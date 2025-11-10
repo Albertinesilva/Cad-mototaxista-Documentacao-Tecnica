@@ -19,6 +19,7 @@ Principais características:
 - Inclui tabelas auxiliares para gerenciamento de **endereços, contatos, CNHs e auditoria**;  
 - A **Definição de Dados (DDL)** estabelece as instruções SQL para criação de **tabelas, índices e restrições de integridade**, garantindo coerência entre chaves primárias e estrangeiras;  
 - Centraliza todas as instruções que sustentam o **modelo lógico do banco de dados**, facilitando manutenção e auditoria.
-#### Disponivel em: [DDL](https://github.com/Albertinesilva/Cadmototaxista-Documentacao-Tecnica/tree/main/db/DDL)
+#### Disponivel em: [DDL](https://github.com/Albertinesilva/Cadmototaxista-Documentacao-Tecnica/blob/main/db/DDL/C7_Estrutura_DDL_PostgreSQL.md)
 #### Disponivel em: [Diagrama](https://github.com/Albertinesilva/Cadmototaxista-Documentacao-Tecnica/blob/main/db/diagrama/modelo_relacional.md)
+
 
