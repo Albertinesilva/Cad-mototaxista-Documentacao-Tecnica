@@ -8,7 +8,8 @@ O uso de JavaDocs é fundamental para garantir `clareza`, `rastreabilidade` e `m
 
 Além disso, a documentação JavaDocs contribui diretamente para a `padronização do desenvolvimento`, reduzindo a curva de aprendizado de novos integrantes da equipe e fortalecendo a qualidade técnica e a transparência do projeto junto à Secretaria Municipal de Trânsito e Transporte (SMTT).
 
-A documentação completa pode ser acessada no diretório /documentacao/site/apidocs.
-Para visualizar o conteúdo, basta abrir o arquivo index.html localizado nessa pasta — esse arquivo serve como ponto de entrada para toda a documentação gerada automaticamente.
+A documentação completa pode ser acessada no diretório `/documentacao/site/apidocs`.
+Para visualizá-la localmente, é necessário baixar a pasta `apidocs` do repositório e abrir o arquivo `index.html`, que serve como ponto de entrada para toda a documentação gerada automaticamente pelo `JavaDocs`.
+Alternativamente, o conteúdo também pode ser consultado on-line, por meio da documentação hospedada no Netlify, disponível no endereço abaixo:
 
-🔗 Acessar Documentação JavaDocs
+#### 🔗 Acessar Documentação JavaDocs – [Netlify](https://documentacao-cadmototaxista-javadocs.netlify.app/)
