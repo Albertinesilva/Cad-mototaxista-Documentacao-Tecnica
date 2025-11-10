@@ -10,6 +10,7 @@ Além disso, a documentação JavaDocs contribui diretamente para a `padronizaç
 
 A documentação completa pode ser acessada no diretório `/documentacao/site/apidocs`.
 Para visualizá-la localmente, é necessário baixar a pasta `apidocs` do repositório e abrir o arquivo `index.html`, que serve como ponto de entrada para toda a documentação gerada automaticamente pelo `JavaDocs`.
+
 Alternativamente, o conteúdo também pode ser consultado on-line, por meio da documentação hospedada no Netlify, disponível no endereço abaixo:
 
 #### 🔗 Acessar Documentação JavaDocs – [Netlify](https://documentacao-cadmototaxista-javadocs.netlify.app/)
