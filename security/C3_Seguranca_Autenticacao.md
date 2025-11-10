@@ -1,6 +1,6 @@
 ﻿<h2 align="center">CadMototaxista - Documentação Técnica</h2>
 
-## Trechos de Segurança e Autenticação
+### Trechos de Segurança e Autenticação
 
 O sistema **CADMOTOTAXISTA** utiliza **Spring Security** para gerenciar autenticação, autorização e controle de sessões de usuários.
 
