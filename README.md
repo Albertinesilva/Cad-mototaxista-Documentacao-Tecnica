@@ -20,61 +20,66 @@ Além disso, o repositório contém a documentação completa do sistema, inclui
 <table>
   <thead>
     <tr>
-      <th align="left">Módulo</th>
-      <th align="left">Descrição</th>
-      <th align="left">Link</th>
+      <th align="center">Módulo</th>
+      <th align="center">Descrição</th>
+      <th align="center">Link</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <td><strong>Controller do Módulo de Alvará</strong></td>
       <td>Controla as requisições de geração e emissão dos relatórios e alvarás do sistema.</td>
-      <td><a href="https://github.com/Albertinesilva/Cadmototaxista-Documentacao-Tecnica/blob/main/controller/C1_Controller_Alvara.md">📄 JasperController</a></td>
+      <td><a href="https://github.com/Albertinesilva/Cadmototaxista-Documentacao-Tecnica/blob/main/controller/C1_Controller_Alvara.md">JasperController</a></td>
     </tr>
     <tr>
       <td><strong>Service do Módulo de Alvará</strong></td>
       <td>Camada responsável pela geração e processamento dos relatórios JasperReports.</td>
-      <td><a href="./documentacao/jasper-service.md">📄 JasperService</a></td>
+      <td><a href="https://github.com/Albertinesilva/Cadmototaxista-Documentacao-Tecnica/blob/main/service/C2_Service_Alvara.md">JasperService</a></td>
     </tr>
     <tr>
       <td><strong>Segurança e Autenticação</strong></td>
       <td>Configuração do Spring Security (perfis, login, logout e controle de sessão).</td>
-      <td><a href="./documentacao/spring-security.md">📄 Spring Security</a></td>
+      <td><a href="https://github.com/Albertinesilva/Cadmototaxista-Documentacao-Tecnica/blob/main/security/C3_Seguranca_Autenticacao.md">Spring Security</a></td>
     </tr>
     <tr>
       <td><strong>Repositórios (Repositories)</strong></td>
       <td>Persistência de dados via Spring Data JPA.</td>
-      <td><a href="./documentacao/spring-data-jpa.md">📄 Spring Data JPA</a></td>
+      <td><a href="https://github.com/Albertinesilva/Cadmototaxista-Documentacao-Tecnica/blob/main/repository/C4_Repositories.md">Spring Data JPA</a></td>
     </tr>
     <tr>
       <td><strong>Regras de Negócio Sensíveis</strong></td>
       <td>Validações críticas e verificação de vencimento de alvará.</td>
-      <td><a href="./documentacao/regras-sensiveis.md">📄 Regras Sensíveis</a></td>
+      <td><a href="https://github.com/Albertinesilva/Cadmototaxista-Documentacao-Tecnica/blob/main/service/metodos/C5_Regras_Negocio_Sensiveis.md">Regras Sensíveis</a></td>
     </tr>
     <tr>
       <td><strong>Integração com ViaCEP</strong></td>
       <td>Busca automática de endereços via API pública.</td>
-      <td><a href="./documentacao/integracao-viacep.md">📄 Integração ViaCEP</a></td>
+      <td><a href="https://github.com/Albertinesilva/Cadmototaxista-Documentacao-Tecnica/blob/main/api/C5_1_Integracao_ViaCEP.md">Integração ViaCEP</a></td>
     </tr>
     <tr>
       <td><strong>Controle de Versões com Flyway</strong></td>
       <td>Versionamento e migração de banco de dados.</td>
-      <td><a href="./documentacao/migrations.md">📄 Migrations</a></td>
+      <td><a href="https://github.com/Albertinesilva/Cadmototaxista-Documentacao-Tecnica/blob/main/db/apontamento.md">Migrations</a></td>
     </tr>
     <tr>
-      <td><strong>Estrutura DDL e Diagrama do Banco</strong></td>
-      <td>Definição de tabelas, chaves e relacionamentos.</td>
-      <td><a href="./documentacao/estrutura-ddl-diagrama.md">📄 Estrutura DDL e Diagrama</a></td>
+      <td><strong>Estrutura DDL do Banco</strong></td>
+      <td>Definição das tabelas, chaves e relacionamentos do banco de dados.</td>
+      <td><a href="https://github.com/Albertinesilva/Cadmototaxista-Documentacao-Tecnica/blob/main/db/DDL/C7_Estrutura_DDL_PostgreSQL.md"> Estrutura DDL</a></td>
+    </tr>
+    <tr>
+      <td><strong>Diagrama do Banco de Dados</strong></td>
+      <td>Representação visual das relações entre entidades e tabelas do sistema.</td>
+      <td><a href="https://github.com/Albertinesilva/Cadmototaxista-Documentacao-Tecnica/blob/main/db/diagrama/modelo_relacional.md">Diagrama ER</a></td>
     </tr>
     <tr>
       <td><strong>Documentação JavaDocs</strong></td>
       <td>Documentação técnica gerada automaticamente (JavaDocs).</td>
-      <td><a href="https://documentacao-cadmototaxista-javadocs.netlify.app/">📄 JavaDocs (Netlify)</a></td>
+      <td><a href="https://documentacao-cadmototaxista-javadocs.netlify.app/">JavaDocs (Netlify)</a></td>
     </tr>
     <tr>
       <td><strong>Execução do Sistema</strong></td>
       <td>Instruções de configuração, variáveis de ambiente e deploy no Heroku.</td>
-      <td><a href="./documentacao/execucao-sistema.md">📄 Execução do Sistema</a></td>
+      <td><a href="https://github.com/Albertinesilva/Cadmototaxista-Documentacao-Tecnica/blob/main/config/C9_Execucao_Sistema.md">Execução do Sistema</a></td>
     </tr>
   </tbody>
 </table>
@@ -92,3 +97,8 @@ A cópia, modificação, distribuição ou redistribuição total ou parcial do 
 
 O autor **não se responsabiliza por danos diretos ou indiretos** resultantes do uso deste software, incluindo falhas, perdas de dados ou prejuízos decorrentes da utilização indevida ou não autorizada do código.
 
+---
+
+| 🌎 LinkedIn                                                              | 👨‍💻 **Autor**                                                                 |
+| ------------------------------------------------------------------------ | ---------------------------------------------------------------------------- |
+| [LinkedIn](https://www.linkedin.com/in/albert-backend-java-spring-boot/) | [Albert Silva](https://www.linkedin.com/in/albert-backend-java-spring-boot/) |
