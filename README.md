@@ -1,4 +1,4 @@
-﻿<h2 align="center">CadMototaxista - Documentação Técnica</h2>
+﻿<h2 align="center">Cad-Mototaxista - Documentação Técnica</h2>
 
 ### 🏍️ Sistema CADMOTOTAXISTA
 Sistema de Gestão de Mototaxistas e Motofretistas da SMTT de Santo Antônio de Jesus
@@ -102,3 +102,4 @@ O autor **não se responsabiliza por danos diretos ou indiretos** resultantes do
 | 🌎 LinkedIn                                                              | 👨‍💻 **Autor**                                                                 |
 | ------------------------------------------------------------------------ | ---------------------------------------------------------------------------- |
 | [LinkedIn](https://www.linkedin.com/in/albert-backend-java-spring-boot/) | [Albert Silva](https://www.linkedin.com/in/albert-backend-java-spring-boot/) |
+
