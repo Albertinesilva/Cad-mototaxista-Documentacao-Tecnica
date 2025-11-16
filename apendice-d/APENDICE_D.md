@@ -1,7 +1,7 @@
 <h2 align="center">CAD-MOTOTAXISTA - Documentação Técnica</h2>
 
 <p align="justify">
-O Apêndice D reúne algumas das principais evidências de validação do sistema CAD-MOTOTAXISTA, contemplando documentação técnica, testes de desempenho, verificação de cobertura de código e mecanismos de autenticação. Os materiais apresentados demonstram a confiabilidade, segurança e robustez da aplicação, por meio de relatórios, registros e artefatos produzidos ao longo do processo de validação. As informações correspondentes podem ser consultadas no quadro abaixo.
+O Apêndice D reúne algumas das principais evidências de validação do sistema <strong>CAD-MOTOTAXISTA</strong>, contemplando documentação técnica, testes de desempenho, verificação de cobertura de código e mecanismos de autenticação. Os materiais apresentados demonstram a confiabilidade, segurança e robustez da aplicação, por meio de relatórios, registros e artefatos produzidos ao longo do processo de validação. As informações correspondentes podem ser consultadas no quadro abaixo.
 </p>
 
 ---
@@ -54,3 +54,4 @@ O Apêndice D reúne algumas das principais evidências de validação do sistem
 | 🌎 LinkedIn                                                              | 👨‍💻 **Autor**                                                                 |
 | ------------------------------------------------------------------------ | ---------------------------------------------------------------------------- |
 | [LinkedIn](https://www.linkedin.com/in/albert-backend-java-spring-boot/) | [Albert Silva](https://www.linkedin.com/in/albert-backend-java-spring-boot/) |
+
