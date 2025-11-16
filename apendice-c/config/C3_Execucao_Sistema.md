@@ -37,10 +37,20 @@ http://localhost:8080/
 
 - Para fins de teste e navegação pela banca examinadora, um usuário institucional foi criado exclusivamente para esse ambiente:
 
+Acesso ao Sistema:
+```http
+https://cad-mototaxistas.herokuapp.com
+```
+
+Credenciais para Testes
 ```javaScript
 E-mail: cadmototaxista@saj.gov.br
+```
+
+```javaScript
 Senha: Teste@2025
 ```
+
 #### 🔗 Disponivel em: [CAD-MOTOTAXISTA](https://cad-mototaxistas.herokuapp.com)
 > ⚠️ Observação: Essas credenciais são destinadas apenas para avaliação acadêmica e não devem ser utilizadas em ambientes de produção.
 ---
@@ -177,6 +187,7 @@ Uma vez concluído o processo, a aplicação fica disponível publicamente no en
 ```http
 https://cad-mototaxistas.herokuapp.com
 ```
+
 Esse modelo de deploy contínuo garante agilidade, rastreabilidade e consistência nas publicações, sendo especialmente adequado para ambientes de desenvolvimento e demonstração acadêmica.
 
 | 🌎 LinkedIn                                                              | 👨‍💻 **Autor**                                                                 |
