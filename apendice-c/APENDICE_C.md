@@ -17,6 +17,11 @@
       <th colspan="3">Backend / Servidor</th>
     </tr>
     <tr align="center">
+      <td>C.1 – Tecnologias</td>
+      <td><a href="https://github.com/Albertinesilva/Cad-mototaxista-Documentacao-Tecnica/edit/main/apendice-c/APENDICE_C.md)">Versões</a></td>
+      <td>Tecnologias utilizadas</td>
+    </tr>
+    <tr align="center">
       <td>C.3 – Execução do Sistema</td>
       <td><a href="https://github.com/Albertinesilva/Cad-mototaxista-Documentacao-Tecnica/edit/main/apendice-c/APENDICE_C.md)">Executar CAD-MOTOTAXISTA</a></td>
       <td>Inicialização do sistema</td>
@@ -58,3 +63,4 @@
     </tr>
   </tbody>
 </table>
+
