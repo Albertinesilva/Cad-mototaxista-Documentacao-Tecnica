@@ -8,7 +8,7 @@ O sistema <strong>CAD-MOTOTAXISTA</strong> utiliza o algoritmo <strong>BCrypt</s
 
 <p align="justify">
 Neste projeto, foi adotado o valor cost = 10, configuração padrão recomendada pelo Spring Security, por oferecer um equilíbrio adequado entre segurança e desempenho. Conforme orientações da OWASP, fatores de custo mais elevados — como cost = 12 — reforçam a proteção contra ataques de força bruta, mas aumentam significativamente o tempo de processamento durante a autenticação, podendo impactar sistemas com alta demanda simultânea. Assim, a escolha do cost 10 mantém aderência às boas práticas de segurança sem comprometer a eficiência operacional <a href="https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html?utm_source=chatgpt.com">(OWASP, 2023)</a>.
-</p>
+</p> 
 
 Para fins de demonstração técnica, a senha utilizada como exemplo é:
 
