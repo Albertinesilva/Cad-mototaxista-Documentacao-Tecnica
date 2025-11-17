@@ -69,9 +69,6 @@ A cópia, modificação, distribuição ou redistribuição total ou parcial do 
 O autor **não se responsabiliza por danos diretos ou indiretos** resultantes do uso deste software, incluindo falhas, perdas de dados ou prejuízos decorrentes da utilização indevida ou não autorizada do código.
 
 ---
-
 | 🌎 LinkedIn                                                              | 👨‍💻 **Autor**                                                                 |
 | ------------------------------------------------------------------------ | ---------------------------------------------------------------------------- |
 | [LinkedIn](https://www.linkedin.com/in/albert-backend-java-spring-boot/) | [Albert Silva](https://www.linkedin.com/in/albert-backend-java-spring-boot/) |
-
-
