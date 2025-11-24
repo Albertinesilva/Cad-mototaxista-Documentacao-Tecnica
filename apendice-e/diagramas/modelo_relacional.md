@@ -1,1 +1,1 @@
-<img src="/assets/img/Modelo_Relacional.png" alt="Modelo Relacional" width="100%" height="100%">
+<img src="../../assets/img/Modelo_Relacional.png" alt="Modelo Relacional" width="100%" height="100%">
