@@ -167,3 +167,50 @@ A tabela a seguir apresenta os resultados consolidados gerados pelo Apache JMete
 </table>
 
 <p><i>Os resultados demonstram desempenho estável e ausência de erros em todos os cenários avaliados.</i></p>
+
+---
+D.2.6 – Análise dos Resultados
+
+A análise dos dados coletados durante os testes de desempenho permite avaliar a eficiência e a estabilidade do sistema CAD-MOTOTAXISTA diante de solicitações simultâneas. As métricas fornecidas pelo Apache JMeter indicam o comportamento da aplicação frente a diferentes operações críticas, possibilitando a identificação de gargalos e a validação de sua capacidade de atendimento em cenários reais. A seguir, são consolidados os principais resultados observados nos experimentos.
+
+<table border="2" style="border-collapse: collapse; text-align:center;">
+  <thead>
+    <tr style="background-color:#2F4F4F; color:white;">
+      <th colspan="3">Indicadores de Desempenho Observados</th>
+    </tr>
+    <tr style="background-color:#708090; color:white;">
+      <th>Métrica</th>
+      <th>Valor Observado</th>
+      <th>Interpretação Técnica</th>
+    </tr>
+  </thead>
+  <tbody align="center">
+    <tr>
+      <td>Taxa de Erros (%)</td>
+      <td>0,00%</td>
+      <td>Indica ausência de falhas HTTP, garantindo integridade e consistência das requisições.</td>
+    </tr>
+    <tr>
+      <td>Tempo Médio de Resposta - Login</td>
+      <td>31 ms</td>
+      <td>Respostas rápidas demonstrando eficiência na autenticação de usuários.</td>
+    </tr>
+    <tr>
+      <td>Tempo Médio de Resposta - Relatório</td>
+      <td>39 ms</td>
+      <td>Baixa latência no processamento e consulta de relatórios.</td>
+    </tr>
+    <tr>
+      <td>Tempo Médio de Resposta - Cadastro</td>
+      <td>3521 ms</td>
+      <td>A latência mais elevada é justificada pelo carregamento de múltiplos campos e validações no front-end.</td>
+    </tr>
+    <tr>
+      <td>Throughput Médio</td>
+      <td>Estável</td>
+      <td>O sistema manteve capacidade constante de atendimento, mesmo com 20 usuários simultâneos.</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><i>Os indicadores demonstram que o sistema comporta acessos simultâneos sem degradação significativa de desempenho.</i></p>
