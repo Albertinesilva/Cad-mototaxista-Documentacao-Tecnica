@@ -75,3 +75,38 @@ Método de Execução (Fluxo Seletivo):
 3. solicitação de geração de relatório do sistema.
 
 Cada cenário foi executado com **20 threads (usuários virtuais)**, configuradas para realizar requisições consecutivas sem ramp-up prolongado, buscando reproduzir uma situação de acesso simultâneo real. Todas as respostas HTTP foram avaliadas em função de tempo de resposta e retorno de status (HTTP 2xx, 4xx, 5xx), garantindo confiabilidade dos resultados.
+
+<table border="2" align="center" style="border-collapse: collapse; text-align:center;">
+  <thead>
+    <tr style="background-color:#2F4F4F; color:white;">
+      <th colspan="2">Métricas Avaliadas (Apache JMeter)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background-color:#708090; color:white;">
+      <th>Métrica</th>
+      <th>Descrição Técnica</th>
+    </tr>
+    <tr>
+      <td>Tempo Médio de Resposta (ms)</td>
+      <td>Expressa a média do tempo que o sistema leva para processar requisições.</td>
+    </tr>
+    <tr>
+      <td>Tempo Mínimo e Máximo (ms)</td>
+      <td>Representam os extremos de latência observados durante os testes.</td>
+    </tr>
+    <tr>
+      <td>Desvio Padrão (ms)</td>
+      <td>Mede a variação entre os tempos de resposta, indicando estabilidade.</td>
+    </tr>
+    <tr>
+      <td>Throughput (req/s)</td>
+      <td>Quantidade de requisições processadas por segundo, indicando capacidade de atendimento.</td>
+    </tr>
+    <tr>
+      <td>Taxa de Erros (%)</td>
+      <td>Percentual de requisições mal-sucedidas (falhas HTTP), essencial para validar integridade.</td>
+    </tr>
+  </tbody>
+</table>
+
