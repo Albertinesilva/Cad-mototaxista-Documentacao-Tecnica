@@ -214,3 +214,40 @@ A análise dos dados coletados durante os testes de desempenho permite avaliar a
 </table>
 
 <p><i>Os indicadores demonstram que o sistema comporta acessos simultâneos sem degradação significativa de desempenho.</i></p>
+
+---
+D.2.7 – Evidências Visuais
+
+As evidências de desempenho coletadas durante os testes de carga são apresentadas por meio de relatórios gráficos gerados pelo Apache JMeter. Esses registros auxiliam na interpretação prática das métricas obtidas, permitindo visualizar características como tempos de resposta, throughput, estabilidade das requisições e ausência de erros. Cada relatório representa um cenário crítico do sistema CAD-MOTOTAXISTA avaliado sob carga simultânea.
+
+<table border="2" style="border-collapse: collapse; text-align:center;">
+  <thead>
+    <tr style="background-color:#2F4F4F; color:white;">
+      <th colspan="2">Evidências Visuais – Relatórios do Apache JMeter</th>
+    </tr>
+    <tr style="background-color:#708090; color:white;">
+      <th>Descrição da Evidência</th>
+      <th>Link da Imagem</th>
+    </tr>
+  </thead>
+  <tbody align="center">
+    <tr>
+      <td>Figura X. Relatório de Sumário – Login CAD-MOTOTAXISTA</td>
+      <td><a href="#" target="_blank">Inserir link</a></td>
+    </tr>
+    <tr>
+      <td>Figura X. Relatório de Sumário – Cadastro CAD-MOTOTAXISTA</td>
+      <td><a href="#" target="_blank">Inserir link</a></td>
+    </tr>
+    <tr>
+      <td>Figura X. Relatório de Sumário – Relatório CAD-MOTOTAXISTA</td>
+      <td><a href="#" target="_blank">Inserir link</a></td>
+    </tr>
+    <tr>
+      <td>Figura X. Árvore de Resultados (View Results Tree) – Validação de Carregamento</td>
+      <td><a href="#" target="_blank">Inserir link</a></td>
+    </tr>
+  </tbody>
+</table>
+
+<p><i>As evidências reforçam a consistência e confiabilidade dos resultados apresentados, demonstrando o comportamento real do sistema durante os testes.</i></p>
