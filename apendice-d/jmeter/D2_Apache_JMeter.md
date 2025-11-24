@@ -251,3 +251,48 @@ As evidências de desempenho coletadas durante os testes de carga são apresenta
 </table>
 
 <p><i>As evidências reforçam a consistência e confiabilidade dos resultados apresentados, demonstrando o comportamento real do sistema durante os testes.</i></p>
+
+---
+D.2.8 Correspondência entre Casos de Avaliação e Evidências
+
+A consolidação dos resultados obtidos durante os testes de desempenho possibilita a rastreabilidade entre os casos de avaliação definidos e as respectivas evidências geradas pelo Apache JMeter. Dessa forma, assegura-se que cada funcionalidade analisada possui comprovação visual e técnica correspondente, favorecendo a validação do comportamento do sistema frente às requisições simuladas. A Tabela 2 apresenta a relação entre os Casos de Avaliação (CA) e os registros evidenciais associados.
+
+<table border="2" style="border-collapse: collapse; text-align:center;">
+  <thead>
+    <tr style="background-color:#2F4F4F; color:white;">
+      <th colspan="3">Tabela – Correspondência entre Casos de Avaliação e Evidências do Apache JMeter</th>
+    </tr>
+    <tr style="background-color:#708090; color:white;">
+      <th>Código de Avaliação</th>
+      <th>Funcionalidade Testada</th>
+      <th>Evidência Associada</th>
+    </tr>
+  </thead>
+  <tbody align="center">
+    <tr>
+      <td>CA001</td>
+      <td>Login do sistema</td>
+      <td>Relatório de Sumário – Login CAD-MOTOTAXISTA</td>
+    </tr>
+    <tr>
+      <td>CA002</td>
+      <td>Acesso à tela de cadastro de mototaxista</td>
+      <td>Relatório de Sumário – Cadastro CAD-MOTOTAXISTA</td>
+    </tr>
+    <tr>
+      <td>CA003</td>
+      <td>Geração de relatório CAD-MOTOTAXISTA</td>
+      <td>Relatório de Sumário – Relatório CAD-MOTOTAXISTA</td>
+    </tr>
+  </tbody>
+</table>
+Fonte: Relatórios gerados pelo Apache JMeter (2025).
+
+---
+D.3 Considerações Finais dos Testes de Desempenho
+
+A execução dos testes de desempenho utilizando o Apache JMeter permitiu avaliar de forma sistemática a estabilidade, eficiência e capacidade de resposta do sistema CAD-MOTOTAXISTA diante de acessos simultâneos. Com base nos resultados obtidos, verificou-se que o sistema demonstrou comportamento estável durante todas as requisições testadas, sem registro de falhas (0% de erros), o que evidencia a integridade das rotinas de autenticação, geração de relatórios e carregamento de interfaces.
+
+Os tempos médios de resposta apresentados para as funcionalidades de login (31 ms) e geração de relatórios (39 ms) revelam baixo impacto computacional, indicando que tais operações não comprometem a experiência do usuário, mesmo sob múltiplas requisições concorrentes. O tempo médio superior observado no carregamento da tela de cadastro (3521 ms) é tecnicamente justificável, tendo em vista que esta operação envolve processamento adicional de scripts front-end, renderização de múltiplos componentes da interface e validações dinâmicas.
+
+Adicionalmente, o Throughput manteve comportamento estável em todos os cenários, confirmando que o sistema é capaz de atender simultaneamente a 20 usuários virtuais sem apresentar degradação significativa de desempenho. Dessa forma, os resultados obtidos indicam que a aplicação encontra-se apta para uso operacional em ambiente de produção, atendendo às necessidades da Secretaria Municipal de Trânsito e Transporte (SMTT) com confiabilidade e desempenho adequado.
