@@ -2,19 +2,28 @@
 
 ### D.2 – Uso do Apache JMeter para Testes de Carga
 
-Introdução
+D.2.1 Introdução
 
 A avaliação de desempenho constitui uma etapa essencial no processo de validação de aplicações web, uma vez que permite mensurar sua estabilidade, eficiência e capacidade de atendimento simultâneo a múltiplas requisições. No sistema CAD-MOTOTAXISTA, essa análise busca assegurar que o ambiente tecnológico adotado seja capaz de suportar cenários reais de uso por parte da Secretaria Municipal de Trânsito e Transporte (SMTT), garantindo confiabilidade e continuidade operacional.
 
 ---
-Objetivo dos Testes
+D.2.2 Objetivo dos Testes de Desempenho
 
-Os testes de desempenho foram realizados com o objetivo de avaliar a capacidade de resposta e estabilidade do sistema CAD-MOTOTAXISTA sob carga controlada. Para isso, empregou-se a ferramenta Apache JMeter, que possibilita a simulação de múltiplos usuários acessando o sistema simultaneamente, medindo tempos médios de resposta, throughput (rendimento) e taxa de erros.
+Os testes de desempenho foram realizados com o objetivo de avaliar a capacidade de resposta e estabilidade do sistema CAD-MOTOTAXISTA sob carga controlada. Para isso, empregou-se a ferramenta Apache JMeter, que possibilita a simulação de múltiplos usuários acessando o sistema simultaneamente, registrando métricas como:
+
+- Tempo de resposta (média, mínimo, máximo e desvio padrão);
+- Throughput (rendimento por segundo);
+- Taxa de erros (% de falhas);
+
+---
+D.2.3 – Ambiente de Teste (JMeter)
+
+Os experimentos foram conduzidos em ambiente local, utilizando a seguinte configuração de hardware e software:
 
 <table border="2" align="center" style="border-collapse: collapse; text-align:center;">
   <thead>
     <tr style="background-color:#2F4F4F; color:white;">
-      <th colspan="2">4.X.1 – Ambiente de Teste (JMeter)</th>
+      <th colspan="2">Ambiente de Teste</th>
     </tr>
   </thead>
   <tbody>
@@ -53,4 +62,16 @@ Os testes de desempenho foram realizados com o objetivo de avaliar a capacidade 
   </tbody>
 </table>
 <p align="center"><i>A execução foi realizada de forma isolada, sem interferência de outras aplicações, garantindo a confiabilidade dos resultados.</i></p>
+
 ---
+D.2.4 – Metodologia e Métricas Avaliadas
+
+A metodologia adotada baseou-se na execução de testes de carga com usuários virtuais simultâneos, simulados pelo **Apache JMeter**, com o objetivo de identificar o comportamento do sistema CAD-MOTOTAXISTA em cenários reais de uso. Os testes foram conduzidos utilizando o seguinte fluxo de execução:
+
+Método de Execução (Fluxo Seletivo):
+
+1. autenticação no sistema (Login);
+2. navegação e carregamento da interface de cadastro;
+3. solicitação de geração de relatório do sistema.
+
+Cada cenário foi executado com **20 threads (usuários virtuais)**, configuradas para realizar requisições consecutivas sem ramp-up prolongado, buscando reproduzir uma situação de acesso simultâneo real. Todas as respostas HTTP foram avaliadas em função de tempo de resposta e retorno de status (HTTP 2xx, 4xx, 5xx), garantindo confiabilidade dos resultados.
