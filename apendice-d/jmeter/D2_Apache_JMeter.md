@@ -109,4 +109,9 @@ Cada cenário foi executado com **20 threads (usuários virtuais)**, configurada
     </tr>
   </tbody>
 </table>
+<p align="center"><i>As métricas comprovam a estabilidade, capacidade de processamento e ausência de falhas no sistema durante a simulação de carga.</i></p>
 
+---
+D.2.5 – Resultados dos Testes de Desempenho
+
+A tabela a seguir apresenta os resultados consolidados gerados pelo Apache JMeter, considerando a média dos tempos de resposta, variações, taxa de erros e throughput durante a simulação de 20 usuários simultâneos:
