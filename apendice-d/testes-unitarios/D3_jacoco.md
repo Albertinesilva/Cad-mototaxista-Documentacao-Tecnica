@@ -4,6 +4,8 @@ Análise do Relatório de Cobertura de Testes – JaCoCo
 
 A Figura 1 apresenta o relatório de cobertura de testes gerado pela ferramenta JaCoCo, aplicado ao projeto CAD-MOTOTAXISTA. A estratégia de teste concentrou-se na camada de segurança e gestão de usuários, por ser o núcleo responsável pelo controle de autenticação, autorização e administração de acesso ao sistema. Assim, foram priorizados componentes diretamente relacionados ao fluxo de login e à validação das credenciais, tais como models, repositories, services e controllers do módulo de usuário.
 
+<img src="../../assets/img/jacoco/Relatorio-Jacoco.png" alt="Relatório Jacoco" width="100%" height="100%"> 
+
 Os resultados evidenciam níveis elevados de cobertura nas classes centrais da autenticação, especialmente em elementos como:
 
 - `UsuarioServiceImpl`, no qual se validaram regras de autenticação, recuperação segura de credenciais e envio de tokens.
@@ -139,5 +141,5 @@ Cobertura de casos de erro e exceções em toda a aplicação.
 
 Testes de integração que validem a interação entre camadas (por exemplo, controllers → services → repositories) em ambientes mais realistas.
 
-Em síntese, o esforço de teste presente oferece uma base confiável para a segurança de autenticação e autorização no CAD-MOTOTAXISTA, sendo uma fundação sólida para evoluir a cobertura de teste em fases posteriores. A URL pública do relatório JaCoCo — relatório de cobertura hospedado no Netlify
+Em síntese, o esforço de teste presente oferece uma base confiável para a segurança de autenticação e autorização no CAD-MOTOTAXISTA, sendo uma fundação sólida para evoluir a cobertura de teste em fases posteriores. A URL pública do relatório JaCoCo — [relatório de cobertura hospedado no Netlify](https://jacoco-cadmototaxista.netlify.app/)
  — reforça a transparência e facilita a revisão contínua pelas partes interessadas.
