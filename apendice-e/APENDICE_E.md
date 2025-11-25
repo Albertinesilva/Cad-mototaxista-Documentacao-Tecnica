@@ -47,17 +47,17 @@ O Apêndice E apresenta os artefatos fundamentais relacionados à modelagem rela
     </tr>
     <tr align="center">
       <td>E.3 – Diagrama de Caso de Uso</td>
-      <td><a href="https://github.com/Albertinesilva/Cad-mototaxista-Documentacao-Tecnica/blob/main/apendice-e/diagramas/E3_caso_de_uso.md"></a> UML – Caso de Uso</td>
+      <td><a href="https://github.com/Albertinesilva/Cad-mototaxista-Documentacao-Tecnica/blob/main/apendice-e/diagramas/E3_caso_de_uso.md"> UML – Caso de Uso</a></td>
       <td>Requisitos funcionais</td>
     </tr>
     <tr align="center">
       <td>E.4 – Diagrama de Classes</td>
-      <td><a href="https://github.com/Albertinesilva/Cad-mototaxista-Documentacao-Tecnica/blob/main/apendice-e/diagramas/E4_classes.md"></a> UML – Classes</td>
+      <td><a href="https://github.com/Albertinesilva/Cad-mototaxista-Documentacao-Tecnica/blob/main/apendice-e/diagramas/E4_classes.md"> UML – Classes</a></td>
       <td>Modelagem de entidades</td>
     </tr>
     <tr align="center">
       <td>E.5 – Diagrama de Pacotes</td>
-      <td><a href="https://github.com/Albertinesilva/Cad-mototaxista-Documentacao-Tecnica/blob/main/apendice-e/diagramas/E5_pacotes.md"></a>UML – Pacotes (MVC)</td>
+      <td><a href="https://github.com/Albertinesilva/Cad-mototaxista-Documentacao-Tecnica/blob/main/apendice-e/diagramas/E5_pacotes.md">UML – Pacotes (MVC)</a></td>
       <td>Organização modular</td>
     </tr>
   </tbody>
