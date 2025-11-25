@@ -1,15 +1,19 @@
 ﻿<h2 align="center">CAD-MOTOTAXISTA - Documentação Técnica</h2>
 
+<br>
+
 ### Trechos de Segurança e Autenticação
 
 O sistema **CADMOTOTAXISTA** utiliza **Spring Security** para gerenciar autenticação, autorização e controle de sessões de usuários.
 
 Principais responsabilidades:
-- Definir permissões de acesso conforme os perfis de usuário: **Administrador, Funcionário e Cliente**;  
-- Configurar regras para páginas públicas e restritas, controle de login, logout e expiração de sessão;  
-- Implementar política de “lembrar-me” para sessões persistentes;  
-- Codificar senhas utilizando **BCrypt**;  
+
+- Definir permissões de acesso conforme os perfis de usuário: **Administrador, Funcionário e Cliente**;
+- Configurar regras para páginas públicas e restritas, controle de login, logout e expiração de sessão;
+- Implementar política de “lembrar-me” para sessões persistentes;
+- Codificar senhas utilizando **BCrypt**;
 - Manter registro de sessões ativas, garantindo rastreabilidade e segurança dos acessos.
+
 ---
 
 ```java
@@ -151,7 +155,7 @@ public class SecurityConfiguration {
          * a partir de {@link AuthenticationConfiguration}, permitindo que o Spring descubra automaticamente
          * a implementação de {@link UserDetailsService} presente na aplicação.
          * </p>
-         * 
+         *
          * @param authenticationConfiguration configuração de autenticação do Spring Security.
          * @return uma instância de {@link AuthenticationManager} gerenciada pelo Spring.
          * @throws Exception caso ocorra um erro ao obter o {@link AuthenticationManager}.

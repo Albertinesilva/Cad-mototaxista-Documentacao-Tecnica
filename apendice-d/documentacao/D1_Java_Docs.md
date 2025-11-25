@@ -1,5 +1,7 @@
 <h2 align="center">Cad-Mototaxista - Documentação Técnica</h2>
 
+<br>
+
 ### D.1 – Documentação JavaDocs
 
 A documentação `JavaDocs` do sistema **CAD-MOTOTAXISTA** foi gerada diretamente a partir dos comentários estruturados presentes no código-fonte, descrevendo de maneira detalhada classes, interfaces, métodos e atributos. Essa abordagem oferece uma visão abrangente da arquitetura do sistema e do comportamento de cada componente, facilitando a compreensão da lógica de negócio aplicada e da interação entre as camadas Controller, Service, Repository e Model.

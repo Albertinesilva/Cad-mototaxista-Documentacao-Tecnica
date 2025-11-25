@@ -1,16 +1,18 @@
 ﻿<h2 align="center">CAD-MOTOTAXISTA - Documentação Técnica</h2>
 
+<br>
+
 ### Controller do Módulo de Geração de Relatórios e Alvará
 
-O **Controller** desta subseção gerencia as requisições relacionadas à geração e disponibilização dos relatórios e à emissão de alvarás dos mototaxistas e motofretistas do sistema.  
+O **Controller** desta subseção gerencia as requisições relacionadas à geração e disponibilização dos relatórios e à emissão de alvarás dos mototaxistas e motofretistas do sistema.
 
-Principais responsabilidades:  
-- Intermediar requisições entre o usuário e o serviço de geração de relatórios;  
-- Receber parâmetros HTTP e encaminhar para a camada de serviço;  
+Principais responsabilidades:
+
+- Intermediar requisições entre o usuário e o serviço de geração de relatórios;
+- Receber parâmetros HTTP e encaminhar para a camada de serviço;
 - Definir se a resposta será exibida no navegador ou baixada como PDF.
 
 ---
-
 
 ```java
 package br.gov.ba.saj.smtt.cadmototaxistas.reports.controller;
@@ -99,4 +101,3 @@ public class JasperController {
 
 }
 ```
-

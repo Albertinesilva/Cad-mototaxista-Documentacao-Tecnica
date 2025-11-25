@@ -1,5 +1,7 @@
 ﻿<h2 align="center">CadMototaxista - Documentação Técnica</h2>
 
+<br>
+
 ### Regras de Negócio Sensíveis
 
 Esta subseção apresenta um exemplo de regra crítica do sistema: a **verificação da validade do alvará** de mototaxistas e motofretistas.  
@@ -8,6 +10,7 @@ Essa regra garante que o sistema **impede a emissão ou renovação de alvarás 
 A implementação utiliza a classe **LocalDate** da API de datas do Java, comparando a data de vencimento registrada com a data atual, retornando verdadeiro caso o alvará esteja vencido.
 
 ---
+
 ```java
 /**
 * Verifica se o alvará do condutor está vencido.

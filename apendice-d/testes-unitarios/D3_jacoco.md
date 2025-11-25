@@ -4,9 +4,9 @@
 
 ### Análise do Relatório de Cobertura de Testes – JaCoCo
 
-A Figura 1 apresenta o relatório de cobertura de testes gerado pela ferramenta **JaCoCo**, aplicado ao projeto **CAD-MOTOTAXISTA**. A estratégia de teste concentrou-se na **camada de segurança e gestão de usuários**, por ser o núcleo responsável pelo controle de autenticação, autorização e administração de acesso ao sistema. Assim, foram priorizados componentes diretamente relacionados ao fluxo de login e validação das credenciais, tais como *models*, *repositories*, *services* e *controllers* do módulo de usuário.
+A Figura 1 apresenta o relatório de cobertura de testes gerado pela ferramenta **JaCoCo**, aplicado ao projeto **CAD-MOTOTAXISTA**. A estratégia de teste concentrou-se na **camada de segurança e gestão de usuários**, por ser o núcleo responsável pelo controle de autenticação, autorização e administração de acesso ao sistema. Assim, foram priorizados componentes diretamente relacionados ao fluxo de login e validação das credenciais, tais como _models_, _repositories_, _services_ e _controllers_ do módulo de usuário.
 
-<img src="../../assets/img/jacoco/Relatorio-Jacoco.png" alt="Relatório Jacoco" width="100%" height="100%"> 
+<img src="../../assets/img/jacoco/Relatorio-Jacoco.png" alt="Relatório Jacoco" width="100%" height="100%">
 
 Os resultados evidenciam níveis elevados de cobertura nas classes centrais da autenticação, especialmente em elementos como:
 
@@ -20,6 +20,7 @@ Essa cobertura demonstra não apenas a execução de métodos críticos, mas tam
 Contudo, o relatório também indica áreas com cobertura parcial, especialmente em componentes auxiliares, controladores secundários e serviços que não influenciam diretamente o fluxo de login. A priorização da camada de segurança decorreu do impacto crítico desse módulo para a proteção do sistema, aliado ao tempo limitado de desenvolvimento da suíte de testes.
 
 ---
+
 ### 1. Tabelas Percentuais com os Pacotes Testados
 
 Para complementar a interpretação dos resultados apresentados no relatório público, foram elaboradas três tabelas resumindo a cobertura de testes do módulo de usuários.
@@ -59,6 +60,7 @@ Para complementar a interpretação dos resultados apresentados no relatório p�
 </table>
 
 ---
+
 #### B) Tabela sem percentuais — classificação qualitativa
 
 <table border="2" style="border-collapse: collapse; text-align:center;">
@@ -94,6 +96,7 @@ Para complementar a interpretação dos resultados apresentados no relatório p�
 </table>
 
 ---
+
 #### C) Tabela de estimativa percentual baseada no escopo de testes aplicado
 
 <table border="2" style="border-collapse: collapse; text-align:center;">
@@ -129,6 +132,7 @@ Para complementar a interpretação dos resultados apresentados no relatório p�
 </table>
 
 ---
+
 ### 2. Conclusão Final da Seção (Cobertura de Testes)
 
 A análise da cobertura de testes obtida pelo JaCoCo reforça que o foco estratégico nos componentes críticos de segurança — especificamente as classes relacionadas ao gerenciamento de usuários — foi bem-sucedido. Apesar de o escopo ter sido limitado pelas restrições de tempo, os testes alcançaram cobertura significativa nas entidades, repositórios, serviços e controllers que sustentam os fluxos de autenticação, ativação de conta e redefinição de senha.
@@ -150,4 +154,3 @@ Em síntese, o esforço da etapa atual oferece uma base confiável para a segura
 Além do relatório de cobertura disponibilizado via JaCoCo, o código completo dos testes unitários aplicados ao módulo de segurança e autenticação pode ser consultado no repositório público:
 
 📎 [Testes Unitários Cad-Mototaxista](https://github.com/Albertinesilva/Cad-mototaxista-Documentacao-Tecnica/tree/main/apendice-d/testes-unitarios/test)
-

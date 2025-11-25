@@ -1,5 +1,7 @@
 <h2 align="center">CAD-MOTOTAXISTA - Documentação Técnica</h2>
 
+<br>
+
 ### D.2 – Uso do Apache JMeter para Testes de Carga
 
 D.2.1 Introdução
@@ -7,6 +9,7 @@ D.2.1 Introdução
 A avaliação de desempenho constitui uma etapa essencial no processo de validação de aplicações web, uma vez que permite mensurar sua estabilidade, eficiência e capacidade de atendimento simultâneo a múltiplas requisições. No sistema CAD-MOTOTAXISTA, essa análise busca assegurar que o ambiente tecnológico adotado seja capaz de suportar cenários reais de uso por parte da Secretaria Municipal de Trânsito e Transporte (SMTT), garantindo confiabilidade e continuidade operacional.
 
 ---
+
 D.2.2 Objetivo dos Testes de Desempenho
 
 Os testes de desempenho foram realizados com o objetivo de avaliar a capacidade de resposta e estabilidade do sistema CAD-MOTOTAXISTA sob carga controlada. Para isso, empregou-se a ferramenta Apache JMeter, que possibilita a simulação de múltiplos usuários acessando o sistema simultaneamente, registrando métricas como:
@@ -16,6 +19,7 @@ Os testes de desempenho foram realizados com o objetivo de avaliar a capacidade 
 - Taxa de erros (% de falhas);
 
 ---
+
 D.2.3 – Ambiente de Teste (JMeter)
 
 Os experimentos foram conduzidos em ambiente local, utilizando a seguinte configuração de hardware e software:
@@ -64,6 +68,7 @@ Os experimentos foram conduzidos em ambiente local, utilizando a seguinte config
 <p><i>A execução foi realizada de forma isolada, sem interferência de outras aplicações, garantindo a confiabilidade dos resultados.</i></p>
 
 ---
+
 D.2.4 – Metodologia e Métricas Avaliadas
 
 A metodologia adotada baseou-se na execução de testes de carga com usuários virtuais simultâneos, simulados pelo **Apache JMeter**, com o objetivo de identificar o comportamento do sistema CAD-MOTOTAXISTA em cenários reais de uso. Os testes foram conduzidos utilizando o seguinte fluxo de execução:
@@ -112,6 +117,7 @@ Cada cenário foi executado com **20 threads (usuários virtuais)**, configurada
 <p><i>As métricas comprovam a estabilidade, capacidade de processamento e ausência de falhas no sistema durante a simulação de carga.</i></p>
 
 ---
+
 D.2.5 – Resultados dos Testes de Desempenho
 
 A tabela a seguir apresenta os resultados consolidados gerados pelo Apache JMeter, considerando a média dos tempos de resposta, variações, taxa de erros e throughput durante a simulação de 20 usuários simultâneos:
@@ -169,6 +175,7 @@ A tabela a seguir apresenta os resultados consolidados gerados pelo Apache JMete
 <p><i>Os resultados demonstram desempenho estável e ausência de erros em todos os cenários avaliados.</i></p>
 
 ---
+
 D.2.6 – Análise dos Resultados
 
 A análise dos dados coletados durante os testes de desempenho permite avaliar a eficiência e a estabilidade do sistema CAD-MOTOTAXISTA diante de solicitações simultâneas. As métricas fornecidas pelo Apache JMeter indicam o comportamento da aplicação frente a diferentes operações críticas, possibilitando a identificação de gargalos e a validação de sua capacidade de atendimento em cenários reais. A seguir, são consolidados os principais resultados observados nos experimentos.
@@ -216,6 +223,7 @@ A análise dos dados coletados durante os testes de desempenho permite avaliar a
 <p><i>Os indicadores demonstram que o sistema comporta acessos simultâneos sem degradação significativa de desempenho.</i></p>
 
 ---
+
 D.2.7 – Evidências Visuais
 
 As evidências de desempenho coletadas durante os testes de carga são apresentadas por meio de relatórios gráficos gerados pelo Apache JMeter. Esses registros auxiliam na interpretação prática das métricas obtidas, permitindo visualizar características como tempos de resposta, throughput, estabilidade das requisições e ausência de erros. Cada relatório representa um cenário crítico do sistema CAD-MOTOTAXISTA avaliado sob carga simultânea.
@@ -253,6 +261,7 @@ As evidências de desempenho coletadas durante os testes de carga são apresenta
 <p><i>As evidências reforçam a consistência e confiabilidade dos resultados apresentados, demonstrando o comportamento real do sistema durante os testes.</i></p>
 
 ---
+
 D.2.8 Correspondência entre Casos de Avaliação e Evidências
 
 A consolidação dos resultados obtidos durante os testes de desempenho possibilita a rastreabilidade entre os casos de avaliação definidos e as respectivas evidências geradas pelo Apache JMeter. Dessa forma, assegura-se que cada funcionalidade analisada possui comprovação visual e técnica correspondente, favorecendo a validação do comportamento do sistema frente às requisições simuladas. A Tabela 2 apresenta a relação entre os Casos de Avaliação (CA) e os registros evidenciais associados.
@@ -289,6 +298,7 @@ A consolidação dos resultados obtidos durante os testes de desempenho possibil
 Fonte: Relatórios gerados pelo Apache JMeter (2025).
 
 ---
+
 D.3 Considerações Finais dos Testes de Desempenho
 
 A execução dos testes de desempenho utilizando o Apache JMeter permitiu avaliar de forma sistemática a estabilidade, eficiência e capacidade de resposta do sistema CAD-MOTOTAXISTA diante de acessos simultâneos. Com base nos resultados obtidos, verificou-se que o sistema demonstrou comportamento estável durante todas as requisições testadas, sem registro de falhas (0% de erros), o que evidencia a integridade das rotinas de autenticação, geração de relatórios e carregamento de interfaces.

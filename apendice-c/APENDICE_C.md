@@ -1,10 +1,15 @@
 <h2 align="center">CAD-MOTOTAXISTA - Documentação Técnica</h2>
 
+<br>
+
+### Apêndice C – Listagens e Versões das Tecnologias
+
 <p align="justify">
 O Apêndice C organiza algumas das principais listagens e versões das tecnologias empregadas no sistema <strong>CAD-MOTOTAXISTA</strong>, reunindo artefatos fundamentais para a compreensão da arquitetura e da infraestrutura da aplicação. No quadro a seguir, o leitor encontrará desde o conjunto de <strong>tecnologias utilizadas (C.1)</strong> até os procedimentos de<srong>execução e acesso ao ambiente produtivo (C.3 e C.3.1)</srong>. Também são apresentados trechos estruturais referentes ao <strong>Controller</strong> e ao <strong>Service</strong> do módulo de Alvará <strong>(C.4 e C.5)</strong>, componentes de segurança e <strong>autenticação (C.6)</strong>, repositórios responsáveis pelo acesso e <strong>persistência de dados (C.7)</strong>, regras de negócio classificadas como <strong>sensíveis (C.8)</strong> e a integração externa com o <strong>serviço ViaCEP (C.8.1)</strong>. Esses elementos fornecem rastreabilidade técnica, padronização dos artefatos e suporte à manutenção evolutiva da aplicação.
 </p>
 
 ---
+
 <table border="2" align="center" style="border-collapse: collapse; text-align:center;">
   <thead>
     <tr style="background-color:#2F4F4F; color:white;">
@@ -70,6 +75,7 @@ O Apêndice C organiza algumas das principais listagens e versões das tecnologi
 </table>
 
 ---
+
 | 🌎 LinkedIn                                                              | 👨‍💻 **Autor**                                                                 |
 | ------------------------------------------------------------------------ | ---------------------------------------------------------------------------- |
 | [LinkedIn](https://www.linkedin.com/in/albert-backend-java-spring-boot/) | [Albert Silva](https://www.linkedin.com/in/albert-backend-java-spring-boot/) |

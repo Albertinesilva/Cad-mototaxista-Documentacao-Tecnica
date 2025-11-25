@@ -1,18 +1,22 @@
 ﻿<h2 align="center">CAD-MOTOTAXISTA - Documentação Técnica</h2>
 
+<br>
+
 ### Integração com o Serviço Externo ViaCEP
 
-Além das validações internas, o sistema incorpora rotinas de **integração com serviços externos** para aprimorar a experiência do usuário e garantir a consistência dos dados cadastrados.  
+Além das validações internas, o sistema incorpora rotinas de **integração com serviços externos** para aprimorar a experiência do usuário e garantir a consistência dos dados cadastrados.
 
 Um exemplo é a utilização do serviço público **ViaCEP**, que automatiza o preenchimento de endereços durante o cadastro de clientes, condutores e funcionários.
 
 Principais funcionalidades do script JavaScript:
-- Executa consultas assíncronas à API ViaCEP no lado do cliente;  
-- Preenche automaticamente os campos de **logradouro, bairro e cidade** ao digitar um CEP válido;  
-- Valida o formato do CEP e trata respostas incorretas ou ausentes, limpando os campos quando necessário;  
+
+- Executa consultas assíncronas à API ViaCEP no lado do cliente;
+- Preenche automaticamente os campos de **logradouro, bairro e cidade** ao digitar um CEP válido;
+- Valida o formato do CEP e trata respostas incorretas ou ausentes, limpando os campos quando necessário;
 - Reduz erros de digitação e padroniza os dados, tornando o cadastro mais ágil e confiável.
 
 ---
+
 ```javaScript
 /**
 * Preenche automaticamente os campos de endereço ao digitar um CEP válido.

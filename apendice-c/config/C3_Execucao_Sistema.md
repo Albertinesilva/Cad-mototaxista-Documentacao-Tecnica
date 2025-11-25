@@ -1,18 +1,24 @@
 <h2 align="center">CAD-MOTOTAXISTA - Documentação Técnica</h2>
 
-### 1 Execução do Sistema
+<br>
+
+### Execução do Sistema CADMOTOTAXISTA
 
 A execução do sistema CADMOTOTAXISTA ocorre por meio da aplicação Spring Boot, que integra todos os módulos de backend, frontend (Thymeleaf) e acesso ao banco de dados PostgreSQL.
 O processo de inicialização foi projetado para garantir o carregamento ordenado dos componentes, a verificação de dependências e a disponibilidade dos serviços essenciais da aplicação.
 
 ---
+
 #### 1.1 Inicialização da Aplicação
 
 A execução é iniciada pelo comando:
+
 ```java
 mvn spring-boot:run
 ```
+
 ou, em ambientes de produção:
+
 ```java
 java -jar cadmototaxista.jar
 ```
@@ -22,27 +28,33 @@ Durante o processo de inicialização, o Spring Boot realiza:
 - Leitura das configurações definidas no arquivo application.properties;
 - Conexão automática ao banco de dados PostgreSQL;
 - Execução do controle de versões de banco de dados via Flyway;
--Registro dos beans e serviços da aplicação;
+  -Registro dos beans e serviços da aplicação;
 - Inicialização do servidor embutido Apache Tomcat, responsável por disponibilizar a interface web.
+
 ---
 
 #### 2. Acesso à Interface Web
 
 Após a inicialização, o sistema é acessível por meio do navegador:
+
 ```properties
 http://localhost:8080/
 ```
+
 ---
+
 #### 2.1 Credenciais de Acesso para Testes (Ambiente de Demonstração)
 
 - Para fins de teste e navegação pela banca examinadora, um usuário institucional foi criado exclusivamente para esse ambiente:
 
 Acesso ao Sistema:
+
 ```http
 https://cad-mototaxistas.herokuapp.com
 ```
 
 Credenciais para Testes
+
 ```javaScript
 E-mail: cadmototaxista@saj.gov.br
 ```
@@ -52,10 +64,13 @@ Senha: Teste@2025
 ```
 
 #### 🔗 Disponivel em: [CAD-MOTOTAXISTA](https://cad-mototaxistas.herokuapp.com)
+
 > ⚠️ Observação: Essas credenciais são destinadas apenas para avaliação acadêmica e não devem ser utilizadas em ambientes de produção.
+
 ---
 
 #### 2.2 Funcionalidades Disponíveis na Interface
+
 A interface gráfica, desenvolvida com Thymeleaf e Bootstrap, fornece acesso aos módulos administrativos da Secretaria Municipal de Trânsito e Transporte (SMTT), permitindo:
 
 - Gerenciamento de Condutores, Clientes e Funcionários;
@@ -144,7 +159,9 @@ spring.jpa.properties.javax.persistence.schema-generation.scripts.create-target=
 spring.jpa.properties.hibernate.hbm2ddl.delimiter=;
 spring.jpa.properties.hibernate.format_sql=true
 ```
+
 > 💡 **Observação**: O arquivo application.properties deve ser ajustado conforme o ambiente, principalmente nas propriedades de conexão com o banco (spring.datasource.url, username e password).
+
 ---
 
 #### 5 Encerramento Controlado da Aplicação
@@ -161,6 +178,7 @@ Essa ação interrompe o servidor de aplicação de forma controlada, liberando 
 - Cache e contexto de sessão.
 
 ---
+
 #### 6. Deploy da Aplicação no Heroku
 
 O deploy do sistema CADMOTOTAXISTA é realizado na plataforma Heroku, que oferece um ambiente de hospedagem em nuvem totalmente integrado ao Git.
@@ -170,12 +188,16 @@ Esse mecanismo de integração contínua simplifica a atualização do sistema, 
 O fluxo padrão de implantação consiste nas seguintes etapas:
 
 6.1 Etapas do Deploy
+
 #### 1.Realizar o commit das alterações locais:
+
 ```bash
 git add .
 git commit -m "Atualização de funcionalidades ou correções"
 ```
+
 #### 2.Enviar as alterações para o repositório remoto vinculado ao Heroku
+
 ```bash
 git push ou git push heroku main
 ```

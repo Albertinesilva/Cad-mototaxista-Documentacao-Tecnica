@@ -1,6 +1,9 @@
 ﻿<h2 align="center">CAD-MOTOTAXISTA - Documentação Técnica</h2>
 
+<br>
+
 ### 🏍️ Sistema CADMOTOTAXISTA
+
 Sistem Web para gestão de emissão de alvarás de Mototaxistas e Motofretistas da SMTT de Santo Antônio de Jesus
 
 <p align="justify">
@@ -12,6 +15,7 @@ Os apêndices a seguir reúnem os principais artefatos complementares da documen
 </p>
 
 ---
+
 <!-- Quadro: Estrutura dos Módulos -->
 <table border="2" align="center" style="border-collapse: collapse; text-align:center;">
   <thead>
@@ -56,6 +60,7 @@ Os apêndices a seguir reúnem os principais artefatos complementares da documen
 </table>
 
 ---
+
 ### 📘 Licença de Uso e Distribuição – Albert Silva de Jesus (v1.0)
 
 Copyright © 2025 **Albert Silva de Jesus**.  
@@ -69,7 +74,7 @@ A cópia, modificação, distribuição ou redistribuição total ou parcial do 
 O autor **não se responsabiliza por danos diretos ou indiretos** resultantes do uso deste software, incluindo falhas, perdas de dados ou prejuízos decorrentes da utilização indevida ou não autorizada do código.
 
 ---
+
 | 🌎 LinkedIn                                                              | 👨‍💻 **Autor**                                                                 |
 | ------------------------------------------------------------------------ | ---------------------------------------------------------------------------- |
 | [LinkedIn](https://www.linkedin.com/in/albert-backend-java-spring-boot/) | [Albert Silva](https://www.linkedin.com/in/albert-backend-java-spring-boot/) |
-

@@ -1,10 +1,15 @@
 ﻿<h2 align="center">CAD-MOTOTAXISTA - Documentação Técnica</h2>
 
+<br>
+
+### Apêndice E – Modelagem Relacional, Estrutura DDL e Artefatos de Engenharia de Software
+
 <p align="justify">
 O Apêndice E apresenta os artefatos fundamentais relacionados à modelagem relacional e ao projeto estrutural do sistema CAD-MOTOTAXISTA, abrangendo desde o controle de versões do banco de dados até os principais diagramas UML utilizados na engenharia de software. Este conjunto de documentos oferece uma visão integrada da arquitetura lógica e dos mecanismos de persistência, assegurando rastreabilidade, padronização e suporte à manutenção evolutiva do sistema. No quadro a seguir, estão organizados os elementos que compõem a modelagem e o projeto, bem como seus respectivos locais de acesso.
 </p>
 
 ---
+
 <table border="2" align="center" style="border-collapse: collapse; text-align:center;">
   <thead>
     <tr style="background-color:#2F4F4F; color:white;">
@@ -59,6 +64,7 @@ O Apêndice E apresenta os artefatos fundamentais relacionados à modelagem rela
 </table>
 
 ---
+
 | 🌎 LinkedIn                                                              | 👨‍💻 **Autor**                                                                 |
 | ------------------------------------------------------------------------ | ---------------------------------------------------------------------------- |
 | [LinkedIn](https://www.linkedin.com/in/albert-backend-java-spring-boot/) | [Albert Silva](https://www.linkedin.com/in/albert-backend-java-spring-boot/) |

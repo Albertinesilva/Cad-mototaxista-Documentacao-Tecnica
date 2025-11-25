@@ -1,19 +1,21 @@
 ﻿<h2 align="center">CAD-MOTOTAXISTA - Documentação Técnica</h2>
 
+<br>
+
 ### Estrutura DDL do Banco de Dados – PostgreSQL
 
 Este script define a **estrutura completa do banco de dados do sistema CADMOTOTAXISTA**, utilizando o **PostgreSQL** como sistema gerenciador.  
-O conteúdo foi desenvolvido para garantir **integridade referencial**, **consistência dos dados** e **rastreabilidade das operações** realizadas pela aplicação.  
+O conteúdo foi desenvolvido para garantir **integridade referencial**, **consistência dos dados** e **rastreabilidade das operações** realizadas pela aplicação.
 
 O script segue o padrão de **transação controlada (`BEGIN ... END`)**, assegurando que todas as instruções de criação de tabelas, índices e chaves estrangeiras sejam executadas de forma atômica — ou seja, completamente ou não executadas, preservando a integridade do banco.
 
 A modelagem contempla as principais entidades do domínio da Secretaria Municipal de Trânsito e Transporte (SMTT), incluindo:
 
-- **Condutor**, **Cliente** e **Funcionário** – entidades centrais de cadastro e operação;  
-- **Motocicleta**, **MotoModelo** e **MotoMarca** – entidades que representam o parque de veículos cadastrados;  
-- **Usuário**, **Perfis** e **Tokens** – componentes responsáveis pelo controle de autenticação e autorização;  
-- **AuditoriaRegistros** – estrutura destinada ao registro e rastreamento de ações do sistema;  
-- **RegistroClienteContato** – tabela responsável por armazenar o histórico de contatos via WhatsApp entre clientes e condutores.  
+- **Condutor**, **Cliente** e **Funcionário** – entidades centrais de cadastro e operação;
+- **Motocicleta**, **MotoModelo** e **MotoMarca** – entidades que representam o parque de veículos cadastrados;
+- **Usuário**, **Perfis** e **Tokens** – componentes responsáveis pelo controle de autenticação e autorização;
+- **AuditoriaRegistros** – estrutura destinada ao registro e rastreamento de ações do sistema;
+- **RegistroClienteContato** – tabela responsável por armazenar o histórico de contatos via WhatsApp entre clientes e condutores.
 
 > 💡 **Observação:** Este script foi versionado e é executado automaticamente pelo **Flyway**, ferramenta de controle de versões de banco de dados adotada pelo sistema CADMOTOTAXISTA.
 

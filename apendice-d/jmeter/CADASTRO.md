@@ -14,6 +14,7 @@ Esta etapa apresenta os parâmetros enviados ao servidor durante o processo de c
 **Fonte: Relatório gerado pelo Apache JMeter (2025).**
 
 ---
+
 Figura 2 – Grupo de usuários simulando requisições concorrentes de cadastro.
 O grupo de threads representa múltiplos usuários realizando cadastros simultâneos, permitindo mensurar o impacto da operação de escrita sob alta demanda.
 
@@ -24,6 +25,7 @@ O grupo de threads representa múltiplos usuários realizando cadastros simultâ
 **Fonte: Relatório gerado pelo Apache JMeter (2025).**
 
 ---
+
 Figura 3 – Relatório de Sumário com métricas de desempenho do cadastro de mototaxistas.
 Este relatório consolida dados de tempo médio, mínimo, máximo, desvio padrão, erros e throughput, permitindo avaliar a eficiência e estabilidade do procedimento de armazenamento de dados.
 
@@ -34,6 +36,7 @@ Este relatório consolida dados de tempo médio, mínimo, máximo, desvio padrã
 **Fonte: Relatório gerado pelo Apache JMeter (2025).**
 
 ---
+
 Figura 4 – Árvore de Resultados validando o retorno das respostas durante o cadastro.
 A estrutura hierárquica permite inspecionar individualmente a resposta do servidor, assegurando que o conteúdo retornado e os códigos HTTP sejam consistentes com a operação executada.
 
