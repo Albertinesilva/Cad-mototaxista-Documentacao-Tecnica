@@ -1,5 +1,7 @@
 <h2 align="center">CAD-MOTOTAXISTA - Documentação Técnica</h2>
 
+<br>
+
 ### Análise do Relatório de Cobertura de Testes – JaCoCo
 
 A Figura 1 apresenta o relatório de cobertura de testes gerado pela ferramenta **JaCoCo**, aplicado ao projeto **CAD-MOTOTAXISTA**. A estratégia de teste concentrou-se na **camada de segurança e gestão de usuários**, por ser o núcleo responsável pelo controle de autenticação, autorização e administração de acesso ao sistema. Assim, foram priorizados componentes diretamente relacionados ao fluxo de login e validação das credenciais, tais como *models*, *repositories*, *services* e *controllers* do módulo de usuário.
@@ -148,3 +150,4 @@ Em síntese, o esforço da etapa atual oferece uma base confiável para a segura
 Além do relatório de cobertura disponibilizado via JaCoCo, o código completo dos testes unitários aplicados ao módulo de segurança e autenticação pode ser consultado no repositório público:
 
 📎 [Testes Unitários Cad-Mototaxista](https://github.com/Albertinesilva/Cad-mototaxista-Documentacao-Tecnica/tree/main/apendice-d/testes-unitarios/test)
+
