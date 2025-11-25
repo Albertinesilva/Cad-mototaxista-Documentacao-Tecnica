@@ -1,3 +1,5 @@
+<h2 align="center">CAD-MOTOTAXISTA - Documentação Técnica</h2>
+
 Login CAD-MOTOTAXISTA — Evidências de Teste
 
 Figura 1 – Configuração da requisição HTTP para autenticação do usuário no sistema CAD-MOTOTAXISTA.
@@ -22,3 +24,4 @@ Figura 4 – Árvore de Resultados validando o correto carregamento das páginas
 A árvore exibe respostas HTTP individuais, permitindo verificar visualmente o conteúdo retornado pelo servidor e comprovar a ausência de falhas ou redirecionamentos incorretos.
 <img src="../../assets/img/login/Ver-Arvore-de-Resultados-Login-CAD-MOTOTAXISTA.png" alt="Ver Árvore de Resultados" width="100%" height="100%">
 **Fonte: Relatório gerado pelo Apache JMeter (2025).**
+
