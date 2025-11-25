@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>StringUtil.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">cadmototaxistas</a> &gt; <a href="index.source.html" class="el_package">br.gov.ba.saj.smtt.cadmototaxistas.util.string</a> &gt; <span class="el_source">StringUtil.java</span></div><h1>StringUtil.java</h1><pre class="source lang-java linenums">package br.gov.ba.saj.smtt.cadmototaxistas.util.string;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
+/**
+ * Classe utilitária para manipulação de textos e strings no sistema
+ * CADMOTOTAXISTA.
+ */
+<span class="nc" id="L11">public class StringUtil {</span>
+
+  /**
+   * Capitaliza apenas a primeira letra da string e converte o restante para
+   * minúsculas.
+   * &lt;p&gt;
+   * Exemplo: &quot;yamaha&quot; → &quot;Yamaha&quot;
+   *
+   * @param texto texto a ser formatado
+   * @return texto formatado com a primeira letra maiúscula
+   */
+  public static String capitalizarPrimeiraLetra(String texto) {
+<span class="nc bnc" id="L23" title="All 4 branches missed.">    if (texto == null || texto.isBlank()) {</span>
+<span class="nc" id="L24">      return texto;</span>
+    }
+
+<span class="nc" id="L27">    texto = texto.trim();</span>
+<span class="nc" id="L28">    return texto.substring(0, 1).toUpperCase() + texto.substring(1).toLowerCase();</span>
+  }
+
+  /**
+   * Formata um nome próprio capitalizando a primeira letra de cada palavra,
+   * exceto preposições e artigos comuns da língua portuguesa, que permanecem em
+   * minúsculo,
+   * a menos que estejam no início do nome.
+   * 
+   * Exemplo:
+   * 
+   * &lt;pre&gt;
+   * &quot;joão da silva&quot; -&gt; &quot;João da Silva&quot;
+   * &quot;ana maria de souza&quot; -&gt; &quot;Ana Maria de Souza&quot;
+   * &lt;/pre&gt;
+   * 
+   * @param input a string com o nome a ser formatado
+   * @return o nome formatado com a capitalização correta, ou a mesma string se
+   *         for nula ou vazia
+   */
+  public static String capitalizeName(String input) {
+<span class="nc bnc" id="L49" title="All 4 branches missed.">    if (input == null || input.isBlank())</span>
+<span class="nc" id="L50">      return input;</span>
+
+<span class="nc" id="L52">    String[] lowercaseWords = { &quot;de&quot;, &quot;da&quot;, &quot;do&quot;, &quot;das&quot;, &quot;dos&quot;, &quot;e&quot;, &quot;em&quot;, &quot;no&quot;, &quot;na&quot;, &quot;nos&quot;, &quot;nas&quot;, &quot;por&quot;, &quot;para&quot; };</span>
+<span class="nc" id="L53">    Set&lt;String&gt; exceptions = new HashSet&lt;&gt;(Arrays.asList(lowercaseWords));</span>
+
+<span class="nc" id="L55">    String[] words = input.toLowerCase().split(&quot;\\s+&quot;);</span>
+<span class="nc" id="L56">    StringBuilder result = new StringBuilder();</span>
+
+<span class="nc bnc" id="L58" title="All 2 branches missed.">    for (int i = 0; i &lt; words.length; i++) {</span>
+<span class="nc" id="L59">      String word = words[i];</span>
+<span class="nc bnc" id="L60" title="All 4 branches missed.">      if (i != 0 &amp;&amp; exceptions.contains(word)) {</span>
+<span class="nc" id="L61">        result.append(word);</span>
+      } else {
+        // Capitaliza a primeira letra e concatena o restante em minúsculo
+<span class="nc" id="L64">        result.append(word.substring(0, 1).toUpperCase());</span>
+<span class="nc bnc" id="L65" title="All 2 branches missed.">        if (word.length() &gt; 1) {</span>
+<span class="nc" id="L66">          result.append(word.substring(1));</span>
+        }
+      }
+<span class="nc bnc" id="L69" title="All 2 branches missed.">      if (i &lt; words.length - 1) {</span>
+<span class="nc" id="L70">        result.append(&quot; &quot;);</span>
+      }
+    }
+
+<span class="nc" id="L74">    return result.toString();</span>
+  }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>EmailServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">cadmototaxistas</a> &gt; <a href="index.source.html" class="el_package">br.gov.ba.saj.smtt.cadmototaxistas.security.services.email.impl</a> &gt; <span class="el_source">EmailServiceImpl.java</span></div><h1>EmailServiceImpl.java</h1><pre class="source lang-java linenums">package br.gov.ba.saj.smtt.cadmototaxistas.security.services.email.impl;
+
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.stereotype.Service;
+import org.thymeleaf.context.Context;
+import org.thymeleaf.spring6.SpringTemplateEngine;
+
+import br.gov.ba.saj.smtt.cadmototaxistas.security.model.entities.Mail;
+import br.gov.ba.saj.smtt.cadmototaxistas.security.services.email.EmailService;
+import br.gov.ba.saj.smtt.cadmototaxistas.security.services.mail.MailService;
+
+/**
+ * Implementação do serviço de envio de e-mails para confirmação de cadastro
+ * e redefinição de senha.
+ */
+@Service
+<span class="fc" id="L24">public class EmailServiceImpl implements EmailService {</span>
+
+	@Value(&quot;${backend.url}&quot;)
+	private String backendUrl;
+
+	@Value(&quot;${frontend.url}&quot;)
+	private String frontendUrl;
+
+	@Autowired
+	private MailService mailService;
+
+	@Autowired
+	private JavaMailSender mailSender;
+
+	@Autowired
+	private SpringTemplateEngine template;
+
+	/**
+	 * Envia um e-mail para o destinatário com um link para confirmação de cadastro.
+	 * O e-mail utiliza template Thymeleaf para composição do conteúdo HTML.
+	 *
+	 * @param destino             endereço de e-mail do destinatário
+	 * @param codigoDeConfirmacao código único para confirmação do cadastro
+	 * @throws MessagingException caso ocorra erro no envio do e-mail
+	 */
+	@Override
+	public void enviarPedidoDeConfirmacaoDeCadastro(String destino, String codigoDeConfirmacao)
+			throws MessagingException {
+<span class="nc" id="L52">		MimeMessage message = mailSender.createMimeMessage();</span>
+<span class="nc" id="L53">		MimeMessageHelper helper = new MimeMessageHelper(message, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED, &quot;UTF-8&quot;);</span>
+
+<span class="nc" id="L55">		Context context = new Context();</span>
+<span class="nc" id="L56">		context.setVariable(&quot;titulo&quot;, &quot;Bem vindo ao sistema de cadastro de mototaxistas, &quot; + destino + &quot;!&quot;);</span>
+<span class="nc" id="L57">		context.setVariable(&quot;texto&quot;, &quot;Precisamos que confirme seu cadastro, clicando no link abaixo&quot;);</span>
+<span class="nc" id="L58">		context.setVariable(&quot;linkConfirmacao&quot;, backendUrl + &quot;/u/confirmacao/cadastro?codigo=&quot; + codigoDeConfirmacao);</span>
+
+<span class="nc" id="L60">		String html = template.process(&quot;email/confirmacao&quot;, context);</span>
+<span class="nc" id="L61">		helper.setTo(destino);</span>
+<span class="nc" id="L62">		helper.setText(html, true);</span>
+<span class="nc" id="L63">		helper.setSubject(&quot;Confirmacao de Cadastro&quot;);</span>
+<span class="nc" id="L64">		helper.setFrom(&quot;nao-responder@Smtt.com.br&quot;);</span>
+<span class="nc" id="L65">		helper.addInline(&quot;logo&quot;, new ClassPathResource(&quot;/static/image/logo-smtt-SEMF.jpeg&quot;));</span>
+
+<span class="nc" id="L67">		mailSender.send(message);</span>
+
+<span class="nc" id="L69">		Mail mail = new Mail(&quot;smttp.gmail.com&quot;, destino, html, &quot;Confirmacao de Cadastro&quot;);</span>
+<span class="nc" id="L70">		mailService.register(mail);</span>
+<span class="nc" id="L71">	}</span>
+
+	/**
+	 * Envia um e-mail para o destinatário com o código de verificação para
+	 * redefinição de senha.
+	 * O e-mail utiliza template Thymeleaf para composição do conteúdo HTML.
+	 *
+	 * @param destino           endereço de e-mail do destinatário
+	 * @param codigoVerificador código de verificação para validação da redefinição
+	 * @throws MessagingException caso ocorra erro no envio do e-mail
+	 */
+	@Override
+	public void enviarPedidoDeRedefinicaoSenha(String destino, String codigoVerificador) throws MessagingException {
+<span class="nc" id="L84">		MimeMessage message = mailSender.createMimeMessage();</span>
+<span class="nc" id="L85">		MimeMessageHelper helper = new MimeMessageHelper(message, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED, &quot;UTF-8&quot;);</span>
+
+<span class="nc" id="L87">		Context context = new Context();</span>
+<span class="nc" id="L88">		context.setVariable(&quot;titulo&quot;, &quot;Redefinição de Senha&quot;);</span>
+<span class="nc" id="L89">		context.setVariable(&quot;texto&quot;, &quot;Para redefinir sua senha use o código de verificação &quot; +</span>
+				&quot;quando exigido no formulário.&quot;);
+<span class="nc" id="L91">		context.setVariable(&quot;verificador&quot;, codigoVerificador);</span>
+
+<span class="nc" id="L93">		String html = template.process(frontendUrl, context);</span>
+<span class="nc" id="L94">		helper.setTo(destino);</span>
+<span class="nc" id="L95">		helper.setText(html, true);</span>
+<span class="nc" id="L96">		helper.setSubject(&quot;Redefinição de Senha&quot;);</span>
+<span class="nc" id="L97">		helper.setFrom(&quot;no-replay@mototaxista.com.br&quot;);</span>
+
+<span class="nc" id="L99">		helper.addInline(&quot;logo&quot;, new ClassPathResource(&quot;/static/image/logo-smtt-SEMF.jpeg&quot;));</span>
+
+<span class="nc" id="L101">		mailSender.send(message);</span>
+
+<span class="nc" id="L103">		Mail mail = new Mail(&quot;smttp.gmail.com&quot;, destino, html, &quot;Redefinição de Senha&quot;);</span>
+<span class="nc" id="L104">		mailService.register(mail);</span>
+<span class="nc" id="L105">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

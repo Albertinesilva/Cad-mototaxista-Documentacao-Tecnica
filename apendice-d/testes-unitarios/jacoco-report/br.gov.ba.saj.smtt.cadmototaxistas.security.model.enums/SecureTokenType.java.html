@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SecureTokenType.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">cadmototaxistas</a> &gt; <a href="index.source.html" class="el_package">br.gov.ba.saj.smtt.cadmototaxistas.security.model.enums</a> &gt; <span class="el_source">SecureTokenType.java</span></div><h1>SecureTokenType.java</h1><pre class="source lang-java linenums">package br.gov.ba.saj.smtt.cadmototaxistas.security.model.enums;
+
+/**
+ * Enum que define os tipos de tokens utilizados no sistema, juntamente com o
+ * comprimento em bytes de cada um.
+ *
+ * &lt;p&gt;
+ * Esses tokens são utilizados em processos de ativação de conta, redefinição de
+ * senha,
+ * verificação de códigos e gerenciamento de sessões.
+ * &lt;/p&gt;
+ */
+<span class="nc" id="L13">public enum SecureTokenType {</span>
+
+  /**
+   * Token utilizado para ativação de conta de usuário.
+   */
+<span class="nc" id="L18">  TOKEN_ATIVACAO(50),</span>
+
+  /**
+   * Token utilizado para processos de redefinição de senha.
+   */
+<span class="nc" id="L23">  TOKEN_REDEFINICAO_SENHA(30),</span>
+
+  /**
+   * Código de verificação (geralmente numérico ou alfanumérico curto).
+   */
+<span class="nc" id="L28">  CODIGO_VERIFICACAO(5),</span>
+
+  /**
+   * Token relacionado ao gerenciamento de sessão.
+   */
+<span class="nc" id="L33">  SESSION(20);</span>
+
+  /**
+   * Tamanho do token em bytes.
+   */
+  private final int byteLength;
+
+  /**
+   * Construtor do enum que define o comprimento do token.
+   * 
+   * @param byteLength o tamanho do token em bytes
+   */
+<span class="nc" id="L45">  SecureTokenType(int byteLength) {</span>
+<span class="nc" id="L46">    this.byteLength = byteLength;</span>
+<span class="nc" id="L47">  }</span>
+
+  /**
+   * Retorna o comprimento (em bytes) do token associado ao tipo.
+   *
+   * @return o tamanho do token em bytes
+   */
+  public int getByteLength() {
+<span class="nc" id="L55">    return byteLength;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

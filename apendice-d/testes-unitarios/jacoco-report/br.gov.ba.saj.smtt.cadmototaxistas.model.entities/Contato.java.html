@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Contato.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">cadmototaxistas</a> &gt; <a href="index.source.html" class="el_package">br.gov.ba.saj.smtt.cadmototaxistas.model.entities</a> &gt; <span class="el_source">Contato.java</span></div><h1>Contato.java</h1><pre class="source lang-java linenums">package br.gov.ba.saj.smtt.cadmototaxistas.model.entities;
+
+import br.gov.ba.saj.smtt.cadmototaxistas.service.condutor.validation.contato.ValidTelefone;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+/**
+ * Entidade que representa os dados de contato de um condutor.
+ * &lt;p&gt;
+ * Contém números de telefone principal obrigatório e telefone comercial
+ * opcional.
+ * O telefone comercial é validado por uma validação customizada
+ * {@link ValidTelefone}.
+ * &lt;/p&gt;
+ * &lt;p&gt;
+ * Possui método utilitário para retornar o telefone comercial apenas com os
+ * dígitos numéricos,
+ * removendo quaisquer caracteres especiais.
+ * &lt;/p&gt;
+ * 
+ * @author
+ */
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
+@Entity
+@Table(name = &quot;contato&quot;)
+public class Contato extends AbstractEntity {
+
+    /**
+     * Telefone principal obrigatório do condutor.
+     * Deve conter exatamente 15 caracteres e ser único.
+     */
+    @NotBlank(message = &quot;{NotBlank.contato.telefonePrincipal}&quot;)
+    @Size(min = 15, max = 15, message = &quot;{Size.contato.telefonePrincipal}&quot;)
+    @Column(name = &quot;telefone_principal&quot;, nullable = false, unique = true, length = 15)
+    private String telefonePrincipal;
+
+    /**
+     * Telefone comercial opcional do condutor.
+     * Validado com anotação customizada {@link ValidTelefone}.
+     * Pode ser nulo.
+     */
+    @ValidTelefone
+    @Column(name = &quot;telefone_comercial&quot;, nullable = true, unique = true, length = 15)
+    private String telefoneComercial = null;
+
+    /**
+     * Retorna o número do telefone principal contendo apenas os dígitos numéricos.
+     * Remove todos os caracteres especiais como parênteses, traços, espaços, etc.
+     *
+     * @return String contendo apenas os números do telefone principal.
+     *         Retorna string vazia se o telefone principal for {@code null}.
+     */
+    public String getTelefonePrincipalLimpo() {
+<span class="nc bnc" id="L64" title="All 2 branches missed.">        if (telefonePrincipal == null)</span>
+<span class="nc" id="L65">            return &quot;&quot;;</span>
+<span class="nc" id="L66">        return telefonePrincipal.replaceAll(&quot;[^\\d]&quot;, &quot;&quot;);</span>
+    }
+
+    /**
+     * Retorna o número do telefone comercial contendo apenas os dígitos numéricos.
+     * Remove todos os caracteres especiais como parênteses, traços, espaços, etc.
+     * 
+     * @return String contendo apenas os números do telefone comercial.
+     *         Retorna string vazia se o telefone comercial for {@code null}.
+     */
+    public String getTelefoneComercialLimpo() {
+<span class="nc bnc" id="L77" title="All 2 branches missed.">        if (telefoneComercial == null)</span>
+<span class="nc" id="L78">            return &quot;&quot;;</span>
+<span class="nc" id="L79">        return telefoneComercial.replaceAll(&quot;[^\\d]&quot;, &quot;&quot;);</span>
+    }
+
+    // Setter que normaliza valores vazios para null
+    public void setTelefoneComercial(String telefoneComercial) {
+<span class="nc bnc" id="L84" title="All 4 branches missed.">        if (telefoneComercial != null &amp;&amp; telefoneComercial.trim().isEmpty()) {</span>
+<span class="nc" id="L85">            this.telefoneComercial = null;</span>
+        } else {
+<span class="nc" id="L87">            this.telefoneComercial = telefoneComercial;</span>
+        }
+<span class="nc" id="L89">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

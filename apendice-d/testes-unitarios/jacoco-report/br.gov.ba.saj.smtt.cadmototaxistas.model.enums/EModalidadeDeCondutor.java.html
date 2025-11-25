@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>EModalidadeDeCondutor.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">cadmototaxistas</a> &gt; <a href="index.source.html" class="el_package">br.gov.ba.saj.smtt.cadmototaxistas.model.enums</a> &gt; <span class="el_source">EModalidadeDeCondutor.java</span></div><h1>EModalidadeDeCondutor.java</h1><pre class="source lang-java linenums">package br.gov.ba.saj.smtt.cadmototaxistas.model.enums;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+/**
+ * Enumeração que representa as modalidades de atuação de um condutor
+ * habilitado.
+ * &lt;p&gt;
+ * Define se o condutor atua como mototaxista, motofretista ou exerce ambas as
+ * funções.
+ * &lt;/p&gt;
+ *
+ * &lt;ul&gt;
+ * &lt;li&gt;{@code MOTOTAXISTA} - Transporte individual de passageiros em
+ * motocicleta.&lt;/li&gt;
+ * &lt;li&gt;{@code MOTOFRETISTA} - Transporte de pequenas cargas ou encomendas em
+ * motocicleta.&lt;/li&gt;
+ * &lt;li&gt;{@code AMBAS} - Atua tanto como mototaxista quanto como
+ * motofretista.&lt;/li&gt;
+ * &lt;/ul&gt;
+ *
+ * Esta enum é utilizada para atribuir e validar o tipo de serviço prestado pelo
+ * condutor.
+ */
+<span class="fc" id="L26">@Getter</span>
+@AllArgsConstructor
+public enum EModalidadeDeCondutor {
+
+    /** Condutor que presta serviço de transporte de passageiros. */
+<span class="fc" id="L31">    MOTOTAXISTA(&quot;MOTOTAXISTA&quot;, &quot;M&quot;),</span>
+
+    /** Condutor que presta serviço de transporte de cargas leves. */
+<span class="fc" id="L34">    MOTOFRETISTA(&quot;MOTOFRETISTA&quot;, &quot;F&quot;),</span>
+
+    /** Condutor que exerce ambas as funções: transporte de passageiros e cargas. */
+<span class="fc" id="L37">    AMBAS(&quot;AMBAS&quot;, &quot;A&quot;);</span>
+
+    /**
+     * Representação textual da modalidade do condutor.
+     */
+    private final String modalidadeDeCondutor;
+
+    /**
+     * Prefixo utilizado para identificar a modalidade do condutor.
+     * Pode ser usado em sistemas de codificação ou abreviação.
+     */
+    private final String prefixo;
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MotoModeloController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">cadmototaxistas</a> &gt; <a href="index.source.html" class="el_package">br.gov.ba.saj.smtt.cadmototaxistas.web.controllers.motocicleta.modelo</a> &gt; <span class="el_source">MotoModeloController.java</span></div><h1>MotoModeloController.java</h1><pre class="source lang-java linenums">package br.gov.ba.saj.smtt.cadmototaxistas.web.controllers.motocicleta.modelo;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import jakarta.validation.Valid;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import br.gov.ba.saj.smtt.cadmototaxistas.model.entities.MotoModelo;
+import br.gov.ba.saj.smtt.cadmototaxistas.service.motocicleta.marca.MotoMarcaService;
+import br.gov.ba.saj.smtt.cadmototaxistas.service.motocicleta.modelo.MotoModeloService;
+import br.gov.ba.saj.smtt.cadmototaxistas.util.paginacao.PaginacaoUtil;
+
+/**
+ * Controller responsável pelo gerenciamento dos modelos de motocicletas.
+ *
+ * Oferece funcionalidades para cadastrar, listar, editar, excluir,
+ * ativar/desativar e filtrar
+ * modelos com base na marca. Utiliza os serviços {@link MotoModeloService} e
+ * {@link MotoMarcaService}
+ * para acessar e manipular os dados.
+ */
+@Controller
+@RequestMapping(&quot;/modelos&quot;)
+<span class="fc" id="L39">public class MotoModeloController {</span>
+
+    @Autowired
+    private MotoModeloService motoModeloService;
+
+    @Autowired
+    private MotoMarcaService motoMarcaService;
+
+    /**
+     * Exibe o formulário de cadastro de um novo modelo de motocicleta.
+     *
+     * @param motoModelo entidade vazia para preenchimento no formulário
+     * @return view da página de cadastro
+     */
+    @GetMapping(&quot;/cadastrar&quot;)
+    public String cadastrar(MotoModelo motoModelo, Model model) {
+<span class="nc" id="L55">        model.addAttribute(&quot;motoMarcas&quot;, motoMarcaService.buscarTodos());</span>
+<span class="nc" id="L56">        return &quot;modelo/cadastro&quot;;</span>
+    }
+
+    /**
+     * Retorna uma lista de modelos ativos filtrados por marca no formato JSON.
+     *
+     * @param id identificador da marca
+     * @return lista de mapas contendo os modelos (id e nome)
+     */
+    @ResponseBody
+    @GetMapping(&quot;/por-marca/{id}&quot;)
+    public List&lt;Map&lt;String, Object&gt;&gt; getModelosPorMarca(@PathVariable Long id) {
+<span class="nc" id="L68">        List&lt;MotoModelo&gt; modelos = motoModeloService.findByMotoMarcaId(id);</span>
+
+<span class="nc" id="L70">        return modelos.stream()</span>
+<span class="nc" id="L71">                .filter(MotoModelo::isAtivo)</span>
+<span class="nc" id="L72">                .map(m -&gt; {</span>
+<span class="nc" id="L73">                    Map&lt;String, Object&gt; map = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L74">                    map.put(&quot;id&quot;, m.getId());</span>
+<span class="nc" id="L75">                    map.put(&quot;nomeModelo&quot;, m.getNomeModelo());</span>
+<span class="nc" id="L76">                    return map;</span>
+                })
+<span class="nc" id="L78">                .toList();</span>
+    }
+
+    /**
+     * Exibe a lista paginada e ordenada das modelos de moto.
+     * 
+     * &lt;p&gt;
+     * Este método é responsável por recuperar uma página da listagem de
+     * {@link MotoModelo},
+     * com base nos parâmetros fornecidos via requisição (número da página e direção
+     * da ordenação),
+     * e adicioná-la ao modelo da view para exibição em tela.
+     * &lt;/p&gt;
+     *
+     * @param model o {@link ModelMap} utilizado para adicionar os dados à view.
+     * @param page  o número da página atual (opcional; se ausente, assume 1).
+     * @param dir   a direção da ordenação (&quot;asc&quot; para ascendente ou &quot;desc&quot; para
+     *              descendente; padrão é &quot;asc&quot;).
+     * @return o nome da view que renderiza a lista de modelos, com suporte a
+     *         paginação.
+     */
+    @GetMapping(&quot;/listar&quot;)
+    public String listar(ModelMap model, @RequestParam(&quot;page&quot;) Optional&lt;Integer&gt; page,
+            @RequestParam(&quot;dir&quot;) Optional&lt;String&gt; dir) {
+<span class="nc" id="L102">        int paginaAtual = page.orElse(1);</span>
+<span class="nc" id="L103">        String ordem = dir.orElse(&quot;asc&quot;);</span>
+
+<span class="nc" id="L105">        PaginacaoUtil&lt;MotoModelo&gt; pageModelo = motoModeloService.buscaPaginada(paginaAtual, ordem);</span>
+<span class="nc" id="L106">        model.addAttribute(&quot;pageModelo&quot;, pageModelo);</span>
+<span class="nc" id="L107">        return &quot;modelo/lista&quot;;</span>
+    }
+
+    /**
+     * Salva um novo modelo de motocicleta após validação dos dados recebidos.
+     *
+     * @param motoModelo objeto contendo os dados do modelo a ser salvo
+     * @param result     resultado da validação dos dados do modelo
+     * @param model      objeto Model para adicionar atributos para a view em caso
+     *                   de erro
+     * @param attr       RedirectAttributes para adicionar mensagens flash após
+     *                   sucesso
+     * @return redireciona para a listagem de modelos se sucesso, ou retorna para o
+     *         formulário de cadastro com erros
+     */
+    @PostMapping(&quot;/salvar&quot;)
+    public String salvar(@Valid MotoModelo motoModelo, BindingResult result, Model model, RedirectAttributes attr) {
+<span class="nc bnc" id="L124" title="All 2 branches missed.">        if (result.hasErrors()) {</span>
+<span class="nc" id="L125">            model.addAttribute(&quot;motoMarcas&quot;, motoMarcaService.buscarTodos());</span>
+<span class="nc" id="L126">            return &quot;modelo/cadastro&quot;;</span>
+        }
+<span class="nc bnc" id="L128" title="All 2 branches missed.">        if (motoModeloService.motoModeloExiste(motoModelo)) {</span>
+<span class="nc" id="L129">            model.addAttribute(&quot;motoMarcas&quot;, motoMarcaService.buscarTodos());</span>
+<span class="nc" id="L130">            model.addAttribute(&quot;fail&quot;, &quot;Modelo da Moto já cadastrado.&quot;);</span>
+<span class="nc" id="L131">            return &quot;modelo/cadastro&quot;;</span>
+        }
+
+<span class="nc" id="L134">        motoModeloService.salvar(motoModelo);</span>
+<span class="nc" id="L135">        attr.addFlashAttribute(&quot;success&quot;, &quot;Modelo da Moto inserido com sucesso.&quot;);</span>
+<span class="nc" id="L136">        return &quot;redirect:/modelos/listar&quot;;</span>
+    }
+
+    /**
+     * Carrega os dados de um modelo de motocicleta existente para edição.
+     *
+     * @param id    identificador do modelo que será editado
+     * @param model objeto ModelMap para adicionar atributos para a view
+     * @return view do formulário de cadastro preenchido com os dados do modelo
+     */
+    @GetMapping(&quot;/editar/{id}&quot;)
+    public String preEditar(@PathVariable(&quot;id&quot;) Long id, ModelMap model) {
+<span class="nc" id="L148">        model.addAttribute(&quot;motoMarcas&quot;, motoMarcaService.buscarTodos());</span>
+<span class="nc" id="L149">        model.addAttribute(&quot;motoModelo&quot;, motoModeloService.buscarPorId(id));</span>
+<span class="nc" id="L150">        return &quot;modelo/cadastro&quot;;</span>
+    }
+
+    /**
+     * Atualiza os dados de um modelo de motocicleta existente após validação.
+     *
+     * @param motoModelo objeto contendo os dados atualizados do modelo
+     * @param result     resultado da validação dos dados do modelo
+     * @param model      objeto Model para adicionar atributos para a view em caso
+     *                   de erro
+     * @param attr       RedirectAttributes para adicionar mensagens flash após
+     *                   sucesso
+     * @return redireciona para a listagem de modelos se sucesso, ou retorna para o
+     *         formulário de edição com erros
+     */
+    @PostMapping(&quot;/editar&quot;)
+    public String editar(@Valid MotoModelo motoModelo, BindingResult result, Model model, RedirectAttributes attr) {
+<span class="nc bnc" id="L167" title="All 2 branches missed.">        if (result.hasErrors()) {</span>
+<span class="nc" id="L168">            model.addAttribute(&quot;motoMarcas&quot;, motoMarcaService.buscarTodos());</span>
+<span class="nc" id="L169">            return &quot;modelo/cadastro&quot;;</span>
+        }
+<span class="nc bnc" id="L171" title="All 2 branches missed.">        if (motoModeloService.motoModeloExiste(motoModelo, motoModelo.getId())) {</span>
+<span class="nc" id="L172">            model.addAttribute(&quot;motoMarcas&quot;, motoMarcaService.buscarTodos());</span>
+<span class="nc" id="L173">            model.addAttribute(&quot;fail&quot;, &quot;Modelo da Moto já cadastrado.&quot;);</span>
+<span class="nc" id="L174">            return &quot;modelo/cadastro&quot;;</span>
+        }
+<span class="nc" id="L176">        motoModeloService.editar(motoModelo);</span>
+<span class="nc" id="L177">        attr.addFlashAttribute(&quot;success&quot;, &quot;Modelo da Moto editado com sucesso.&quot;);</span>
+<span class="nc" id="L178">        return &quot;redirect:/modelos/listar&quot;;</span>
+    }
+
+    /**
+     * Exclui um modelo de motocicleta, se não houver condutores vinculados.
+     *
+     * @param id   identificador do modelo
+     * @param attr atributos para mensagens de sucesso ou falha
+     * @return redirecionamento para a lista de modelos
+     */
+    @GetMapping(&quot;/excluir/{id}&quot;)
+    public String excluir(@PathVariable(&quot;id&quot;) Long id, RedirectAttributes attr) {
+<span class="nc bnc" id="L190" title="All 2 branches missed.">        if (motoModeloService.motoModeloTemCondutor(id)) {</span>
+<span class="nc" id="L191">            attr.addFlashAttribute(&quot;fail&quot;, &quot;Modelo da moto não removida. Possui Condutor(s) vinculado(s).&quot;);</span>
+        } else {
+<span class="nc" id="L193">            motoModeloService.excluir(id);</span>
+<span class="nc" id="L194">            attr.addFlashAttribute(&quot;success&quot;, &quot;Modelo da moto excluído com sucesso.&quot;);</span>
+        }
+<span class="nc" id="L196">        return &quot;redirect:/modelos/listar&quot;;</span>
+    }
+
+    /**
+     * Ativa ou desativa um modelo de motocicleta.
+     *
+     * @param id     identificador do modelo
+     * @param status define o novo status do modelo
+     * @param attr   atributos para mensagem flash
+     * @return redirecionamento para a lista de modelos
+     */
+    @PostMapping(&quot;/ativar-desativar/{id}&quot;)
+    public String ativarDesativar(@PathVariable(&quot;id&quot;) Long id, @RequestParam boolean status, RedirectAttributes attr) {
+<span class="nc" id="L209">        motoModeloService.atualizarStatus(id, status);</span>
+<span class="nc bnc" id="L210" title="All 2 branches missed.">        if (status) {</span>
+<span class="nc" id="L211">            attr.addFlashAttribute(&quot;success&quot;, &quot;Modelo ativado com sucesso.&quot;);</span>
+        } else {
+<span class="nc" id="L213">            attr.addFlashAttribute(&quot;success&quot;, &quot;Modelo desativado com sucesso.&quot;);</span>
+        }
+<span class="nc" id="L215">        return &quot;redirect:/modelos/listar&quot;;</span>
+    }
+
+    /**
+     * Filtra e exibe a lista de modelos de moto cujo nome contenha a string
+     * fornecida.
+     *
+     * &lt;p&gt;
+     * Recebe um parâmetro de pesquisa 'nome' e busca todas as {@link MotoModelo}
+     * que
+     * contenham
+     * essa string, ignorando maiúsculas/minúsculas. Se nenhuma marca for
+     * encontrada, redireciona
+     * para a listagem completa exibindo uma mensagem de falha.
+     * Caso contrário, adiciona a lista filtrada ao modelo para exibição na view.
+     * &lt;/p&gt;
+     *
+     * @param nome  o texto a ser buscado dentro do nome da modelo (parte ou total).
+     * @param model o {@link ModelMap} utilizado para passar os dados para a view.
+     * @param attr  o {@link RedirectAttributes} para adicionar mensagens de flash
+     *              em redirecionamento.
+     * @return o nome da view que apresenta a lista filtrada de modelos, ou
+     *         redireciona para a listagem geral caso nenhuma modelo seja
+     *         encontrada.
+     */
+    @GetMapping(&quot;/buscar/nome&quot;)
+    public String getPorNome(@RequestParam(&quot;nome&quot;) String nome, ModelMap model, RedirectAttributes attr) {
+<span class="nc" id="L242">        List&lt;MotoModelo&gt; modelos = motoModeloService.buscarPorNomeContendo(nome);</span>
+
+<span class="nc bnc" id="L244" title="All 2 branches missed.">        if (modelos.isEmpty()) {</span>
+<span class="nc" id="L245">            attr.addFlashAttribute(&quot;fail&quot;, &quot;Nenhuma modelo encontrado com esse nome.&quot;);</span>
+<span class="nc" id="L246">            return &quot;redirect:/modelos/listar&quot;;</span>
+        }
+
+<span class="nc" id="L249">        model.addAttribute(&quot;motoModelos&quot;, modelos);</span>
+<span class="nc" id="L250">        return &quot;modelo/lista&quot;;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

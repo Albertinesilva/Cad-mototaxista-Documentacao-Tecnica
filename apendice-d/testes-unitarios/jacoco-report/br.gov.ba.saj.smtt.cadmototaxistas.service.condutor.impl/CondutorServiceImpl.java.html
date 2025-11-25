@@ -1,0 +1,362 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CondutorServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">cadmototaxistas</a> &gt; <a href="index.source.html" class="el_package">br.gov.ba.saj.smtt.cadmototaxistas.service.condutor.impl</a> &gt; <span class="el_source">CondutorServiceImpl.java</span></div><h1>CondutorServiceImpl.java</h1><pre class="source lang-java linenums">package br.gov.ba.saj.smtt.cadmototaxistas.service.condutor.impl;
+
+import java.time.LocalDate;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import br.gov.ba.saj.smtt.cadmototaxistas.auditoria.model.enums.AcaoAuditoria;
+import br.gov.ba.saj.smtt.cadmototaxistas.auditoria.service.RegistroAuditoria.RegistroAuditoriaService;
+import br.gov.ba.saj.smtt.cadmototaxistas.model.entities.Condutor;
+import br.gov.ba.saj.smtt.cadmototaxistas.model.entities.MotoModelo;
+import br.gov.ba.saj.smtt.cadmototaxistas.repositories.CondutorRepository;
+import br.gov.ba.saj.smtt.cadmototaxistas.service.condutor.CondutorService;
+import br.gov.ba.saj.smtt.cadmototaxistas.service.motocicleta.modelo.MotoModeloService;
+import br.gov.ba.saj.smtt.cadmototaxistas.util.paginacao.PaginacaoUtil;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
+
+/**
+ * Implementação da interface {@link CondutorService}, responsável por fornecer
+ * os serviços relacionados às entidades {@link Condutor}.
+ *
+ * Esta classe é anotada com {@code @Service} e {@code @Transactional} para
+ * permitir
+ * a gestão transacional e o controle do ciclo de vida dos métodos de serviço.
+ */
+@Service
+@Transactional(readOnly = false)
+<span class="fc" id="L34">public class CondutorServiceImpl implements CondutorService {</span>
+
+    @Autowired
+    private CondutorRepository condutorRepository;
+
+    @Autowired
+    private MotoModeloService motoModeloService;
+
+    @Autowired
+    private RegistroAuditoriaService registroAuditoriaService;
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    /**
+     * Salva um novo condutor, realizando a inicialização dos campos padrão,
+     * gerando o número de ordem e registrando a auditoria da operação.
+     * 
+     * O método realiza duas operações de persistência:
+     * 1. Salva inicialmente o condutor para obter o ID gerado.
+     * 2. Atualiza o condutor com o número de ordem gerado a partir do ID.
+     * 
+     * @param condutor Condutor a ser salvo.
+     */
+    @Override
+    public void salvar(Condutor condutor) {
+<span class="nc" id="L60">        inicializarCamposPadrao(condutor);</span>
+<span class="nc" id="L61">        Condutor condutorSalvo = condutorRepository.save(condutor);</span>
+<span class="nc" id="L62">        gerarNumeroOrdem(condutorSalvo);</span>
+
+<span class="nc" id="L64">        condutorRepository.save(condutorSalvo);</span>
+<span class="nc" id="L65">        registrarAuditoria(AcaoAuditoria.CREATE, condutorSalvo);</span>
+<span class="nc" id="L66">    }</span>
+
+    /**
+     * Edita um condutor existente, verificando se o alvará está vencido e
+     * atualizando a data de vencimento se necessário.
+     * 
+     * Registra a auditoria da operação de atualização.
+     * 
+     * @param condutor Condutor a ser editado.
+     */
+    @Override
+    public void editar(Condutor condutor) {
+<span class="nc" id="L78">        Condutor condutorAntes = buscarPorId(condutor.getId());</span>
+
+        AcaoAuditoria acao;
+<span class="nc bnc" id="L81" title="All 2 branches missed.">        if (isAlvaraVencido(condutorAntes)) {</span>
+<span class="nc" id="L82">            condutor.setDataVencimentoAlvara(LocalDate.now().plusYears(1));</span>
+<span class="nc" id="L83">            acao = AcaoAuditoria.ATUALIZACAO_ALVARA;</span>
+        } else {
+<span class="nc" id="L85">            acao = AcaoAuditoria.UPDATE;</span>
+        }
+
+<span class="nc" id="L88">        condutorRepository.save(condutor);</span>
+<span class="nc" id="L89">        registrarAuditoria(acao, condutorAntes);</span>
+<span class="nc" id="L90">    }</span>
+
+    /**
+     * Exclui um condutor pelo ID e registra auditoria da entidade excluída.
+     */
+    @Override
+    public void excluir(Long id) {
+<span class="nc" id="L97">        Condutor condutorAntes = buscarPorId(id);</span>
+<span class="nc" id="L98">        registrarAuditoria(AcaoAuditoria.DELETE, condutorAntes);</span>
+<span class="nc" id="L99">        condutorRepository.deleteById(id);</span>
+<span class="nc" id="L100">    }</span>
+
+    /**
+     * Busca um condutor pelo ID.
+     * 
+     * @param id ID do condutor
+     * @return Condutor encontrado ou lança IllegalArgumentException se não existir
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public Condutor buscarPorId(Long id) {
+<span class="nc" id="L111">        return condutorRepository.findById(id)</span>
+<span class="nc" id="L112">                .orElseThrow(() -&gt; new IllegalArgumentException(&quot;Id Inválido para condutor: &quot; + id));</span>
+    }
+
+    /**
+     * Busca todos os condutores, ordenados pelo número de ordem.
+     * 
+     * @return Lista de condutores ordenados
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public List&lt;Condutor&gt; buscarTodos() {
+<span class="nc" id="L123">        return condutorRepository.findAllByOrderByNumOrdemAsc();</span>
+    }
+
+    /**
+     * Busca um condutor pelo número de ordem.
+     * 
+     * @param numOrdem Número de ordem
+     * @return Optional do condutor, se encontrado
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public Optional&lt;Condutor&gt; buscarPorNumOrdem(String numOrdem) {
+<span class="nc" id="L135">        return condutorRepository.findByNumOrdem(numOrdem);</span>
+    }
+
+    /**
+     * Busca um condutor pelo CPF.
+     * 
+     * @param cpf CPF do condutor
+     * @return Condutor encontrado ou null se não existir
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public Optional&lt;Condutor&gt; buscarPorCpf(String cpf) {
+<span class="nc" id="L147">        return condutorRepository.findByCpf(cpf);</span>
+    }
+
+    /**
+     * Busca os modelos de motocicleta associados à marca selecionada no cadastro do
+     * condutor.
+     *
+     * &lt;p&gt;
+     * Este método extrai o ID da marca da motocicleta presente no objeto
+     * {@code Condutor} e utiliza
+     * o serviço {@code MotoModeloService} para recuperar todos os modelos dessa
+     * marca.
+     * &lt;/p&gt;
+     *
+     * &lt;p&gt;
+     * Se qualquer uma das informações necessárias estiver ausente (motocicleta,
+     * modelo ou marca),
+     * será lançada uma exceção informando que a marca não foi corretamente
+     * informada.
+     * &lt;/p&gt;
+     *
+     * @param condutor o {@link Condutor} com os dados da motocicleta preenchidos
+     * @return uma lista de {@link MotoModelo} vinculados à marca informada
+     * @throws IllegalArgumentException se a marca da motocicleta não estiver
+     *                                  informada corretamente
+     */
+    @Override
+    public List&lt;MotoModelo&gt; buscarModelosDaMarcaSelecionada(Condutor condutor) {
+<span class="nc bnc" id="L175" title="All 2 branches missed.">        if (condutor.getMotocicleta() == null</span>
+<span class="nc bnc" id="L176" title="All 2 branches missed.">                || condutor.getMotocicleta().getMotoModelo() == null</span>
+<span class="nc bnc" id="L177" title="All 2 branches missed.">                || condutor.getMotocicleta().getMotoModelo().getMarcaMoto() == null</span>
+<span class="nc bnc" id="L178" title="All 2 branches missed.">                || condutor.getMotocicleta().getMotoModelo().getMarcaMoto().getId() == null) {</span>
+<span class="nc" id="L179">            return Collections.emptyList();</span>
+        }
+
+<span class="nc" id="L182">        Long marcaId = condutor.getMotocicleta()</span>
+<span class="nc" id="L183">                .getMotoModelo()</span>
+<span class="nc" id="L184">                .getMarcaMoto()</span>
+<span class="nc" id="L185">                .getId();</span>
+
+<span class="nc" id="L187">        return motoModeloService.findByMotoMarcaId(marcaId);</span>
+    }
+
+    // Métodos para validação de existência, evitando duplicidade
+
+    @Override
+    public boolean existsByNumOrdemAndIdNot(String numOrdem, Long id) {
+<span class="nc" id="L194">        return condutorRepository.existsByNumOrdemAndIdNot(numOrdem, id);</span>
+    }
+
+    @Override
+    public boolean existsByCpfAndIdNot(String cpf, Long id) {
+<span class="nc" id="L199">        return condutorRepository.existsByCpfAndIdNot(cpf, id);</span>
+    }
+
+    @Override
+    public boolean existsByRgAndIdNot(String rg, Long id) {
+<span class="nc" id="L204">        return condutorRepository.existsByRgAndIdNot(rg, id);</span>
+    }
+
+    @Override
+    public boolean existsByCnhNumeroAndIdNot(String cnh, Long id) {
+<span class="nc" id="L209">        return condutorRepository.existsByCnhNumeroAndIdNot(cnh, id);</span>
+    }
+
+    @Override
+    public boolean existsByMotocicletaPlacaAndIdNot(String placa, Long id) {
+<span class="nc" id="L214">        return condutorRepository.existsByMotocicletaPlacaAndIdNot(placa, id);</span>
+    }
+
+    /**
+     * Inicializa campos padrão em um novo condutor.
+     * 
+     * Se o condutor ainda não possui ID (ou seja, está sendo criado),
+     * inicializa o número de ordem como null e define a data de vencimento do
+     * alvará
+     * para um ano a partir da data atual.
+     * 
+     * @param condutor Condutor que terá seus campos inicializados.
+     */
+    private void inicializarCamposPadrao(Condutor condutor) {
+<span class="nc bnc" id="L228" title="All 2 branches missed.">        if (condutor.getId() == null) {</span>
+<span class="nc" id="L229">            condutor.setNumOrdem(null);</span>
+<span class="nc" id="L230">            condutor.setDataVencimentoAlvara(LocalDate.now().plusYears(1));</span>
+        }
+<span class="nc" id="L232">    }</span>
+
+    /**
+     * Registra a ação de auditoria para o condutor.
+     * 
+     * @param acao     Tipo de ação realizada (CREATE, UPDATE, DELETE)
+     * @param condutor Condutor relacionado à ação
+     */
+    private void registrarAuditoria(AcaoAuditoria acao, Condutor condutor) {
+<span class="nc" id="L241">        registroAuditoriaService.registrar(acao, condutor);</span>
+<span class="nc" id="L242">    }</span>
+
+    /**
+     * Atualiza o status de cadastro ativo/inativo de um condutor.
+     * 
+     * @param id     ID do condutor
+     * @param status Novo status a ser definido
+     */
+    @Override
+    @Transactional
+    public void atualizarStatus(Long id, boolean status) {
+<span class="nc" id="L253">        Condutor condutor = buscarPorId(id);</span>
+<span class="nc" id="L254">        condutor.setCadastroAtivo(status);</span>
+<span class="nc" id="L255">        condutorRepository.save(condutor);</span>
+<span class="nc" id="L256">    }</span>
+
+    /**
+     * Realiza a busca paginada de condutores, podendo filtrar apenas aqueles com
+     * alvará válido.
+     *
+     * @param pagina                número da página atual (a partir de 1)
+     * @param direcao               direção da ordenação (&quot;asc&quot; ou &quot;desc&quot;)
+     * @param apenasComAlvaraValido define se deve buscar apenas condutores com
+     *                              alvará válido
+     * @return objeto {@link PaginacaoUtil} contendo os dados da página de
+     *         condutores
+     */
+    @Override
+    public PaginacaoUtil&lt;Condutor&gt; buscaPaginada(int pagina, String direcao, boolean apenasComAlvaraValido) {
+<span class="nc" id="L271">        int tamanho = 5;</span>
+<span class="nc" id="L272">        int inicio = (pagina - 1) * tamanho;</span>
+
+<span class="nc" id="L274">        List&lt;Condutor&gt; condutores = buscarCondutoresPaginados(inicio, tamanho, direcao, apenasComAlvaraValido);</span>
+<span class="nc" id="L275">        long totalRegistros = contarCondutores(apenasComAlvaraValido);</span>
+<span class="nc" id="L276">        long totalDePaginas = (totalRegistros + (tamanho - 1)) / tamanho;</span>
+
+<span class="nc" id="L278">        return new PaginacaoUtil&lt;&gt;(tamanho, pagina, totalDePaginas, direcao, condutores);</span>
+    }
+
+    /**
+     * Executa a consulta paginada de condutores, com ou sem filtro por alvará
+     * válido.
+     *
+     * @param inicio                índice inicial da consulta
+     * @param tamanho               quantidade de registros por página
+     * @param direcao               direção da ordenação (&quot;asc&quot; ou &quot;desc&quot;)
+     * @param apenasComAlvaraValido se true, busca apenas condutores com alvará
+     *                              dentro da validade
+     * @return lista de {@link Condutor} de acordo com os critérios
+     */
+    private List&lt;Condutor&gt; buscarCondutoresPaginados(int inicio, int tamanho, String direcao,
+            boolean apenasComAlvaraValido) {
+<span class="nc" id="L294">        String baseQuery = &quot;from Condutor c&quot;;</span>
+<span class="nc bnc" id="L295" title="All 2 branches missed.">        String where = apenasComAlvaraValido</span>
+<span class="nc" id="L296">                ? &quot; where c.dataVencimentoAlvara is not null and c.dataVencimentoAlvara &gt;= :hoje&quot;</span>
+<span class="nc" id="L297">                : &quot;&quot;;</span>
+
+<span class="nc" id="L299">        TypedQuery&lt;Condutor&gt; query = entityManager</span>
+<span class="nc" id="L300">                .createQuery(&quot;select c &quot; + baseQuery + where + &quot; order by c.numOrdem &quot; + direcao, Condutor.class)</span>
+<span class="nc" id="L301">                .setFirstResult(inicio)</span>
+<span class="nc" id="L302">                .setMaxResults(tamanho);</span>
+
+<span class="nc bnc" id="L304" title="All 2 branches missed.">        if (apenasComAlvaraValido) {</span>
+<span class="nc" id="L305">            query.setParameter(&quot;hoje&quot;, LocalDate.now());</span>
+        }
+
+<span class="nc" id="L308">        return query.getResultList();</span>
+    }
+
+    /**
+     * Realiza a contagem total de condutores, podendo aplicar o filtro por alvará
+     * válido.
+     *
+     * @param apenasComAlvaraValido se true, conta apenas condutores com alvará
+     *                              dentro da validade
+     * @return total de condutores conforme o critério
+     */
+    private long contarCondutores(boolean apenasComAlvaraValido) {
+<span class="nc" id="L320">        String baseQuery = &quot;from Condutor c&quot;;</span>
+<span class="nc bnc" id="L321" title="All 2 branches missed.">        String where = apenasComAlvaraValido</span>
+<span class="nc" id="L322">                ? &quot; where c.dataVencimentoAlvara is not null and c.dataVencimentoAlvara &gt;= :hoje&quot;</span>
+<span class="nc" id="L323">                : &quot;&quot;;</span>
+
+<span class="nc" id="L325">        TypedQuery&lt;Long&gt; countQuery = entityManager</span>
+<span class="nc" id="L326">                .createQuery(&quot;select count(c) &quot; + baseQuery + where, Long.class);</span>
+
+<span class="nc bnc" id="L328" title="All 2 branches missed.">        if (apenasComAlvaraValido) {</span>
+<span class="nc" id="L329">            countQuery.setParameter(&quot;hoje&quot;, LocalDate.now());</span>
+        }
+
+<span class="nc" id="L332">        return countQuery.getSingleResult();</span>
+    }
+
+    /**
+     * Gera e atribui o número de ordem ao condutor com base no seu ID e modalidade.
+     * O formato do número de ordem será PREFIXO/NNNN, onde PREFIXO é obtido da
+     * modalidade
+     * do condutor e NNNN é o ID formatado com 4 dígitos com zeros à esquerda.
+     * 
+     * @param condutorSalvo Condutor já persistido no banco, com ID gerado.
+     */
+    private void gerarNumeroOrdem(Condutor condutorSalvo) {
+<span class="nc" id="L344">        String prefixo = condutorSalvo.getModalidadeDeCondutor().getPrefixo(); // M, F, A</span>
+<span class="nc" id="L345">        String numeroFormatado = String.format(&quot;%04d&quot;, condutorSalvo.getId());</span>
+<span class="nc" id="L346">        condutorSalvo.setNumOrdem(prefixo + &quot;/&quot; + numeroFormatado);</span>
+<span class="nc" id="L347">    }</span>
+
+    /**
+     * Verifica se o alvará do condutor está vencido.
+     * 
+     * @param condutor Condutor a ser verificado
+     * @return true se o alvará estiver vencido, false caso contrário
+     */
+    private boolean isAlvaraVencido(Condutor condutor) {
+<span class="nc" id="L356">        return Optional.ofNullable(condutor.getDataVencimentoAlvara())</span>
+<span class="nc" id="L357">                .map(data -&gt; data.isBefore(LocalDate.now()))</span>
+<span class="nc" id="L358">                .orElse(false);</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

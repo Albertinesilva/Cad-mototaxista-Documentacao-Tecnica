@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MotoModeloServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">cadmototaxistas</a> &gt; <a href="index.source.html" class="el_package">br.gov.ba.saj.smtt.cadmototaxistas.service.motocicleta.modelo.impl</a> &gt; <span class="el_source">MotoModeloServiceImpl.java</span></div><h1>MotoModeloServiceImpl.java</h1><pre class="source lang-java linenums">package br.gov.ba.saj.smtt.cadmototaxistas.service.motocicleta.modelo.impl;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import br.gov.ba.saj.smtt.cadmototaxistas.model.entities.MotoModelo;
+import br.gov.ba.saj.smtt.cadmototaxistas.repositories.MotoModeloRepository;
+import br.gov.ba.saj.smtt.cadmototaxistas.service.motocicleta.modelo.MotoModeloService;
+import br.gov.ba.saj.smtt.cadmototaxistas.util.paginacao.PaginacaoUtil;
+import br.gov.ba.saj.smtt.cadmototaxistas.util.string.StringUtil;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+
+/**
+ * Implementação da interface {@link MotoModeloService}, responsável por
+ * fornecer
+ * os serviços relacionados às entidades {@link MotoModelo}.
+ *
+ * Esta classe é anotada com {@code @Service} e {@code @Transactional} para
+ * permitir
+ * a gestão transacional e o controle do ciclo de vida dos métodos de serviço.
+ */
+@Service
+@Transactional(readOnly = false)
+<span class="fc" id="L28">public class MotoModeloServiceImpl implements MotoModeloService {</span>
+
+    @Autowired
+    private MotoModeloRepository motoModeloRepository;
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    /**
+     * Salva um novo modelo de motocicleta no banco de dados.
+     *
+     * @param motoModelo o modelo de motocicleta a ser salvo
+     */
+    @Override
+    public void salvar(MotoModelo motoModelo) {
+<span class="nc" id="L43">        motoModeloRepository.save(motoModelo);</span>
+<span class="nc" id="L44">    }</span>
+
+    /**
+     * Atualiza um modelo de motocicleta existente.
+     *
+     * @param motoModelo o modelo de motocicleta com os dados atualizados
+     */
+    @Override
+    public void editar(MotoModelo motoModelo) {
+<span class="nc" id="L53">        motoModeloRepository.save(motoModelo);</span>
+<span class="nc" id="L54">    }</span>
+
+    /**
+     * Remove um modelo de motocicleta pelo seu ID.
+     *
+     * @param id o ID do modelo de motocicleta a ser excluído
+     */
+    @Override
+    public void excluir(Long id) {
+<span class="nc" id="L63">        motoModeloRepository.deleteById(id);</span>
+<span class="nc" id="L64">    }</span>
+
+    /**
+     * Busca um modelo de motocicleta pelo seu ID.
+     *
+     * @param id o ID do modelo de motocicleta
+     * @return o modelo de motocicleta encontrado
+     * @throws IllegalArgumentException se o ID for inválido ou não encontrado
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public MotoModelo buscarPorId(Long id) {
+<span class="nc" id="L76">        MotoModelo motoModelo = motoModeloRepository.findById(id)</span>
+<span class="nc" id="L77">                .orElseThrow(() -&gt; new IllegalArgumentException(&quot;Id Inválido para Ponto:&quot; + id));</span>
+<span class="nc" id="L78">        return motoModelo;</span>
+    }
+
+    /**
+     * Retorna todos os modelos de motocicleta cadastrados.
+     *
+     * @return lista com todos os modelos de motocicleta
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public List&lt;MotoModelo&gt; buscarTodos() {
+<span class="nc" id="L89">        return motoModeloRepository.findAll();</span>
+    }
+
+    /**
+     * Busca e retorna uma lista de modelos de moto cujo nome contenha o texto
+     * fornecido,
+     * ignorando diferenças entre maiúsculas e minúsculas.
+     *
+     * &lt;p&gt;
+     * A busca é feita de forma parcial, ou seja, modelos que contenham o trecho
+     * informado
+     * em qualquer posição do nome serão retornadas.
+     * &lt;/p&gt;
+     *
+     * @param nome o trecho do nome da modelo a ser buscado.
+     * @return uma lista de {@link MotoModelo} que contenham o nome informado.
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public List&lt;MotoModelo&gt; buscarPorNomeContendo(String nome) {
+<span class="nc" id="L109">        return motoModeloRepository.findByNomeModeloContainingIgnoreCase(nome.trim());</span>
+    }
+
+    /**
+     * Verifica se um modelo de motocicleta está associado a algum condutor.
+     *
+     * @param id o ID do modelo de motocicleta
+     * @return true se existir algum condutor associado, false caso contrário
+     */
+    @Override
+    public boolean motoModeloTemCondutor(Long id) {
+<span class="nc bnc" id="L120" title="All 2 branches missed.">        if (buscarPorId(id).getMotocicleta().isEmpty()) {</span>
+<span class="nc" id="L121">            return false;</span>
+        }
+<span class="nc" id="L123">        return true;</span>
+    }
+
+    /**
+     * Verifica se já existe um modelo de motocicleta cadastrado com o nome
+     * informado.
+     * 
+     * @param nomeModelo o nome do modelo de motocicleta que será verificado
+     * @return {@code true} se existir um modelo com o nome informado; {@code false}
+     *         caso contrário
+     * 
+     *         Este método consulta o repositório para verificar se existe algum
+     *         registro de
+     *         modelo de motocicleta cujo nome seja exatamente igual ao nome
+     *         fornecido.
+     *         Utiliza um método do repositório que retorna um Optional e verifica
+     *         se está presente.
+     */
+    @Override
+    public boolean motoModeloExiste(MotoModelo motoModelo) {
+<span class="nc" id="L143">        motoModelo.setNomeModelo(StringUtil.capitalizarPrimeiraLetra(motoModelo.getNomeModelo()));</span>
+<span class="nc" id="L144">        return motoModeloRepository.findByNomeModelo(motoModelo.getNomeModelo()).isPresent();</span>
+    }
+
+    /**
+     * Verifica se já existe um modelo de motocicleta cadastrado com o nome
+     * informado,
+     * excluindo o modelo com o ID fornecido da verificação.
+     * 
+     * @param nomeModelo o nome do modelo de motocicleta que será verificado
+     * @param id         o ID do modelo que deve ser ignorado na verificação
+     *                   (normalmente o modelo que está sendo editado)
+     * @return {@code true} se existir outro modelo com o mesmo nome, diferente do
+     *         ID informado; {@code false} caso contrário
+     * 
+     *         Este método é utilizado geralmente para operações de edição, onde se
+     *         quer garantir que
+     *         não exista outro modelo com o mesmo nome, exceto o próprio modelo que
+     *         está sendo editado.
+     *         Se o ID informado for nulo, o método delega para a verificação
+     *         simples por nome.
+     */
+    @Override
+    public boolean motoModeloExiste(MotoModelo motoModelo, Long id) {
+<span class="nc bnc" id="L167" title="All 2 branches missed.">        if (id == null) {</span>
+<span class="nc" id="L168">            return motoModeloExiste(motoModelo);</span>
+        }
+<span class="nc" id="L170">        return motoModeloRepository.findByNomeModeloAndIdNot(motoModelo.getNomeModelo(), id).isPresent();</span>
+    }
+
+    /**
+     * Busca os modelos de motocicleta que pertencem a uma marca específica.
+     *
+     * @param marcaId o ID da marca da motocicleta
+     * @return lista de modelos associados à marca informada
+     */
+    @Override
+    public List&lt;MotoModelo&gt; findByMotoMarcaId(Long marcaId) {
+<span class="nc" id="L181">        return motoModeloRepository.findByMarcaMotoId(marcaId);</span>
+    }
+
+    /**
+     * Atualiza o status ativo/inativo de um modelo de motocicleta.
+     *
+     * @param id     o ID do modelo de motocicleta
+     * @param status o novo status (true para ativo, false para inativo)
+     */
+    @Override
+    public void atualizarStatus(Long id, boolean status) {
+<span class="nc" id="L192">        MotoModelo motoModelo = buscarPorId(id);</span>
+<span class="nc" id="L193">        motoModelo.setAtivo(status);</span>
+<span class="nc" id="L194">        motoModeloRepository.save(motoModelo);</span>
+<span class="nc" id="L195">    }</span>
+
+    /**
+     * Realiza a busca paginada das modelos de moto, com ordenação conforme a
+     * direção
+     * especificada.
+     * 
+     * &lt;p&gt;
+     * Este método utiliza a API do JPA (`EntityManager`) para executar uma consulta
+     * JPQL que retorna
+     * uma lista de objetos {@link MotoModelo} de forma paginada, ou seja, limitada
+     * ao número de registros
+     * por página e deslocada de acordo com o número da página atual. A ordenação é
+     * feita com base no nome da modelo.
+     * &lt;/p&gt;
+     * 
+     * &lt;p&gt;
+     * O tamanho fixo da página é definido como 5 registros. A página 1 representa
+     * os primeiros 5 elementos.
+     * A direção da ordenação pode ser &quot;asc&quot; (crescente) ou &quot;desc&quot; (decrescente).
+     * &lt;/p&gt;
+     *
+     * @param pagina  o número da página solicitada (baseado em 1, e não 0).
+     * @param direcao a direção da ordenação, sendo &quot;asc&quot; para ascendente ou &quot;desc&quot;
+     *                para descendente.
+     * @return um objeto {@link PaginacaoUtil} contendo os dados da página atual
+     *         (lista de modelos, total de páginas, etc.).
+     */
+    @Override
+    public PaginacaoUtil&lt;MotoModelo&gt; buscaPaginada(int pagina, String direcao) {
+<span class="nc" id="L225">        int tamanho = 5;</span>
+<span class="nc" id="L226">        int inicio = (pagina - 1) * tamanho; // Ex: página 1 começa do índice 0</span>
+<span class="nc" id="L227">        List&lt;MotoModelo&gt; modelos = entityManager</span>
+<span class="nc" id="L228">                .createQuery(&quot;select m from MotoModelo m order by m.nomeModelo &quot; + direcao, MotoModelo.class)</span>
+<span class="nc" id="L229">                .setFirstResult(inicio)</span>
+<span class="nc" id="L230">                .setMaxResults(tamanho)</span>
+<span class="nc" id="L231">                .getResultList();</span>
+
+<span class="nc" id="L233">        long totalRegistros = count();</span>
+<span class="nc" id="L234">        long totalDePaginas = (totalRegistros + (tamanho - 1)) / tamanho;</span>
+
+<span class="nc" id="L236">        return new PaginacaoUtil&lt;&gt;(tamanho, pagina, totalDePaginas, direcao, modelos);</span>
+    }
+
+    /**
+     * Conta o número total de registros da entidade {@link MotoModelo} no banco de
+     * dados.
+     *
+     * &lt;p&gt;
+     * Utiliza uma consulta JPQL simples com a função de agregação
+     * &lt;code&gt;count()&lt;/code&gt; para retornar
+     * o total de modelos de moto cadastradas.
+     * &lt;/p&gt;
+     *
+     * @return o número total de registros da entidade {@link MotoModelo}.
+     */
+    @Override
+    public long count() {
+<span class="nc" id="L253">        return entityManager</span>
+<span class="nc" id="L254">                .createQuery(&quot;select count(m) from MotoModelo m&quot;, Long.class)</span>
+<span class="nc" id="L255">                .getSingleResult();</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

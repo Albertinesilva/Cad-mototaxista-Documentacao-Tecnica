@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MotoMarca.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">cadmototaxistas</a> &gt; <a href="index.source.html" class="el_package">br.gov.ba.saj.smtt.cadmototaxistas.model.entities</a> &gt; <span class="el_source">MotoMarca.java</span></div><h1>MotoMarca.java</h1><pre class="source lang-java linenums">package br.gov.ba.saj.smtt.cadmototaxistas.model.entities;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * Representa a marca de motocicletas.
+ * &lt;p&gt;
+ * Contém informações básicas sobre a marca, como nome, descrição, status ativo,
+ * e a lista de modelos de motocicletas associados.
+ * &lt;/p&gt;
+ * 
+ * A relação com {@link MotoModelo} é unidirecional, com mapeamento OneToMany.
+ * 
+ * @author
+ */
+@Getter
+@Setter
+@Entity
+@Table(name = &quot;moto_marca&quot;)
+<span class="fc" id="L31">public class MotoMarca extends AbstractEntity {</span>
+
+    /**
+     * Nome da marca da motocicleta.
+     * &lt;p&gt;
+     * Obrigatório, único, com tamanho entre 3 e 20 caracteres.
+     * &lt;/p&gt;
+     */
+    @NotBlank(message = &quot;{NotBlank.motoMarca.nome}&quot;)
+    @Size(min = 3, max = 20, message = &quot;{Size.motoMarca.nome}&quot;)
+    @Column(name = &quot;nome_marca&quot;, nullable = false, unique = true, length = 20)
+    private String nomeMarca;
+
+    /**
+     * Descrição opcional da marca da motocicleta.
+     */
+    @Column(name = &quot;descricao_marca&quot;, nullable = true, length = 255)
+    private String descricaoMarca;
+
+    /**
+     * Indica se a marca está ativa.
+     */
+    @Column(name = &quot;ativo&quot;, nullable = false)
+    private boolean ativo;
+
+    /**
+     * Lista dos modelos de motocicletas associados a esta marca.
+     * &lt;p&gt;
+     * Relacionamento OneToMany mapeado pelo atributo 'marcaMoto' da entidade
+     * {@link MotoModelo}.
+     * &lt;/p&gt;
+     */
+<span class="fc" id="L63">    @OneToMany(mappedBy = &quot;marcaMoto&quot;)</span>
+    private List&lt;MotoModelo&gt; motoModelo = new ArrayList&lt;&gt;();
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

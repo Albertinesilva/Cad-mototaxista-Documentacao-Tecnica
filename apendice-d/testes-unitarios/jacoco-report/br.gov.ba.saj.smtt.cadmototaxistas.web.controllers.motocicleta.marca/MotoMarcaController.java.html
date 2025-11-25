@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MotoMarcaController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">cadmototaxistas</a> &gt; <a href="index.source.html" class="el_package">br.gov.ba.saj.smtt.cadmototaxistas.web.controllers.motocicleta.marca</a> &gt; <span class="el_source">MotoMarcaController.java</span></div><h1>MotoMarcaController.java</h1><pre class="source lang-java linenums">package br.gov.ba.saj.smtt.cadmototaxistas.web.controllers.motocicleta.marca;
+
+import jakarta.validation.Valid;
+
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import br.gov.ba.saj.smtt.cadmototaxistas.model.entities.MotoMarca;
+import br.gov.ba.saj.smtt.cadmototaxistas.service.motocicleta.marca.MotoMarcaService;
+import br.gov.ba.saj.smtt.cadmototaxistas.util.paginacao.PaginacaoUtil;
+
+/**
+ * Controller responsável pelo gerenciamento das operações relacionadas às
+ * Marcas de Motocicletas.
+ *
+ * Disponibiliza funcionalidades para cadastrar, listar, editar, excluir e
+ * ativar/desativar marcas.
+ * Utiliza o serviço {@link MotoMarcaService} para a manipulação dos dados
+ * persistentes.
+ */
+@Controller
+@RequestMapping(&quot;/marcas&quot;)
+<span class="fc" id="L35">public class MotoMarcaController {</span>
+
+    @Autowired
+    private MotoMarcaService motoMarcaService;
+
+    /**
+     * Exibe o formulário de cadastro de nova marca de motocicleta.
+     *
+     * @param motoMarca instância da entidade MotoMarca a ser vinculada ao
+     *                  formulário
+     * @return view da página de cadastro
+     */
+    @GetMapping(&quot;/cadastrar&quot;)
+    public String cadastrar(MotoMarca motoMarca) {
+<span class="nc" id="L49">        return &quot;marca/cadastro&quot;;</span>
+    }
+
+    /**
+     * Exibe a lista paginada e ordenada das marcas de moto.
+     * 
+     * &lt;p&gt;
+     * Este método é responsável por recuperar uma página da listagem de
+     * {@link MotoMarca},
+     * com base nos parâmetros fornecidos via requisição (número da página e direção
+     * da ordenação),
+     * e adicioná-la ao modelo da view para exibição em tela.
+     * &lt;/p&gt;
+     *
+     * @param model o {@link ModelMap} utilizado para adicionar os dados à view.
+     * @param page  o número da página atual (opcional; se ausente, assume 1).
+     * @param dir   a direção da ordenação (&quot;asc&quot; para ascendente ou &quot;desc&quot; para
+     *              descendente; padrão é &quot;asc&quot;).
+     * @return o nome da view que renderiza a lista de marcas, com suporte a
+     *         paginação.
+     */
+    @GetMapping(&quot;/listar&quot;)
+    public String listar(ModelMap model, @RequestParam(&quot;page&quot;) Optional&lt;Integer&gt; page,
+            @RequestParam(&quot;dir&quot;) Optional&lt;String&gt; dir) {
+<span class="nc" id="L73">        int paginaAtual = page.orElse(1);</span>
+<span class="nc" id="L74">        String ordem = dir.orElse(&quot;asc&quot;);</span>
+
+<span class="nc" id="L76">        PaginacaoUtil&lt;MotoMarca&gt; pageMarca = motoMarcaService.buscaPaginada(paginaAtual, ordem);</span>
+<span class="nc" id="L77">        model.addAttribute(&quot;pageMarca&quot;, pageMarca);</span>
+<span class="nc" id="L78">        return &quot;marca/lista&quot;;</span>
+    }
+
+    /**
+     * Salva uma nova marca de motocicleta após validação.
+     *
+     * @param motoMarca entidade com os dados a serem salvos
+     * @param result    resultado da validação
+     * @param model     modelo para enviar dados de erro
+     * @param attr      atributos para redirecionamento com mensagens
+     * @return redirecionamento ou página de cadastro com erro
+     */
+    @PostMapping(&quot;/salvar&quot;)
+    public String salvar(@Valid MotoMarca motoMarca, BindingResult result, Model model, RedirectAttributes attr) {
+<span class="nc bnc" id="L92" title="All 2 branches missed.">        if (result.hasErrors()) {</span>
+<span class="nc" id="L93">            model.addAttribute(&quot;motoMarca&quot;, motoMarca);</span>
+<span class="nc" id="L94">            return &quot;marca/cadastro&quot;;</span>
+<span class="nc bnc" id="L95" title="All 2 branches missed.">        } else if (motoMarcaService.motoMarcaExiste(motoMarca)) {</span>
+<span class="nc" id="L96">            model.addAttribute(&quot;fail&quot;, &quot;Marca da Moto já cadastrada.&quot;);</span>
+<span class="nc" id="L97">            return &quot;marca/cadastro&quot;;</span>
+        }
+<span class="nc" id="L99">        motoMarcaService.salvar(motoMarca);</span>
+<span class="nc" id="L100">        attr.addFlashAttribute(&quot;success&quot;, &quot;Marca da Moto inserida com sucesso.&quot;);</span>
+<span class="nc" id="L101">        return &quot;redirect:/marcas/listar&quot;;</span>
+    }
+
+    /**
+     * Carrega os dados de uma marca para edição.
+     *
+     * @param id    identificador da marca
+     * @param model modelo para transportar os dados para a view
+     * @return view de cadastro preenchida com dados existentes
+     */
+    @GetMapping(&quot;/editar/{id}&quot;)
+    public String preEditar(@PathVariable(&quot;id&quot;) Long id, ModelMap model) {
+<span class="nc" id="L113">        model.addAttribute(&quot;motoMarca&quot;, motoMarcaService.buscarPorId(id));</span>
+<span class="nc" id="L114">        return &quot;marca/cadastro&quot;;</span>
+    }
+
+    /**
+     * Edita uma marca de motocicleta após validação.
+     *
+     * @param motoMarca dados da marca atualizados
+     * @param result    resultado da validação
+     * @param model     modelo para feedback em caso de erro
+     * @param attr      atributos para mensagens pós-edição
+     * @return redirecionamento ou retorno à view de cadastro
+     */
+    @PostMapping(&quot;/editar&quot;)
+    public String editar(@Valid MotoMarca motoMarca, BindingResult result, Model model, RedirectAttributes attr) {
+<span class="nc bnc" id="L128" title="All 2 branches missed.">        if (result.hasErrors()) {</span>
+<span class="nc" id="L129">            return &quot;marca/cadastro&quot;;</span>
+<span class="nc bnc" id="L130" title="All 2 branches missed.">        } else if (motoMarcaService.motoMarcaExiste(motoMarca)) {</span>
+<span class="nc" id="L131">            model.addAttribute(&quot;fail&quot;, &quot;Marca da Moto já cadastrada.&quot;);</span>
+<span class="nc" id="L132">            return &quot;marca/cadastro&quot;;</span>
+        }
+<span class="nc" id="L134">        motoMarcaService.editar(motoMarca);</span>
+<span class="nc" id="L135">        attr.addFlashAttribute(&quot;success&quot;, &quot;Marca da Moto editada com sucesso.&quot;);</span>
+<span class="nc" id="L136">        return &quot;redirect:/marcas/listar&quot;;</span>
+    }
+
+    /**
+     * Exclui uma marca de motocicleta, caso não haja modelos vinculados.
+     *
+     * @param id    identificador da marca
+     * @param model modelo para enviar mensagens
+     * @return redireciona para a lista com mensagens de sucesso ou falha
+     */
+    @GetMapping(&quot;/excluir/{id}&quot;)
+    public String excluir(@PathVariable(&quot;id&quot;) Long id, ModelMap model) {
+<span class="nc bnc" id="L148" title="All 2 branches missed.">        if (motoMarcaService.motoMarcaTemModelos(id)) {</span>
+<span class="nc" id="L149">            model.addAttribute(&quot;fail&quot;, &quot;Marca da moto não removida. Possui Modelo(s) vinculado(s).&quot;);</span>
+        } else {
+<span class="nc" id="L151">            motoMarcaService.excluir(id);</span>
+<span class="nc" id="L152">            model.addAttribute(&quot;success&quot;, &quot;Marca da moto excluída com sucesso.&quot;);</span>
+        }
+<span class="nc" id="L154">        return &quot;redirect:/marcas/listar&quot;;</span>
+    }
+
+    /**
+     * Ativa ou desativa uma marca de motocicleta.
+     *
+     * @param id     identificador da marca
+     * @param status define se será ativada ou desativada
+     * @param attr   atributos para mensagens de sucesso
+     * @return redirecionamento para a listagem de marcas
+     */
+    @PostMapping(&quot;/ativar-desativar/{id}&quot;)
+    public String ativarDesativar(@PathVariable(&quot;id&quot;) Long id, @RequestParam boolean status, RedirectAttributes attr) {
+<span class="nc" id="L167">        motoMarcaService.atualizarStatus(id, status);</span>
+<span class="nc bnc" id="L168" title="All 2 branches missed.">        if (status) {</span>
+<span class="nc" id="L169">            attr.addFlashAttribute(&quot;success&quot;, &quot;Marca ativada com sucesso.&quot;);</span>
+        } else {
+<span class="nc" id="L171">            attr.addFlashAttribute(&quot;success&quot;, &quot;Marca desativada com sucesso.&quot;);</span>
+        }
+<span class="nc" id="L173">        return &quot;redirect:/marcas/listar&quot;;</span>
+    }
+
+    /**
+     * Filtra e exibe a lista de marcas de moto cujo nome contenha a string
+     * fornecida.
+     *
+     * &lt;p&gt;
+     * Recebe um parâmetro de pesquisa 'nome' e busca todas as {@link MotoMarca} que
+     * contenham
+     * essa string, ignorando maiúsculas/minúsculas. Se nenhuma marca for
+     * encontrada, redireciona
+     * para a listagem completa exibindo uma mensagem de falha.
+     * Caso contrário, adiciona a lista filtrada ao modelo para exibição na view.
+     * &lt;/p&gt;
+     *
+     * @param nome  o texto a ser buscado dentro do nome da marca (parte ou total).
+     * @param model o {@link ModelMap} utilizado para passar os dados para a view.
+     * @param attr  o {@link RedirectAttributes} para adicionar mensagens de flash
+     *              em redirecionamento.
+     * @return o nome da view que apresenta a lista filtrada de marcas, ou
+     *         redireciona para a listagem geral caso nenhuma marca seja encontrada.
+     */
+    @GetMapping(&quot;/buscar/nome&quot;)
+    public String getPorNome(@RequestParam(&quot;nome&quot;) String nome, ModelMap model, RedirectAttributes attr) {
+<span class="nc" id="L198">        List&lt;MotoMarca&gt; marcas = motoMarcaService.buscarPorNomeContendo(nome);</span>
+
+<span class="nc bnc" id="L200" title="All 2 branches missed.">        if (marcas.isEmpty()) {</span>
+<span class="nc" id="L201">            attr.addFlashAttribute(&quot;fail&quot;, &quot;Nenhuma marca encontrada com esse nome.&quot;);</span>
+<span class="nc" id="L202">            return &quot;redirect:/marcas/listar&quot;;</span>
+        }
+
+<span class="nc" id="L205">        model.addAttribute(&quot;motoMarcas&quot;, marcas);</span>
+<span class="nc" id="L206">        return &quot;marca/lista&quot;;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

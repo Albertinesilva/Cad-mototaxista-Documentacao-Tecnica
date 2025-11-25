@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Funcionario.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">cadmototaxistas</a> &gt; <a href="index.source.html" class="el_package">br.gov.ba.saj.smtt.cadmototaxistas.model.entities</a> &gt; <span class="el_source">Funcionario.java</span></div><h1>Funcionario.java</h1><pre class="source lang-java linenums">package br.gov.ba.saj.smtt.cadmototaxistas.model.entities;
+
+import java.time.LocalDate;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+
+import org.hibernate.validator.constraints.br.CPF;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.format.annotation.DateTimeFormat.ISO;
+
+import br.gov.ba.saj.smtt.cadmototaxistas.model.enums.ETipoSanguineo;
+import br.gov.ba.saj.smtt.cadmototaxistas.security.model.entities.Usuario;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * Representa um funcionário do sistema.
+ * &lt;p&gt;
+ * Contém informações pessoais e dados de cadastro, incluindo nome, CPF,
+ * data de nascimento, matrícula, tipo sanguíneo e vínculo com o usuário do
+ * sistema.
+ * &lt;/p&gt;
+ * 
+ * Possui relacionamento OneToOne com a entidade {@link Usuario}.
+ * 
+ * @author
+ */
+@Getter
+@Setter
+@Entity
+@Table(name = &quot;funcionario&quot;)
+public class Funcionario extends AbstractEntity {
+
+	/**
+	 * Nome completo do funcionário.
+	 */
+	@Column(name = &quot;nome&quot;, nullable = false, length = 255)
+	private String nome;
+
+	/**
+	 * CPF do funcionário.
+	 * &lt;p&gt;
+	 * Valor único e válido conforme a validação {@link CPF}.
+	 * &lt;/p&gt;
+	 */
+	@CPF(message = &quot;{CPF.ServidorSmtt.cpf}&quot;)
+	@Column(name = &quot;cpf&quot;, nullable = true, unique = true, length = 15)
+	private String cpf;
+
+	/**
+	 * Data de nascimento do funcionário.
+	 */
+	@DateTimeFormat(iso = ISO.DATE)
+	@Column(name = &quot;data_nascimento&quot;, nullable = true, columnDefinition = &quot;DATE&quot;)
+	private LocalDate dataNascimento;
+
+	/**
+	 * Data de inscrição do funcionário no sistema.
+	 */
+	@DateTimeFormat(iso = ISO.DATE)
+	@Column(name = &quot;data_inscricao&quot;, nullable = true, columnDefinition = &quot;DATE&quot;)
+	private LocalDate dtInscricao;
+
+	/**
+	 * Matrícula funcional do funcionário.
+	 * &lt;p&gt;
+	 * Valor único.
+	 * &lt;/p&gt;
+	 */
+	@Column(name = &quot;matricula&quot;, nullable = true, unique = true, length = 11)
+	private String matricula;
+
+	/**
+	 * Tipo sanguíneo do funcionário.
+	 */
+	@Enumerated(EnumType.STRING)
+	@Column(name = &quot;tipo_sanguineo&quot;, nullable = true, length = 15)
+	private ETipoSanguineo tipoSanguineo;
+
+	/**
+	 * Usuário do sistema vinculado a este funcionário.
+	 * &lt;p&gt;
+	 * Relacionamento OneToOne com cascade REMOVE para exclusão em cascata.
+	 * &lt;/p&gt;
+	 */
+	@OneToOne(cascade = CascadeType.REMOVE)
+	@JoinColumn(name = &quot;id_usuario&quot;)
+	private Usuario usuario;
+
+	/**
+	 * Construtor padrão.
+	 */
+	public Funcionario() {
+<span class="fc" id="L101">		super();</span>
+<span class="fc" id="L102">	}</span>
+
+	/**
+	 * Construtor que seta o ID da entidade.
+	 * 
+	 * @param id Identificador do funcionário.
+	 */
+<span class="nc" id="L109">	public Funcionario(Long id) {</span>
+<span class="nc" id="L110">		super.setId(id);</span>
+<span class="nc" id="L111">	}</span>
+
+	/**
+	 * Construtor que seta o usuário vinculado.
+	 * 
+	 * @param usuario Usuário do sistema associado.
+	 */
+<span class="nc" id="L118">	public Funcionario(Usuario usuario) {</span>
+<span class="nc" id="L119">		this.usuario = usuario;</span>
+<span class="nc" id="L120">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

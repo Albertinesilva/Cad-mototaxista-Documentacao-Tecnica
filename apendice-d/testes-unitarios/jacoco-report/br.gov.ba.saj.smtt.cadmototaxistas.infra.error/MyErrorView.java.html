@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MyErrorView.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">cadmototaxistas</a> &gt; <a href="index.source.html" class="el_package">br.gov.ba.saj.smtt.cadmototaxistas.infra.error</a> &gt; <span class="el_source">MyErrorView.java</span></div><h1>MyErrorView.java</h1><pre class="source lang-java linenums">package br.gov.ba.saj.smtt.cadmototaxistas.infra.error;
+
+import java.util.Map;
+
+import jakarta.servlet.http.HttpServletRequest;
+
+import org.springframework.boot.autoconfigure.web.servlet.error.ErrorViewResolver;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.ModelAndView;
+
+import br.gov.ba.saj.smtt.cadmototaxistas.web.controllers.condutor.CondutorController;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * Classe responsável por personalizar a visualização de erros da aplicação.
+ * &lt;p&gt;
+ * Implementa o {@link ErrorViewResolver} para interceptar erros lançados
+ * pela aplicação e retornar uma página amigável ao usuário com mensagens
+ * específicas para cada tipo de erro HTTP.
+ * &lt;/p&gt;
+ * 
+ * &lt;p&gt;
+ * A página padrão utilizada para exibição dos erros é &lt;b&gt;/error.html&lt;/b&gt;.
+ * &lt;/p&gt;
+ * 
+ * Exemplos de erros tratados:
+ * - 400 Bad Request
+ * - 401 Unauthorized
+ * - 403 Forbidden
+ * - 404 Not Found
+ * - 405 Method Not Allowed
+ * - 500 Internal Server Error
+ * - 502 Bad Gateway
+ * - 503 Service Unavailable
+ * - 504 Gateway Timeout
+ * 
+ * @author
+ */
+@Component
+<span class="fc" id="L43">public class MyErrorView implements ErrorViewResolver {</span>
+
+<span class="fc" id="L45">    private static final Logger LOGGER = LoggerFactory.getLogger(CondutorController.class);</span>
+
+    /**
+     * Resolve a visualização de erro com base no status HTTP retornado pela
+     * aplicação.
+     * 
+     * @param request Requisição HTTP original.
+     * @param status  Código de status HTTP.
+     * @param map     Informações adicionais sobre o erro.
+     * @return {@link ModelAndView} contendo os dados para a renderização da página
+     *         de erro.
+     */
+    @Override
+    public ModelAndView resolveErrorView(HttpServletRequest request, HttpStatus status, Map&lt;String, Object&gt; map) {
+
+        // Loga os detalhes do erro para facilitar a análise
+<span class="nc" id="L61">        map.forEach((k, v) -&gt; LOGGER.info(&quot;Erro atributo - {}: {}&quot;, k, v));</span>
+
+<span class="nc" id="L63">        ModelAndView model = new ModelAndView(&quot;/error&quot;);</span>
+<span class="nc" id="L64">        model.addObject(&quot;status&quot;, status.value());</span>
+
+<span class="nc bnc" id="L66" title="All 10 branches missed.">        switch (status.value()) {</span>
+            case 400:
+<span class="nc" id="L68">                model.addObject(&quot;error&quot;, &quot;Requisição inválida.&quot;);</span>
+<span class="nc" id="L69">                model.addObject(&quot;message&quot;,</span>
+                        &quot;A requisição não pôde ser entendida pelo servidor. Verifique os dados enviados.&quot;);
+<span class="nc" id="L71">                break;</span>
+
+            case 401:
+<span class="nc" id="L74">                model.addObject(&quot;error&quot;, &quot;Não autorizado.&quot;);</span>
+<span class="nc" id="L75">                model.addObject(&quot;message&quot;, &quot;Você precisa estar autenticado para acessar esta página.&quot;);</span>
+<span class="nc" id="L76">                break;</span>
+
+            case 403:
+<span class="nc" id="L79">                model.addObject(&quot;error&quot;, &quot;Acesso negado.&quot;);</span>
+<span class="nc" id="L80">                model.addObject(&quot;message&quot;, &quot;Você não tem permissão para acessar esta página.&quot;);</span>
+<span class="nc" id="L81">                break;</span>
+
+            case 404:
+<span class="nc" id="L84">                model.addObject(&quot;error&quot;, &quot;Página não encontrada.&quot;);</span>
+<span class="nc" id="L85">                model.addObject(&quot;message&quot;, &quot;A URL para a página '&quot; + map.get(&quot;path&quot;) + &quot;' não existe.&quot;);</span>
+<span class="nc" id="L86">                break;</span>
+
+            case 405:
+<span class="nc" id="L89">                model.addObject(&quot;error&quot;, &quot;Método não permitido.&quot;);</span>
+<span class="nc" id="L90">                model.addObject(&quot;message&quot;,</span>
+<span class="nc" id="L91">                        &quot;O método '&quot; + map.get(&quot;method&quot;) + &quot;' não é permitido para a URL '&quot; + map.get(&quot;path&quot;) + &quot;'.&quot;);</span>
+<span class="nc" id="L92">                break;</span>
+
+            case 500:
+<span class="nc" id="L95">                model.addObject(&quot;error&quot;, &quot;Erro interno no servidor.&quot;);</span>
+<span class="nc" id="L96">                model.addObject(&quot;message&quot;, &quot;Ocorreu um erro inesperado no servidor. Tente novamente mais tarde.&quot;);</span>
+<span class="nc" id="L97">                break;</span>
+
+            case 502:
+<span class="nc" id="L100">                model.addObject(&quot;error&quot;, &quot;Bad Gateway.&quot;);</span>
+<span class="nc" id="L101">                model.addObject(&quot;message&quot;, &quot;O servidor recebeu uma resposta inválida de um servidor upstream.&quot;);</span>
+<span class="nc" id="L102">                break;</span>
+
+            case 503:
+<span class="nc" id="L105">                model.addObject(&quot;error&quot;, &quot;Serviço indisponível.&quot;);</span>
+<span class="nc" id="L106">                model.addObject(&quot;message&quot;, &quot;O servidor está temporariamente indisponível. Tente novamente mais tarde.&quot;);</span>
+<span class="nc" id="L107">                break;</span>
+
+            case 504:
+<span class="nc" id="L110">                model.addObject(&quot;error&quot;, &quot;Gateway Timeout.&quot;);</span>
+<span class="nc" id="L111">                model.addObject(&quot;message&quot;, &quot;O servidor não recebeu uma resposta a tempo de outro servidor.&quot;);</span>
+<span class="nc" id="L112">                break;</span>
+
+            default:
+<span class="nc" id="L115">                model.addObject(&quot;error&quot;, map.getOrDefault(&quot;error&quot;, &quot;Erro desconhecido.&quot;));</span>
+<span class="nc" id="L116">                model.addObject(&quot;message&quot;, map.getOrDefault(&quot;message&quot;, &quot;Um erro inesperado ocorreu.&quot;));</span>
+                break;
+        }
+
+<span class="nc" id="L120">        return model;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

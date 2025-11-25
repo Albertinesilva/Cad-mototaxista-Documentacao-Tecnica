@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UtilMessage.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">cadmototaxistas</a> &gt; <a href="index.source.html" class="el_package">br.gov.ba.saj.smtt.cadmototaxistas.util.messages</a> &gt; <span class="el_source">UtilMessage.java</span></div><h1>UtilMessage.java</h1><pre class="source lang-java linenums">package br.gov.ba.saj.smtt.cadmototaxistas.util.messages;
+
+import java.util.AbstractMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Stream;
+
+import org.slf4j.Logger;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import br.gov.ba.saj.smtt.cadmototaxistas.model.entities.Condutor;
+import br.gov.ba.saj.smtt.cadmototaxistas.service.condutor.CondutorService;
+import br.gov.ba.saj.smtt.cadmototaxistas.util.enums.ResultadoAtivacao;
+
+/**
+ * Classe utilitária responsável por mensagens e validações de negócio
+ * relacionadas à entidade {@link Condutor}.
+ * 
+ * &lt;p&gt;
+ * Este utilitário permite verificar se um condutor possui dados
+ * duplicados, como número de ordem, CPF ou RG, retornando uma mensagem
+ * amigável encapsulada em um {@link Optional}.
+ * &lt;/p&gt;
+ * 
+ * @author Albert
+ */
+<span class="nc" id="L32">public class UtilMessage {</span>
+
+        /**
+         * Adiciona uma mensagem de sucesso ao model.
+         */
+        public static void adicionarMensagemSucesso(ModelMap model, String mensagem) {
+<span class="nc" id="L38">                model.addAttribute(&quot;success&quot;, mensagem);</span>
+<span class="nc" id="L39">        }</span>
+
+        /**
+         * Adiciona uma mensagem de erro ao model.
+         */
+        public static void adicionarMensagemErro(ModelMap model, String mensagem) {
+<span class="nc" id="L45">                model.addAttribute(&quot;fail&quot;, mensagem);</span>
+<span class="nc" id="L46">        }</span>
+
+        public static boolean temErro(BindingResult result, ModelMap model, Logger logger, User user) {
+<span class="nc bnc" id="L49" title="All 2 branches missed.">                if (result.hasErrors()) {</span>
+<span class="nc" id="L50">                        model.addAttribute(&quot;fail&quot;, &quot;Erro ao salvar os dados. Verifique os campos e tente novamente.&quot;);</span>
+<span class="nc" id="L51">                        logger.error(&quot;Erro de validação ao processar dados para o usuário: {}&quot;, user.getUsername());</span>
+<span class="nc" id="L52">                        return true;</span>
+                }
+<span class="nc" id="L54">                return false;</span>
+        }
+
+        /**
+         * Verifica se há erros de validação ou mensagens de erro manuais e adiciona uma
+         * mensagem de falha ao {@link ModelMap}.
+         * 
+         * &lt;p&gt;
+         * Esse método centraliza o tratamento de erros de formulário, podendo lidar
+         * tanto com erros detectados
+         * automaticamente via {@link BindingResult}, quanto com erros adicionais
+         * definidos manualmente (como validações de negócio).
+         * &lt;/p&gt;
+         * 
+         * &lt;p&gt;
+         * Também é possível personalizar a mensagem de erro utilizando uma função de
+         * formatação, e registrar logs se um {@link Logger} for fornecido.
+         * &lt;/p&gt;
+         * 
+         * @param result                  objeto que contém os erros de validação de
+         *                                bean (geralmente anotados com {@code @Valid}).
+         * @param model                   o {@link ModelMap} onde será adicionada a
+         *                                mensagem de erro, caso existam erros.
+         * @param logger                  o logger utilizado para registrar os erros;
+         *                                pode ser {@code null} se não for necessário
+         *                                logar.
+         * @param user                    o usuário autenticado, usado para registro no
+         *                                log. É necessário se {@code logger} não for
+         *                                {@code null}.
+         * @param errosManuais            uma lista de mensagens de erro adicionais que
+         *                                não estão no {@link BindingResult},
+         *                                como erros de validação personalizada (ex:
+         *                                telefone duplicado).
+         * @param mensagemErroCustomizada função que recebe o {@link BindingResult} e
+         *                                retorna uma mensagem de erro personalizada.
+         *                                Pode ser {@code null}, caso em que será usada
+         *                                a mensagem padrão.
+         * 
+         * @return {@code true} se houver qualquer erro (de validação ou manual),
+         *         {@code false} caso contrário.
+         */
+        public static boolean temErro(BindingResult result, ModelMap model, Logger logger, User user,
+                        List&lt;String&gt; errosManuais,
+                        Function&lt;BindingResult, String&gt; mensagemErroCustomizada) {
+
+<span class="nc bnc" id="L99" title="All 4 branches missed.">                boolean temErros = result.hasErrors() || !errosManuais.isEmpty();</span>
+
+<span class="nc bnc" id="L101" title="All 2 branches missed.">                if (temErros) {</span>
+<span class="nc bnc" id="L102" title="All 2 branches missed.">                        String mensagem = mensagemErroCustomizada != null</span>
+<span class="nc" id="L103">                                        ? mensagemErroCustomizada.apply(result)</span>
+<span class="nc" id="L104">                                        : &quot;Erro ao salvar os dados. Verifique os campos e tente novamente.&quot;;</span>
+
+<span class="nc bnc" id="L106" title="All 2 branches missed.">                        if (!errosManuais.isEmpty()) {</span>
+<span class="nc" id="L107">                                mensagem += &quot; &quot; + String.join(&quot; &quot;, errosManuais);</span>
+                        }
+
+<span class="nc" id="L110">                        model.addAttribute(&quot;fail&quot;, mensagem);</span>
+
+<span class="nc bnc" id="L112" title="All 2 branches missed.">                        if (logger != null) {</span>
+<span class="nc" id="L113">                                logger.error(&quot;Erro ao processar dados para o usuário {}: {}&quot;, user.getUsername(),</span>
+                                                mensagem);
+                        }
+
+<span class="nc" id="L117">                        return true;</span>
+                }
+
+<span class="nc" id="L120">                return false;</span>
+        }
+
+        /**
+         * Verifica a duplicidade de dados do condutor, como número de ordem, CPF e RG.
+         * 
+         * &lt;p&gt;
+         * Se houver alguma duplicidade, retorna um {@link Optional} contendo a
+         * mensagem de erro correspondente (ex.: &quot;CPF já cadastrado.&quot;). Caso não haja
+         * nenhuma duplicidade, retorna {@link Optional#empty()}.
+         * &lt;/p&gt;
+         * 
+         * &lt;p&gt;
+         * Esta abordagem permite tratar as validações de forma funcional, eliminando
+         * a necessidade de vários blocos condicionais no Controller.
+         * &lt;/p&gt;
+         * 
+         * @param service  uma instância de {@link CondutorService} para realizar as
+         *                 verificações de existência.
+         * @param condutor o objeto {@link Condutor} que será validado.
+         * @return um {@link Optional} contendo a mensagem de erro, caso haja
+         *         duplicidade; ou {@link Optional#empty()} se estiver tudo correto.
+         */
+        public static Optional&lt;String&gt; verificarDuplicadosCondutor(CondutorService consutorService, Condutor condutor) {
+<span class="nc bnc" id="L144" title="All 2 branches missed.">                Long id = condutor.getId() != null ? condutor.getId() : -1L;</span>
+
+<span class="nc" id="L146">                return Stream.of(</span>
+                                new AbstractMap.SimpleEntry&lt;&gt;(
+<span class="nc" id="L148">                                                consutorService.existsByNumOrdemAndIdNot(condutor.getNumOrdem(), id),</span>
+                                                &quot;Número de ordem já cadastrado.&quot;),
+                                new AbstractMap.SimpleEntry&lt;&gt;(
+<span class="nc" id="L151">                                                consutorService.existsByCpfAndIdNot(condutor.getCpf(), id),</span>
+                                                &quot;CPF já cadastrado.&quot;),
+                                new AbstractMap.SimpleEntry&lt;&gt;(
+<span class="nc" id="L154">                                                consutorService.existsByRgAndIdNot(condutor.getRg(), id),</span>
+                                                &quot;RG já cadastrado.&quot;),
+                                // CNH
+                                new AbstractMap.SimpleEntry&lt;&gt;(
+<span class="nc bnc" id="L158" title="All 4 branches missed.">                                                condutor.getCnh() != null &amp;&amp; condutor.getCnh().getNumero() != null &amp;&amp;</span>
+<span class="nc bnc" id="L159" title="All 2 branches missed.">                                                                consutorService.existsByCnhNumeroAndIdNot(</span>
+<span class="nc" id="L160">                                                                                condutor.getCnh().getNumero(), id),</span>
+                                                &quot;CNH já cadastrada.&quot;),
+                                // Motocicleta (precisa validar null também)
+                                new AbstractMap.SimpleEntry&lt;&gt;(
+<span class="nc bnc" id="L164" title="All 2 branches missed.">                                                condutor.getMotocicleta() != null</span>
+<span class="nc bnc" id="L165" title="All 2 branches missed.">                                                                &amp;&amp; condutor.getMotocicleta().getPlaca() != null &amp;&amp;</span>
+<span class="nc bnc" id="L166" title="All 2 branches missed.">                                                                consutorService.existsByMotocicletaPlacaAndIdNot(</span>
+<span class="nc" id="L167">                                                                                condutor.getMotocicleta().getPlaca(),</span>
+                                                                                id),
+                                                &quot;Placa da motocicleta já cadastrada.&quot;))
+<span class="nc" id="L170">                                .filter(Map.Entry::getKey) // Apenas onde for true</span>
+<span class="nc" id="L171">                                .map(Map.Entry::getValue) // Pega a mensagem</span>
+<span class="nc" id="L172">                                .findFirst(); // Retorna a primeira ocorrência</span>
+        }
+
+        /**
+         * Adiciona ao RedirectAttributes as mensagens correspondentes ao resultado da
+         * ativação.
+         *
+         * @param resultado resultado do processo de ativação
+         * @param attr      objeto para adicionar mensagens flash
+         */
+        /**
+         * Adiciona mensagens de feedback ao usuário com base no resultado da ativação
+         * do cadastro.
+         *
+         * @param resultado resultado da tentativa de ativação do cadastro
+         * @param attr      objeto usado para adicionar atributos de redirecionamento
+         *                  (mensagens flash)
+         */
+        public static void adicionarMensagemAtivacao(ResultadoAtivacao resultado, RedirectAttributes attr) {
+<span class="nc bnc" id="L191" title="All 5 branches missed.">                switch (resultado) {</span>
+                        case ATIVADO:
+<span class="nc" id="L193">                                attr.addFlashAttribute(&quot;alerta&quot;, &quot;sucesso&quot;);</span>
+<span class="nc" id="L194">                                attr.addFlashAttribute(&quot;titulo&quot;, &quot;Cadastro Verificado!&quot;);</span>
+<span class="nc" id="L195">                                attr.addFlashAttribute(&quot;texto&quot;, &quot;Parabéns, seu cadastro foi confirmado.&quot;);</span>
+<span class="nc" id="L196">                                attr.addFlashAttribute(&quot;subtexto&quot;,</span>
+                                                &quot;Caso necessário, solicite ativação ao administrador do sistema OU siga com seu login/senha&quot;);
+<span class="nc" id="L198">                                break;</span>
+
+                        case JA_ATIVADO:
+<span class="nc" id="L201">                                attr.addFlashAttribute(&quot;alerta&quot;, &quot;info&quot;);</span>
+<span class="nc" id="L202">                                attr.addFlashAttribute(&quot;titulo&quot;, &quot;Cadastro já verificado!&quot;);</span>
+<span class="nc" id="L203">                                attr.addFlashAttribute(&quot;texto&quot;, &quot;Seu cadastro já está ativo.&quot;);</span>
+<span class="nc" id="L204">                                attr.addFlashAttribute(&quot;subtexto&quot;,</span>
+                                                &quot;Você pode acessar o sistema com seu login e senha normalmente.&quot;);
+<span class="nc" id="L206">                                break;</span>
+
+                        case TOKEN_EXPIRADO_OU_UTILIZADO:
+                        case USUARIO_INVALIDO:
+<span class="nc" id="L210">                                attr.addFlashAttribute(&quot;alerta&quot;, &quot;erro&quot;);</span>
+<span class="nc" id="L211">                                attr.addFlashAttribute(&quot;titulo&quot;, &quot;Token expirado ou já utilizado.&quot;);</span>
+<span class="nc" id="L212">                                attr.addFlashAttribute(&quot;texto&quot;, &quot;Um novo e-mail de ativação foi enviado.&quot;);</span>
+<span class="nc" id="L213">                                attr.addFlashAttribute(&quot;subtexto&quot;, &quot;Verifique sua caixa de entrada.&quot;);</span>
+<span class="nc" id="L214">                                break;</span>
+
+                        case TOKEN_INVALIDO:
+<span class="nc" id="L217">                                attr.addFlashAttribute(&quot;alerta&quot;, &quot;erro&quot;);</span>
+<span class="nc" id="L218">                                attr.addFlashAttribute(&quot;titulo&quot;, &quot;Código inválido!&quot;);</span>
+<span class="nc" id="L219">                                attr.addFlashAttribute(&quot;texto&quot;, &quot;O link de ativação é inválido.&quot;);</span>
+<span class="nc" id="L220">                                attr.addFlashAttribute(&quot;subtexto&quot;,</span>
+                                                &quot;Verifique se o link está correto ou solicite um novo.&quot;);
+<span class="nc" id="L222">                                break;</span>
+
+                        default:
+<span class="nc" id="L225">                                attr.addFlashAttribute(&quot;alerta&quot;, &quot;erro&quot;);</span>
+<span class="nc" id="L226">                                attr.addFlashAttribute(&quot;titulo&quot;, &quot;Erro inesperado.&quot;);</span>
+<span class="nc" id="L227">                                attr.addFlashAttribute(&quot;texto&quot;, &quot;Não foi possível concluir o processo.&quot;);</span>
+<span class="nc" id="L228">                                attr.addFlashAttribute(&quot;subtexto&quot;, &quot;Tente novamente mais tarde ou contate o suporte.&quot;);</span>
+                                break;
+                }
+<span class="nc" id="L231">        }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

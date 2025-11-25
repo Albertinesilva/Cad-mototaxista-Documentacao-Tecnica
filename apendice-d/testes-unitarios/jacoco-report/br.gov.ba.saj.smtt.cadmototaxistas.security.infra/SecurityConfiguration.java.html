@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SecurityConfiguration.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">cadmototaxistas</a> &gt; <a href="index.source.html" class="el_package">br.gov.ba.saj.smtt.cadmototaxistas.security.infra</a> &gt; <span class="el_source">SecurityConfiguration.java</span></div><h1>SecurityConfiguration.java</h1><pre class="source lang-java linenums">package br.gov.ba.saj.smtt.cadmototaxistas.security.infra;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.session.SessionRegistry;
+import org.springframework.security.core.session.SessionRegistryImpl;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.session.RegisterSessionAuthenticationStrategy;
+import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
+import org.springframework.security.web.session.HttpSessionEventPublisher;
+
+import br.gov.ba.saj.smtt.cadmototaxistas.security.model.enums.PerfilTipo;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
+
+import static org.springframework.security.config.Customizer.withDefaults;
+
+@Configuration
+@EnableWebSecurity
+@EnableMethodSecurity
+<span class="fc" id="L30">public class SecurityConfiguration {</span>
+
+        @Value(&quot;${app.security.remember-me-key}&quot;)
+        private String rememberMeKey;
+
+<span class="fc" id="L35">        private static final String ADMIN = PerfilTipo.ADMIN.getDescricao();</span>
+<span class="fc" id="L36">        private static final String FUNCIONARIO = PerfilTipo.FUNCIONARIO.getDescricao();</span>
+<span class="fc" id="L37">        private static final String CLIENTE = PerfilTipo.CLIENTE.getDescricao();</span>
+
+        @Bean
+        public SecurityFilterChain configure(HttpSecurity http) throws Exception {
+
+<span class="fc" id="L42">                http.authorizeHttpRequests((authorize) -&gt; authorize</span>
+                                // Permite acesso público a arquivos estáticos
+<span class="fc" id="L44">                                .requestMatchers(&quot;/webjars/**&quot;, &quot;/css/**&quot;, &quot;/image/**&quot;, &quot;/js/**&quot;).permitAll()</span>
+<span class="fc" id="L45">                                .requestMatchers(&quot;/&quot;, &quot;/home&quot;, &quot;/mensagens-alvara&quot;, &quot;/expired&quot;).permitAll()</span>
+<span class="fc" id="L46">                                .requestMatchers(&quot;/u/novo/cadastro&quot;, &quot;/u/cadastro/realizado&quot;,&quot;/u/cadastro/cliente/salvar&quot;).permitAll()</span>
+<span class="fc" id="L47">                                .requestMatchers(&quot;/u/confirmacao/cadastro&quot;).permitAll()</span>
+<span class="fc" id="L48">                                .requestMatchers(&quot;/u/p/**&quot;).permitAll()</span>
+
+                                // acessos privados admin
+<span class="fc" id="L51">                                .requestMatchers(&quot;/u/editar/senha&quot;, &quot;/u/confirmar/senha&quot;)</span>
+<span class="fc" id="L52">                                .hasAnyAuthority(FUNCIONARIO, CLIENTE)</span>
+<span class="fc" id="L53">                                .requestMatchers(&quot;/u/**&quot;).hasAuthority(ADMIN)</span>
+<span class="fc" id="L54">                                .requestMatchers(&quot;/condutores/**&quot;).hasAnyAuthority(ADMIN, FUNCIONARIO)</span>
+<span class="fc" id="L55">                                .requestMatchers(&quot;/auditorias/**&quot;).hasAuthority(ADMIN)</span>
+<span class="fc" id="L56">                                .requestMatchers(&quot;/relatorios/**&quot;).hasAuthority(ADMIN)</span>
+
+                                // Permissões para Clientes
+<span class="fc" id="L59">                                .requestMatchers(&quot;/clientes/**&quot;).hasAuthority(CLIENTE)</span>
+
+                                // acessos privados funcionários
+<span class="fc" id="L62">                                .requestMatchers(&quot;/funcionarios/dados&quot;, &quot;/funcionarios/salvar&quot;, &quot;/funcionarios/editar&quot;)</span>
+<span class="fc" id="L63">                                .hasAnyAuthority(FUNCIONARIO, ADMIN)</span>
+<span class="fc" id="L64">                                .requestMatchers(&quot;/funcionarios/**&quot;).hasAuthority(FUNCIONARIO)</span>
+<span class="fc" id="L65">                                .requestMatchers(&quot;/condutores/**&quot;).hasAnyAuthority(FUNCIONARIO, ADMIN)</span>
+
+<span class="fc" id="L67">                                .anyRequest().authenticated() // Restringe acesso a rotas não especificadas</span>
+                )
+
+                                // Configuração de login
+<span class="fc" id="L71">                                .formLogin(formLogin -&gt; formLogin</span>
+<span class="fc" id="L72">                                                .loginPage(&quot;/login&quot;) // Página customizada de login</span>
+<span class="fc" id="L73">                                                .defaultSuccessUrl(&quot;/&quot;, true) // Redireciona após login bem-sucedido</span>
+<span class="fc" id="L74">                                                .failureUrl(&quot;/login-error&quot;) // Redireciona em caso de falha</span>
+<span class="fc" id="L75">                                                .permitAll() // Permite acesso a todos os usuários</span>
+                                )
+<span class="fc" id="L77">                                .csrf(csrf -&gt; csrf.ignoringRequestMatchers(&quot;/clientes/registrar-contato&quot;))</span>
+                                // Configuração de logout
+<span class="fc" id="L79">                                .logout(logout -&gt; logout</span>
+<span class="fc" id="L80">                                                .logoutSuccessUrl(&quot;/&quot;) // Redireciona para home após logout</span>
+<span class="fc" id="L81">                                                .invalidateHttpSession(true) // Invalida sessão após logout</span>
+<span class="fc" id="L82">                                                .deleteCookies(&quot;JSESSIONID&quot;)// Remove cookies de sessão</span>
+                                )
+<span class="fc" id="L84">                                .rememberMe(withDefaults())</span>
+
+                                // Tratamento de acessos negados
+<span class="fc" id="L87">                                .exceptionHandling(exception -&gt; exception</span>
+<span class="fc" id="L88">                                                .accessDeniedPage(&quot;/acesso-negado&quot;) // Página customizada de acesso</span>
+                                                                                    // negado
+                                )
+                                // Configuração de sessão e cookies de autenticação
+<span class="fc" id="L92">                                .rememberMe(rememberMe -&gt; rememberMe</span>
+<span class="fc" id="L93">                                                .key(rememberMeKey) // Opcional, define uma chave única</span>
+<span class="fc" id="L94">                                                .tokenValiditySeconds(86400) // Tempo de validade do token (1 dia)</span>
+                                )
+                                // Configuração de sessão (separada de rememberMe)
+<span class="fc" id="L97">                                .sessionManagement((session) -&gt; session</span>
+<span class="fc" id="L98">                                                .maximumSessions(1) // Número máximo de sessões</span>
+<span class="fc" id="L99">                                                .expiredUrl(&quot;/expired&quot;) // Página de sessão expirada</span>
+<span class="fc" id="L100">                                                .maxSessionsPreventsLogin(false) // Permite login simultâneo</span>
+<span class="fc" id="L101">                                                .sessionRegistry(sessionRegistry()) // Registra sessões ativas</span>
+                                )
+                                // Configuração de sessão (separada de rememberMe)
+<span class="fc" id="L104">                                .sessionManagement((session) -&gt; session</span>
+<span class="fc" id="L105">                                                .sessionFixation() // Proteção contra ataques de fixação de sessão</span>
+<span class="fc" id="L106">                                                .newSession() // Cria uma nova sessão</span>
+<span class="fc" id="L107">                                                .sessionAuthenticationStrategy(sessionAuthStrategy()) // Estratégia de</span>
+                                                                                                      // autenticação de
+                                                                                                      // sessão
+                                );
+
+<span class="fc" id="L112">                return http.build();</span>
+        }
+
+        /**
+         * Define um bean para codificação de senhas usando
+         * {@link BCryptPasswordEncoder}.
+         * &lt;p&gt;
+         * O {@code BCryptPasswordEncoder} gera um hash seguro e é recomendado para
+         * armazenamento de senhas no banco de dados.
+         * &lt;/p&gt;
+         *
+         * @return Uma instância de {@link PasswordEncoder} que usa o algoritmo BCrypt.
+         * @see BCryptPasswordEncoder
+         */
+        @Bean
+        public PasswordEncoder passwordEncoder() {
+<span class="fc" id="L128">                return new BCryptPasswordEncoder();</span>
+        }
+
+        /**
+         * Define um bean para o {@link AuthenticationManager}, utilizando a
+         * configuração automática do Spring Security.
+         * 
+         * &lt;p&gt;
+         * Este método obtém e retorna a instância gerenciada de
+         * {@link AuthenticationManager}
+         * a partir de {@link AuthenticationConfiguration}, permitindo que o Spring
+         * descubra automaticamente
+         * a implementação de {@link UserDetailsService} presente na aplicação.
+         * &lt;/p&gt;
+         * 
+         * @param authenticationConfiguration configuração de autenticação do Spring
+         *                                    Security.
+         * @return uma instância de {@link AuthenticationManager} gerenciada pelo
+         *         Spring.
+         * @throws Exception caso ocorra um erro ao obter o
+         *                   {@link AuthenticationManager}.
+         */
+        @Bean
+        public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
+                        throws Exception {
+<span class="fc" id="L153">                return authenticationConfiguration.getAuthenticationManager();</span>
+        }
+
+        /**
+         * Estratégia de autenticação de sessão que registra sessões autenticadas.
+         *
+         * @return {@link SessionAuthenticationStrategy} configurada.
+         */
+        @Bean
+        public SessionAuthenticationStrategy sessionAuthStrategy() {
+<span class="fc" id="L163">                return new RegisterSessionAuthenticationStrategy(sessionRegistry());</span>
+        }
+
+        /**
+         * Registro de sessões ativas na aplicação.
+         *
+         * @return {@link SessionRegistry} para controle de sessões.
+         */
+        @Bean
+        public SessionRegistry sessionRegistry() {
+<span class="fc" id="L173">                return new SessionRegistryImpl();</span>
+        }
+
+        /**
+         * Registra o {@link HttpSessionEventPublisher} para gerenciamento de sessões
+         * HTTP.
+         *
+         * @return Bean de listener de eventos de sessão HTTP.
+         */
+        @Bean
+        public ServletListenerRegistrationBean&lt;?&gt; servletListenerRegistrationBean() {
+<span class="fc" id="L184">                return new ServletListenerRegistrationBean&lt;&gt;(new HttpSessionEventPublisher());</span>
+        }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

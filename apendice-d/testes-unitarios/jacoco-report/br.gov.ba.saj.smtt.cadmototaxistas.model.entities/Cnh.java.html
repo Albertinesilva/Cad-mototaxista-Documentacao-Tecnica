@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Cnh.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">cadmototaxistas</a> &gt; <a href="index.source.html" class="el_package">br.gov.ba.saj.smtt.cadmototaxistas.model.entities</a> &gt; <span class="el_source">Cnh.java</span></div><h1>Cnh.java</h1><pre class="source lang-java linenums">package br.gov.ba.saj.smtt.cadmototaxistas.model.entities;
+
+import java.time.LocalDate;
+
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.format.annotation.DateTimeFormat.ISO;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.Future;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
+import br.gov.ba.saj.smtt.cadmototaxistas.model.enums.ECategoria;
+
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * Representa a Carteira Nacional de Habilitação (CNH) de um condutor.
+ * &lt;p&gt;
+ * Esta entidade contém informações como número da habilitação, categoria da
+ * CNH,
+ * data de vencimento, e o condutor associado.
+ * &lt;/p&gt;
+ * 
+ * As validações garantem que os campos estejam preenchidos corretamente e que
+ * a data de vencimento seja futura.
+ * 
+ * @author
+ */
+@Getter
+@Setter
+@Entity
+@Table(name = &quot;cnh&quot;)
+<span class="fc" id="L42">public class Cnh extends AbstractEntity {</span>
+
+    /**
+     * Número da Carteira Nacional de Habilitação.
+     * &lt;p&gt;
+     * Deve ter exatamente 11 caracteres, ser único e não pode ser nulo ou vazio.
+     * &lt;/p&gt;
+     */
+    @NotBlank(message = &quot;{NotBlank.cnh.numero}&quot;)
+    @Size(min = 11, max = 11, message = &quot;{Size.cnh.numero}&quot;)
+    @Column(name = &quot;numero_habilitacao&quot;, nullable = false, unique = true, length = 11)
+    private String numero;
+
+    /**
+     * Categoria da CNH, representada pelo enum {@link ECategoria}.
+     * &lt;p&gt;
+     * Campo obrigatório.
+     * &lt;/p&gt;
+     */
+    @NotNull(message = &quot;{NotNull.cnh.categoria}&quot;)
+    @Enumerated(EnumType.STRING)
+    @Column(name = &quot;categoria&quot;, nullable = false, length = 2)
+    private ECategoria categoria;
+
+    /**
+     * Data de vencimento da CNH.
+     * &lt;p&gt;
+     * Deve ser uma data futura e obrigatória.
+     * &lt;/p&gt;
+     */
+    @NotNull(message = &quot;{NotNull.cnh.dataVencimento}&quot;)
+    @Future(message = &quot;{Future.cnh.dataVencimento}&quot;)
+    @Column(name = &quot;data_vencimento&quot;, nullable = false, columnDefinition = &quot;DATE&quot;)
+    @DateTimeFormat(iso = ISO.DATE)
+    private LocalDate dataVencimento;
+
+    /**
+     * Relação bidirecional com o condutor associado à CNH.
+     * &lt;p&gt;
+     * Mapeado pelo atributo {@code cnh} na entidade {@link Condutor}.
+     * O cascade {@link CascadeType#ALL} propaga todas as operações.
+     * &lt;/p&gt;
+     */
+    @OneToOne(mappedBy = &quot;cnh&quot;, cascade = CascadeType.ALL)
+    private Condutor condutor;
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

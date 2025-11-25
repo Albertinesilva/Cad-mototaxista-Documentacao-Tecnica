@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MailServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">cadmototaxistas</a> &gt; <a href="index.source.html" class="el_package">br.gov.ba.saj.smtt.cadmototaxistas.security.services.mail.impl</a> &gt; <span class="el_source">MailServiceImpl.java</span></div><h1>MailServiceImpl.java</h1><pre class="source lang-java linenums">package br.gov.ba.saj.smtt.cadmototaxistas.security.services.mail.impl;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import br.gov.ba.saj.smtt.cadmototaxistas.security.model.entities.Mail;
+import br.gov.ba.saj.smtt.cadmototaxistas.security.repositories.MailRepository;
+import br.gov.ba.saj.smtt.cadmototaxistas.security.services.mail.MailService;
+
+/**
+ * Implementação do serviço para gerenciamento de registros de e-mails enviados.
+ */
+@Service
+<span class="fc" id="L15">public class MailServiceImpl implements MailService {</span>
+
+  @Autowired
+  private MailRepository mailRepository;
+
+  /**
+   * Registra um novo e-mail no sistema.
+   *
+   * @param registrarEmail Dados do e-mail a ser registrado.
+   */
+  @Override
+  @Transactional(readOnly = false)
+  public void register(Mail registrarEmail) {
+<span class="nc" id="L28">    mailRepository.save(registrarEmail);</span>
+<span class="nc" id="L29">  }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

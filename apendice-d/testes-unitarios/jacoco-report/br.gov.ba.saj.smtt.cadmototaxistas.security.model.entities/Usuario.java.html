@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Usuario.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">cadmototaxistas</a> &gt; <a href="index.source.html" class="el_package">br.gov.ba.saj.smtt.cadmototaxistas.security.model.entities</a> &gt; <span class="el_source">Usuario.java</span></div><h1>Usuario.java</h1><pre class="source lang-java linenums">package br.gov.ba.saj.smtt.cadmototaxistas.security.model.entities;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Index;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.Email;
+import jakarta.persistence.JoinColumn;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import br.gov.ba.saj.smtt.cadmototaxistas.model.entities.AbstractEntity;
+import br.gov.ba.saj.smtt.cadmototaxistas.security.model.enums.PerfilTipo;
+
+/**
+ * Representa um usuário do sistema, contendo informações de autenticação
+ * como email, senha, perfis (roles) e status de ativação.
+ * &lt;p&gt;
+ * Cada usuário pode possuir múltiplos perfis, os quais definem seu nível de
+ * acesso.
+ * &lt;/p&gt;
+ */
+@Entity
+@Table(name = &quot;usuarios&quot;, indexes = {
+		@Index(name = &quot;idx_usuario_email&quot;, columnList = &quot;email&quot;)
+})
+public class Usuario extends AbstractEntity {
+
+	/**
+	 * Endereço de e-mail do usuário, utilizado para login.
+	 * &lt;p&gt;
+	 * Deve ser único e seguir o padrão de email.
+	 */
+	@Email(message = &quot;{Email.usuario.email}&quot;)
+	@Column(name = &quot;email&quot;, unique = true, nullable = false, length = 100)
+	private String email;
+
+	/**
+	 * Senha do usuário criptografada.
+	 * &lt;p&gt;
+	 * Esse campo é ignorado na serialização JSON para segurança.
+	 */
+	@JsonIgnore
+	@Column(name = &quot;senha&quot;, nullable = false, length = 255)
+	private String senha;
+
+	/**
+	 * Perfis (ou roles) associados ao usuário.
+	 * &lt;p&gt;
+	 * Define os tipos de acesso do usuário no sistema.
+	 */
+	@ManyToMany
+	@JoinTable(name = &quot;usuarios_tem_perfis&quot;, joinColumns = {
+			@JoinColumn(name = &quot;usuario_id&quot;, referencedColumnName = &quot;id&quot;)
+	}, inverseJoinColumns = {
+			@JoinColumn(name = &quot;perfil_id&quot;, referencedColumnName = &quot;id&quot;)
+	})
+	private List&lt;Perfil&gt; perfis;
+
+	/**
+	 * Indica se o usuário está ativo no sistema.
+	 */
+	@Column(name = &quot;ativo&quot;, nullable = false)
+	private boolean ativo;
+
+	/**
+	 * Código utilizado para verificações como redefinição de senha.
+	 */
+	@Column(name = &quot;codigo_verificador&quot;, length = 100)
+	private String codigoVerificador;
+
+	/**
+	 * Construtor padrão.
+	 */
+	public Usuario() {
+<span class="fc" id="L81">		super();</span>
+<span class="fc" id="L82">	}</span>
+
+	/**
+	 * Construtor que associa um ID ao usuário.
+	 * 
+	 * @param id identificador do usuário.
+	 */
+<span class="fc" id="L89">	public Usuario(Long id) {</span>
+<span class="fc" id="L90">		super.setId(id);</span>
+<span class="fc" id="L91">	}</span>
+
+	/**
+	 * Construtor que inicializa o email do usuário.
+	 * 
+	 * @param email email do usuário.
+	 */
+<span class="fc" id="L98">	public Usuario(String email) {</span>
+<span class="fc" id="L99">		this.email = email;</span>
+<span class="fc" id="L100">	}</span>
+
+	/**
+	 * Adiciona um perfil à lista de perfis do usuário.
+	 * 
+	 * @param tipo tipo de perfil a ser adicionado.
+	 */
+	public void addPerfil(PerfilTipo tipo) {
+<span class="fc bfc" id="L108" title="All 2 branches covered.">		if (this.perfis == null) {</span>
+<span class="fc" id="L109">			this.perfis = new ArrayList&lt;&gt;();</span>
+		}
+<span class="fc" id="L111">		this.perfis.add(new Perfil(tipo.getCod()));</span>
+<span class="fc" id="L112">	}</span>
+
+	// Getters e Setters
+
+	public String getEmail() {
+<span class="fc" id="L117">		return email;</span>
+	}
+
+	public void setEmail(String email) {
+<span class="fc" id="L121">		this.email = email;</span>
+<span class="fc" id="L122">	}</span>
+
+	public String getSenha() {
+<span class="fc" id="L125">		return senha;</span>
+	}
+
+	public void setSenha(String senha) {
+<span class="fc" id="L129">		this.senha = senha;</span>
+<span class="fc" id="L130">	}</span>
+
+	public List&lt;Perfil&gt; getPerfis() {
+<span class="fc" id="L133">		return perfis;</span>
+	}
+
+	public void setPerfis(List&lt;Perfil&gt; perfis) {
+<span class="fc" id="L137">		this.perfis = perfis;</span>
+<span class="fc" id="L138">	}</span>
+
+	public boolean isAtivo() {
+<span class="fc" id="L141">		return ativo;</span>
+	}
+
+	public void setAtivo(boolean ativo) {
+<span class="fc" id="L145">		this.ativo = ativo;</span>
+<span class="fc" id="L146">	}</span>
+
+	public String getCodigoVerificador() {
+<span class="fc" id="L149">		return codigoVerificador;</span>
+	}
+
+	public void setCodigoVerificador(String codigoVerificador) {
+<span class="fc" id="L153">		this.codigoVerificador = codigoVerificador;</span>
+<span class="fc" id="L154">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

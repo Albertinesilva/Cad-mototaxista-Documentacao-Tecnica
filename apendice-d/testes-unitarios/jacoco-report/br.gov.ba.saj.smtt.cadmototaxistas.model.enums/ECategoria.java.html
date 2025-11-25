@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ECategoria.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">cadmototaxistas</a> &gt; <a href="index.source.html" class="el_package">br.gov.ba.saj.smtt.cadmototaxistas.model.enums</a> &gt; <span class="el_source">ECategoria.java</span></div><h1>ECategoria.java</h1><pre class="source lang-java linenums">package br.gov.ba.saj.smtt.cadmototaxistas.model.enums;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+/**
+ * Enumeração que representa as categorias da Carteira Nacional de Habilitação
+ * (CNH).
+ * &lt;p&gt;
+ * Cada valor representa uma combinação de permissões para condução de veículos
+ * conforme as regras do DETRAN.
+ * &lt;/p&gt;
+ * 
+ * &lt;ul&gt;
+ * &lt;li&gt;{@code A} - Veículos de duas ou três rodas (motos).&lt;/li&gt;
+ * &lt;li&gt;{@code AB} - Veículos de duas ou três rodas e veículos de quatro rodas
+ * até 3.500 kg.&lt;/li&gt;
+ * &lt;li&gt;{@code AC} - Categoria A + veículos de carga acima de 3.500 kg.&lt;/li&gt;
+ * &lt;li&gt;{@code AD} - Categoria B + veículos para transporte de passageiros.&lt;/li&gt;
+ * &lt;li&gt;{@code AE} - Categoria B + combinação de unidades acopladas acima de
+ * 6.000 kg.&lt;/li&gt;
+ * &lt;/ul&gt;
+ * 
+ * Esta enum é utilizada para definir e restringir os valores possíveis no campo
+ * de categoria da CNH.
+ */
+<span class="fc" id="L27">@Getter</span>
+@AllArgsConstructor
+public enum ECategoria {
+
+    /** Categoria A: motos, ciclomotores, motonetas e triciclos. */
+<span class="fc" id="L32">    A(&quot;A&quot;),</span>
+
+    /** Categoria AB: motos e veículos de até 3.500 kg (categoria B). */
+<span class="fc" id="L35">    AB(&quot;AB&quot;),</span>
+
+    /** Categoria AC: motos e veículos de carga acima de 3.500 kg (categoria C). */
+<span class="fc" id="L38">    AC(&quot;AC&quot;),</span>
+
+    /**
+     * Categoria AD: motos e veículos de transporte de passageiros (categoria D).
+     */
+<span class="fc" id="L43">    AD(&quot;AD&quot;),</span>
+
+    /** Categoria AE: motos e veículos com unidade acoplada (categoria E). */
+<span class="fc" id="L46">    AE(&quot;AE&quot;);</span>
+
+    /**
+     * Representação textual da categoria.
+     */
+    private final String categoria;
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

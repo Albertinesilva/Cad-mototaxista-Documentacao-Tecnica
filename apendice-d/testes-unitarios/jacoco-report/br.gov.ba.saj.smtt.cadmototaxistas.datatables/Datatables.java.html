@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Datatables.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">cadmototaxistas</a> &gt; <a href="index.source.html" class="el_package">br.gov.ba.saj.smtt.cadmototaxistas.datatables</a> &gt; <span class="el_source">Datatables.java</span></div><h1>Datatables.java</h1><pre class="source lang-java linenums">package br.gov.ba.saj.smtt.cadmototaxistas.datatables;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import jakarta.servlet.http.HttpServletRequest;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Component;
+
+/**
+ * Componente responsável por processar requisições de tabelas paginadas com o DataTables.
+ * 
+ * &lt;p&gt;
+ * Esta classe extrai os parâmetros da requisição HTTP enviados pelo plugin DataTables,
+ * como página atual, tamanho da página, coluna de ordenação e direção de ordenação,
+ * e fornece um {@link Pageable} para consulta ao banco de dados.
+ * &lt;/p&gt;
+ * 
+ * Também monta a resposta JSON no formato esperado pelo DataTables.
+ * 
+ * @author
+ */
+@Component
+public class Datatables {
+
+    private HttpServletRequest request;
+    private String[] colunas;
+
+    /**
+     * Construtor padrão.
+     */
+    public Datatables() {
+<span class="fc" id="L37">        super();</span>
+<span class="fc" id="L38">    }</span>
+
+    /**
+     * Retorna um mapa de resposta contendo os dados paginados para o DataTables.
+     * 
+     * @param page Página retornada da consulta ao repositório.
+     * @return Mapa com os dados no formato necessário para o DataTables.
+     */
+    public Map&lt;String, Object&gt; getResponse(Page&lt;?&gt; page) {
+<span class="nc" id="L47">        Map&lt;String, Object&gt; json = new LinkedHashMap&lt;&gt;();</span>
+<span class="nc" id="L48">        json.put(&quot;draw&quot;, draw());</span>
+<span class="nc" id="L49">        json.put(&quot;recordsTotal&quot;, page.getTotalElements());</span>
+<span class="nc" id="L50">        json.put(&quot;recordsFiltered&quot;, page.getTotalElements());</span>
+<span class="nc" id="L51">        json.put(&quot;data&quot;, page.getContent());</span>
+<span class="nc" id="L52">        return json;</span>
+    }
+
+    public HttpServletRequest getRequest() {
+<span class="nc" id="L56">        return request;</span>
+    }
+
+    /**
+     * Define o {@link HttpServletRequest} contendo os parâmetros da requisição.
+     * 
+     * @param request Objeto da requisição HTTP.
+     */
+    public void setRequest(HttpServletRequest request) {
+<span class="nc" id="L65">        this.request = request;</span>
+<span class="nc" id="L66">    }</span>
+
+    public String[] getColunas() {
+<span class="nc" id="L69">        return colunas;</span>
+    }
+
+    /**
+     * Define o array de nomes de colunas esperadas para ordenação e mapeamento.
+     * 
+     * @param colunas Array com os nomes das colunas.
+     */
+    public void setColunas(String[] colunas) {
+<span class="nc" id="L78">        this.colunas = colunas;</span>
+<span class="nc" id="L79">    }</span>
+
+    /**
+     * Obtém o número da operação de &quot;draw&quot; (controle de chamadas do DataTables).
+     */
+    private int draw() {
+<span class="nc" id="L85">        return Integer.parseInt(this.request.getParameter(&quot;draw&quot;));</span>
+    }
+
+    /**
+     * Obtém o índice do primeiro item da página (ponto de início).
+     */
+    private int start() {
+<span class="nc" id="L92">        return Integer.parseInt(this.request.getParameter(&quot;start&quot;));</span>
+    }
+
+    /**
+     * Obtém o número de registros por página informado pelo DataTables.
+     * 
+     * @return Quantidade de itens por página.
+     */
+    public int getLength() {
+<span class="nc" id="L101">        return Integer.parseInt(this.request.getParameter(&quot;length&quot;));</span>
+    }
+
+    /**
+     * Calcula a página atual com base no índice inicial e na quantidade por página.
+     * 
+     * @return Número da página atual (base 0).
+     */
+    public int getCurrentPage() {
+<span class="nc" id="L110">        return start() / getLength();</span>
+    }
+
+    /**
+     * Obtém o nome da coluna a ser utilizada para ordenação.
+     * 
+     * @return Nome da coluna ordenável.
+     */
+    public String getColumnName() {
+<span class="nc" id="L119">        int iCol = Integer.parseInt(this.request.getParameter(&quot;order[0][column]&quot;));</span>
+<span class="nc" id="L120">        return this.colunas[iCol];</span>
+    }
+
+    /**
+     * Obtém a direção da ordenação (ASC ou DESC).
+     * 
+     * @return Direção da ordenação.
+     */
+    public Sort.Direction getDirection() {
+<span class="nc" id="L129">        String order = this.request.getParameter(&quot;order[0][dir]&quot;);</span>
+<span class="nc" id="L130">        Sort.Direction sort = Sort.Direction.ASC;</span>
+<span class="nc bnc" id="L131" title="All 2 branches missed.">        if (order.equalsIgnoreCase(&quot;desc&quot;)) {</span>
+<span class="nc" id="L132">            sort = Sort.Direction.DESC;</span>
+        }
+<span class="nc" id="L134">        return sort;</span>
+    }
+
+    /**
+     * Obtém o termo de busca digitado pelo usuário no campo de pesquisa do DataTables.
+     * 
+     * @return Termo de busca.
+     */
+    public String getSearch() {
+<span class="nc" id="L143">        return this.request.getParameter(&quot;search[value]&quot;);</span>
+    }
+
+    /**
+     * Cria um objeto {@link Pageable} com base nos parâmetros da requisição.
+     * 
+     * @return Objeto de paginação com ordenação.
+     */
+    public Pageable getPageable() {
+<span class="nc" id="L152">        return PageRequest.of(getCurrentPage(), getLength(), getDirection(), getColumnName());</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

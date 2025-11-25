@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Condutor.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">cadmototaxistas</a> &gt; <a href="index.source.html" class="el_package">br.gov.ba.saj.smtt.cadmototaxistas.model.entities</a> &gt; <span class="el_source">Condutor.java</span></div><h1>Condutor.java</h1><pre class="source lang-java linenums">package br.gov.ba.saj.smtt.cadmototaxistas.model.entities;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+import org.hibernate.validator.constraints.br.CPF;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.format.annotation.DateTimeFormat.ISO;
+
+import br.gov.ba.saj.smtt.cadmototaxistas.model.enums.EModalidadeDeCondutor;
+import br.gov.ba.saj.smtt.cadmototaxistas.model.enums.ETipoSanguineo;
+import br.gov.ba.saj.smtt.cadmototaxistas.model.enums.converter.TipoSanguineoConverter;
+import br.gov.ba.saj.smtt.cadmototaxistas.model.interfaces.EntidadeComContato;
+import br.gov.ba.saj.smtt.cadmototaxistas.service.condutor.validation.idademinima.ValidIdadeMinima;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * Entidade que representa um Condutor dentro do sistema.
+ * &lt;p&gt;
+ * Contém informações pessoais, documentos, contatos, endereço, veículos
+ * associados,
+ * além de dados de auditoria automática como criação e modificação.
+ * &lt;/p&gt;
+ * &lt;p&gt;
+ * Possui validações para garantir a integridade dos dados, como CPF válido,
+ * idade mínima e campos obrigatórios.
+ * &lt;/p&gt;
+ * 
+ * @author
+ */
+@Getter
+@Setter
+@Entity
+@Table(name = &quot;condutor&quot;)
+@EntityListeners(AuditingEntityListener.class)
+<span class="fc" id="L58">public class Condutor extends AbstractEntity implements EntidadeComContato {</span>
+
+    /**
+     * Número de ordem único que identifica o condutor.
+     * Deve ter entre 1 e 10 caracteres.
+     */
+    @Column(name = &quot;numero_ordem&quot;, nullable = true, unique = true, length = 10)
+    private String numOrdem;
+
+    /**
+     * Nome completo do condutor.
+     * Deve ter no mínimo 2 caracteres e não pode ser nulo ou vazio.
+     */
+    @NotBlank(message = &quot;{NotBlank.condutor.nome}&quot;)
+    @Size(min = 2, message = &quot;{Size.condutor.nome}&quot;)
+    @Column(name = &quot;nome&quot;, nullable = false, length = 255)
+    private String nome;
+
+    /**
+     * Modalidade do condutor, representada pelo enum {@link EModalidadeDeCondutor}.
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(name = &quot;modalidade_condutor&quot;, nullable = false, length = 12)
+    private EModalidadeDeCondutor modalidadeDeCondutor;
+
+    /**
+     * Apelido do condutor, campo opcional.
+     */
+    @Column(name = &quot;apelido&quot;, nullable = true, length = 50)
+    private String apelido;
+
+    /**
+     * Registro Geral (RG) do condutor.
+     * Deve ter entre 5 e 15 caracteres e ser único.
+     */
+    @NotBlank(message = &quot;{NotBlank.condutor.rg}&quot;)
+    @Size(min = 5, max = 15, message = &quot;{Size.condutor.rg}&quot;)
+    @Column(name = &quot;rg&quot;, nullable = true, unique = true, length = 15)
+    private String rg;
+
+    /**
+     * Cadastro de Pessoa Física (CPF) do condutor.
+     * Campo obrigatório, único e válido conforme validação {@link CPF}.
+     */
+    @CPF(message = &quot;{CPF.condutor.cpf}&quot;)
+    @NotBlank(message = &quot;{NotBlank.condutor.cpf}&quot;)
+    @Size(min = 11, message = &quot;{Size.condutor.cpf}&quot;)
+    @Column(name = &quot;cpf&quot;, nullable = false, unique = true, length = 15)
+    private String cpf;
+
+    /**
+     * Data de nascimento do condutor.
+     * Deve respeitar a idade mínima de 21 anos conforme validação personalizada
+     * {@link ValidIdadeMinima}.
+     */
+    @ValidIdadeMinima(value = 21, message = &quot;{IdadeMinima.condutor.dataNascimento}&quot;)
+    @NotNull(message = &quot;{NotNull.condutor.dataNascimento}&quot;)
+    @DateTimeFormat(iso = ISO.DATE)
+    @Column(name = &quot;data_nascimento&quot;, nullable = false, columnDefinition = &quot;DATE&quot;)
+    private LocalDate dataNascimento;
+
+    /**
+     * Nome do pai do condutor (opcional).
+     */
+    @Column(name = &quot;nome_pai&quot;, nullable = true, length = 255)
+    private String paiNome;
+
+    /**
+     * Nome da mãe do condutor (opcional).
+     */
+    @Column(name = &quot;nome_mae&quot;, nullable = true, length = 255)
+    private String maeNome;
+
+    /**
+     * Indica se o cadastro está ativo.
+     */
+    @Column(name = &quot;cadastro_ativo&quot;, nullable = false)
+    private boolean cadastroAtivo;
+
+    /**
+     * Tipo sanguíneo do condutor.
+     * Utiliza conversor para armazenar corretamente no banco.
+     */
+    @Convert(converter = TipoSanguineoConverter.class)
+    @Column(name = &quot;tipo_sanguineo&quot;, nullable = true, length = 11)
+    private ETipoSanguineo tipoSanguineo;
+
+    /**
+     * Data de vencimento do alvará do condutor (opcional).
+     */
+    @DateTimeFormat(iso = ISO.DATE)
+    @Column(name = &quot;data_vencimento_alvara&quot;, nullable = true, columnDefinition = &quot;DATE&quot;)
+    private LocalDate dataVencimentoAlvara;
+
+    /**
+     * Data de criação do registro, preenchida automaticamente pelo Spring Data JPA.
+     */
+    @CreatedDate
+    @Column(name = &quot;data_criacao&quot;)
+    private LocalDateTime dataCriacao;
+
+    /**
+     * Data da última modificação do registro, preenchida automaticamente.
+     */
+    @LastModifiedDate
+    @Column(name = &quot;data_modificacao&quot;)
+    private LocalDateTime dataModificacao;
+
+    /**
+     * Usuário que criou o registro, preenchido automaticamente pelo Spring
+     * Security.
+     */
+    @CreatedBy
+    @Column(name = &quot;criado_por&quot;)
+    private String criadorPor;
+
+    /**
+     * Usuário que modificou o registro pela última vez.
+     */
+    @LastModifiedBy
+    @Column(name = &quot;modificado_por&quot;)
+    private String modificadoPor;
+
+    /**
+     * Endereço do condutor.
+     * Mapeado em relação OneToOne, com cascata para operações.
+     */
+    @Valid
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = &quot;endereco_fk&quot;)
+    private Endereco endereco;
+
+    /**
+     * Ponto (local de trabalho ou referência) associado ao condutor.
+     * Relacionamento ManyToOne.
+     */
+    @ManyToOne
+    @JoinColumn(name = &quot;ponto_fk&quot;)
+    private Ponto ponto;
+
+    /**
+     * Contato do condutor, mapeado OneToOne com cascata.
+     */
+    @Valid
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = &quot;contato_fk&quot;)
+    private Contato contato;
+
+    /**
+     * Motocicleta associada ao condutor.
+     * Mapeamento OneToOne com cascata.
+     */
+    @Valid
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = &quot;motocicleta_fk&quot;)
+    private Motocicleta motocicleta;
+
+    /**
+     * CNH (Carteira Nacional de Habilitação) do condutor.
+     * Mapeamento OneToOne com cascata.
+     */
+    @Valid
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = &quot;cnh_fk&quot;)
+    private Cnh cnh;
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

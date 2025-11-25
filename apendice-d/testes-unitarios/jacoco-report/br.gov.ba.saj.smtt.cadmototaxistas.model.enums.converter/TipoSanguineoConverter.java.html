@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TipoSanguineoConverter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">cadmototaxistas</a> &gt; <a href="index.source.html" class="el_package">br.gov.ba.saj.smtt.cadmototaxistas.model.enums.converter</a> &gt; <span class="el_source">TipoSanguineoConverter.java</span></div><h1>TipoSanguineoConverter.java</h1><pre class="source lang-java linenums">package br.gov.ba.saj.smtt.cadmototaxistas.model.enums.converter;
+
+import br.gov.ba.saj.smtt.cadmototaxistas.model.enums.ETipoSanguineo;
+import jakarta.persistence.AttributeConverter;
+import jakarta.persistence.Converter;
+
+/**
+ * Conversor JPA responsável por mapear a enumeração {@link ETipoSanguineo}
+ * para sua representação textual no banco de dados e vice-versa.
+ * 
+ * &lt;p&gt;
+ * Essa classe é anotada com {@code @Converter(autoApply = true)}, o que
+ * significa que ela será aplicada automaticamente em todos os atributos do tipo
+ * {@link ETipoSanguineo}.
+ * &lt;/p&gt;
+ *
+ * &lt;p&gt;Exemplo de persistência:&lt;/p&gt;
+ * &lt;ul&gt;
+ *   &lt;li&gt;{@code ETipoSanguineo.APOSITIVO} → &quot;A+&quot;&lt;/li&gt;
+ * &lt;/ul&gt;
+ *
+ * &lt;p&gt;Exemplo de leitura:&lt;/p&gt;
+ * &lt;ul&gt;
+ *   &lt;li&gt;&quot;O-&quot; → {@code ETipoSanguineo.ONEGATIVO}&lt;/li&gt;
+ * &lt;/ul&gt;
+ *
+ * @author Albert Silva
+ */
+@Converter(autoApply = true)
+<span class="fc" id="L30">public class TipoSanguineoConverter implements AttributeConverter&lt;ETipoSanguineo, String&gt; {</span>
+
+  /**
+   * Converte o atributo {@link ETipoSanguineo} da entidade para seu valor em
+   * string,
+   * que será armazenado no banco de dados.
+   *
+   * @param attribute a enumeração {@link ETipoSanguineo}, pode ser {@code null}
+   * @return uma string representando o tipo sanguíneo (ex: &quot;A+&quot;), ou {@code null}
+   *         se o atributo for nulo
+   */
+  @Override
+  public String convertToDatabaseColumn(ETipoSanguineo attribute) {
+<span class="nc bnc" id="L43" title="All 2 branches missed.">    return attribute != null ? attribute.getTipoSanguineo() : null;</span>
+  }
+
+  /**
+   * Converte o valor textual vindo do banco de dados para a enumeração
+   * {@link ETipoSanguineo}.
+   *
+   * @param dbData a string armazenada no banco de dados, pode ser {@code null}
+   * @return a enumeração correspondente, ou {@code null} se o dado do banco for
+   *         nulo
+   * @throws IllegalArgumentException se o valor não corresponder a nenhum tipo
+   *                                  válido
+   */
+  @Override
+  public ETipoSanguineo convertToEntityAttribute(String dbData) {
+<span class="nc bnc" id="L58" title="All 2 branches missed.">    return dbData != null ? ETipoSanguineo.fromValue(dbData) : null;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

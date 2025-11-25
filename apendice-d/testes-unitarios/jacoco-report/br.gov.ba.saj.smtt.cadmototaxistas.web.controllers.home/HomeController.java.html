@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>HomeController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">cadmototaxistas</a> &gt; <a href="index.source.html" class="el_package">br.gov.ba.saj.smtt.cadmototaxistas.web.controllers.home</a> &gt; <span class="el_source">HomeController.java</span></div><h1>HomeController.java</h1><pre class="source lang-java linenums">package br.gov.ba.saj.smtt.cadmototaxistas.web.controllers.home;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.web.authentication.session.SessionAuthenticationException;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import br.gov.ba.saj.smtt.cadmototaxistas.model.entities.Condutor;
+import br.gov.ba.saj.smtt.cadmototaxistas.service.condutor.CondutorService;
+
+/**
+ * Controller responsável por gerenciar as páginas iniciais do sistema,
+ * como a home, login, mensagens de erro de login, sessão expirada e acesso
+ * negado.
+ * 
+ * Fornece rotas para:
+ * - Exibição da página home
+ * - Página de login e tratamento de falhas no login
+ * - Página de sessão expirada
+ * - Página de acesso negado
+ */
+@Controller
+<span class="fc" id="L30">public class HomeController {</span>
+
+	@Autowired
+	private CondutorService condutorService;
+
+	/**
+	 * Exibe a página inicial (home) do sistema.
+	 * 
+	 * @return nome da view da página home
+	 */
+	@GetMapping({ &quot;/&quot;, &quot;/home&quot; })
+	public String home() {
+<span class="nc" id="L42">		return &quot;home&quot;;</span>
+	}
+
+	/**
+	 * Exibe a página de login do sistema.
+	 * 
+	 * @return nome da view da página de login
+	 */
+	@GetMapping({ &quot;login&quot; })
+	public String login() {
+<span class="nc" id="L52">		return &quot;login&quot;;</span>
+	}
+
+	@GetMapping({ &quot;/mensagens-alvara&quot; })
+	public String alvaras(@RequestParam(&quot;id&quot;) Long id, Model model) {
+<span class="nc" id="L57">		Condutor condutor = condutorService.buscarPorId(id);</span>
+<span class="nc" id="L58">		model.addAttribute(&quot;nome&quot;, condutor.getNome());</span>
+<span class="nc" id="L59">		model.addAttribute(&quot;vencimento&quot;, condutor.getDataVencimentoAlvara());</span>
+<span class="nc" id="L60">		return &quot;mensagem-alvara&quot;;</span>
+	}
+
+	/**
+	 * Exibe a página de login com mensagem de erro em caso de falha de
+	 * autenticação.
+	 * Trata casos de sessão já ativa em outro dispositivo e credenciais inválidas.
+	 * 
+	 * @param model   mapa de atributos para a view
+	 * @param request objeto da requisição HTTP para acessar a sessão
+	 * @return nome da view da página de login com mensagem de erro
+	 */
+	@GetMapping({ &quot;/login-error&quot; })
+	public String loginError(ModelMap model, HttpServletRequest request) {
+<span class="nc" id="L74">		HttpSession session = request.getSession();</span>
+<span class="nc" id="L75">		String lastException = String.valueOf(session.getAttribute(&quot;SPRING_SECURITY_LAST_EXCEPTION&quot;));</span>
+<span class="nc bnc" id="L76" title="All 2 branches missed.">		if (lastException.contains(SessionAuthenticationException.class.getName())) {</span>
+<span class="nc" id="L77">			model.addAttribute(&quot;alerta&quot;, &quot;erro&quot;);</span>
+<span class="nc" id="L78">			model.addAttribute(&quot;titulo&quot;, &quot;Acesso recusado!&quot;);</span>
+<span class="nc" id="L79">			model.addAttribute(&quot;texto&quot;, &quot;Você já está logado em outro dispositivo.&quot;);</span>
+<span class="nc" id="L80">			model.addAttribute(&quot;subtexto&quot;, &quot;Faça o logout ou espere sua sessão expirar.&quot;);</span>
+<span class="nc" id="L81">			return &quot;login&quot;;</span>
+		}
+
+<span class="nc" id="L84">		model.addAttribute(&quot;alerta&quot;, &quot;erro&quot;);</span>
+<span class="nc" id="L85">		model.addAttribute(&quot;titulo&quot;, &quot;Credenciais inválidas&quot;);</span>
+<span class="nc" id="L86">		model.addAttribute(&quot;texto&quot;, &quot;Login ou senha incorretos, tente novamente.&quot;);</span>
+<span class="nc" id="L87">		model.addAttribute(&quot;subtexto&quot;, &quot;Acesso permitido apenas para cadastros já ativados.&quot;);</span>
+<span class="nc" id="L88">		return &quot;login&quot;;</span>
+	}
+
+	/**
+	 * Exibe a página informando que a sessão do usuário expirou.
+	 * 
+	 * @param model mapa de atributos para a view
+	 * @return nome da view da página de login com mensagem de sessão expirada
+	 */
+	@GetMapping(&quot;/expired&quot;)
+	public String sessaoExpirada(ModelMap model) {
+<span class="nc" id="L99">		model.addAttribute(&quot;alerta&quot;, &quot;erro&quot;);</span>
+<span class="nc" id="L100">		model.addAttribute(&quot;titulo&quot;, &quot;Acesso recusado!&quot;);</span>
+<span class="nc" id="L101">		model.addAttribute(&quot;texto&quot;, &quot;Sua sessão expirou.&quot;);</span>
+<span class="nc" id="L102">		model.addAttribute(&quot;subtexto&quot;, &quot;Você logou em outro dispositivo&quot;);</span>
+<span class="nc" id="L103">		return &quot;login&quot;;</span>
+	}
+
+	/**
+	 * Exibe a página de acesso negado quando o usuário tenta acessar uma área sem
+	 * permissão.
+	 * 
+	 * @param model    mapa de atributos para a view
+	 * @param response objeto da resposta HTTP para obter o status
+	 * @return nome da view da página de erro
+	 */
+	@GetMapping({ &quot;/acesso-negado&quot; })
+	public String acessoNegado(ModelMap model, HttpServletResponse response) {
+<span class="nc" id="L116">		model.addAttribute(&quot;status&quot;, response.getStatus());</span>
+<span class="nc" id="L117">		model.addAttribute(&quot;error&quot;, &quot;Acesso Negado&quot;);</span>
+<span class="nc" id="L118">		model.addAttribute(&quot;message&quot;, &quot;Você não tem permissão para acessar esta área ou realizar esta ação.&quot;);</span>
+<span class="nc" id="L119">		return &quot;error&quot;;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

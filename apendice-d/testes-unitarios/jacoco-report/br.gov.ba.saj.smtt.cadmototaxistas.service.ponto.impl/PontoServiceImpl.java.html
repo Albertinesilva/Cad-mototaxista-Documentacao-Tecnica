@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PontoServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">cadmototaxistas</a> &gt; <a href="index.source.html" class="el_package">br.gov.ba.saj.smtt.cadmototaxistas.service.ponto.impl</a> &gt; <span class="el_source">PontoServiceImpl.java</span></div><h1>PontoServiceImpl.java</h1><pre class="source lang-java linenums">package br.gov.ba.saj.smtt.cadmototaxistas.service.ponto.impl;
+
+import java.util.List;
+
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import br.gov.ba.saj.smtt.cadmototaxistas.model.entities.Ponto;
+import br.gov.ba.saj.smtt.cadmototaxistas.repositories.PontoRepository;
+import br.gov.ba.saj.smtt.cadmototaxistas.service.ponto.PontoService;
+import br.gov.ba.saj.smtt.cadmototaxistas.util.paginacao.PaginacaoUtil;
+
+/**
+ * Implementação da interface {@link PontoService}, responsável por conter
+ * a lógica de negócio relacionada à entidade {@link Ponto}.
+ *
+ * Esta classe é anotada com {@code @Service} para indicar que é um componente
+ * de serviço
+ * gerenciado pelo Spring, e {@code @Transactional} para garantir que os métodos
+ * sejam
+ * executados dentro de transações, conforme necessário.
+ */
+@Service
+@Transactional(readOnly = false)
+<span class="fc" id="L29">public class PontoServiceImpl implements PontoService {</span>
+
+    @Autowired
+    private PontoRepository pontoRepository;
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    /**
+     * Salva um novo ponto no sistema.
+     * 
+     * @param ponto Ponto a ser salvo.
+     */
+    @Override
+    public void salvar(Ponto ponto) {
+<span class="nc bnc" id="L44" title="All 2 branches missed.">        if (ponto.getId() == null) {</span>
+<span class="nc" id="L45">            ponto.setAtivo(true);</span>
+        }
+<span class="nc" id="L47">        pontoRepository.save(ponto);</span>
+<span class="nc" id="L48">    }</span>
+
+    /**
+     * Atualiza os dados de um ponto existente.
+     * 
+     * @param ponto Ponto com dados atualizados.
+     */
+    @Override
+    public void editar(Ponto ponto) {
+<span class="nc" id="L57">        pontoRepository.save(ponto);</span>
+<span class="nc" id="L58">    }</span>
+
+    /**
+     * Exclui um ponto pelo seu ID.
+     * 
+     * @param id ID do ponto a ser excluído.
+     */
+    @Override
+    public void excluir(Long id) {
+<span class="nc" id="L67">        pontoRepository.deleteById(id);</span>
+<span class="nc" id="L68">    }</span>
+
+    /**
+     * Atualiza o status ativo/inativo de um ponto.
+     * 
+     * @param id     ID do ponto.
+     * @param status Novo status (true para ativo, false para inativo).
+     */
+    @Override
+    public void atualizarStatus(Long id, boolean status) {
+<span class="nc" id="L78">        Ponto ponto = pontoRepository.findById(id)</span>
+<span class="nc" id="L79">                .orElseThrow(() -&gt; new IllegalArgumentException(&quot;Id Inválido para Ponto:&quot; + id));</span>
+<span class="nc" id="L80">        ponto.setAtivo(status);</span>
+<span class="nc" id="L81">        pontoRepository.save(ponto);</span>
+<span class="nc" id="L82">    }</span>
+
+    /**
+     * Busca um ponto pelo seu ID.
+     * 
+     * @param id ID do ponto.
+     * @return Ponto encontrado.
+     * @throws IllegalArgumentException se o ID for inválido.
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public Ponto buscarPorId(Long id) {
+<span class="nc" id="L94">        Ponto ponto = pontoRepository.findById(id)</span>
+<span class="nc" id="L95">                .orElseThrow(() -&gt; new IllegalArgumentException(&quot;Id Inválido para Ponto:&quot; + id));</span>
+
+<span class="nc" id="L97">        return ponto;</span>
+    }
+
+    /**
+     * Busca todos os pontos cadastrados.
+     * 
+     * @return Lista com todos os pontos.
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public List&lt;Ponto&gt; buscarTodos() {
+<span class="nc" id="L108">        return pontoRepository.findAll();</span>
+    }
+
+    /**
+     * Busca uma lista de pontos cujo nome contenha a string informada, ignorando
+     * letras maiúsculas e minúsculas.
+     *
+     * @param nome parte do nome do ponto a ser buscado
+     * @return lista de pontos encontrados com nomes correspondentes
+     */
+    @Override
+    public List&lt;Ponto&gt; buscarPorNomeContendo(String nome) {
+<span class="nc" id="L120">        return pontoRepository.findByNomeContainingIgnoreCase(nome);</span>
+    }
+
+    /**
+     * Verifica se existe algum condutor cadastrado no ponto informado.
+     * 
+     * @param id ID do ponto.
+     * @return true se existir algum condutor cadastrado neste ponto, false caso
+     *         contrário.
+     * @throws IllegalArgumentException se o ID do ponto for inválido.
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public boolean existeCondutorCadastradoNoPonto(Long id) {
+<span class="nc" id="L134">        Ponto ponto = pontoRepository.findById(id)</span>
+<span class="nc" id="L135">                .orElseThrow(() -&gt; new IllegalArgumentException(&quot;Id Inválido para ponto:&quot; + id));</span>
+
+<span class="nc bnc" id="L137" title="All 4 branches missed.">        return ponto.getCondutores() != null &amp;&amp; !ponto.getCondutores().isEmpty();</span>
+    }
+
+    /**
+     * Busca uma página de pontos paginada, ordenada conforme a direção informada.
+     * 
+     * @param pagina  Número da página (baseado em 1).
+     * @param direcao Direção da ordenação (&quot;asc&quot; ou &quot;desc&quot;).
+     * @return PaginacaoUtil contendo os pontos da página.
+     */
+    @Override
+    public PaginacaoUtil&lt;Ponto&gt; buscaPaginada(int pagina, String direcao) {
+<span class="nc" id="L149">        int tamanho = 5;</span>
+<span class="nc" id="L150">        int inicio = (pagina - 1) * tamanho;</span>
+<span class="nc" id="L151">        List&lt;Ponto&gt; pontos = entityManager</span>
+<span class="nc" id="L152">                .createQuery(&quot;select c from Ponto c order by c.nome &quot; + direcao, Ponto.class)</span>
+<span class="nc" id="L153">                .setFirstResult(inicio)</span>
+<span class="nc" id="L154">                .setMaxResults(tamanho)</span>
+<span class="nc" id="L155">                .getResultList();</span>
+
+<span class="nc" id="L157">        long totalRegistros = count();</span>
+<span class="nc" id="L158">        long totalDePaginas = (totalRegistros + (tamanho - 1)) / tamanho;</span>
+
+<span class="nc" id="L160">        return new PaginacaoUtil&lt;&gt;(tamanho, pagina, totalDePaginas, direcao, pontos);</span>
+    }
+
+    /**
+     * Retorna a quantidade total de pontos cadastrados.
+     * 
+     * @return Total de pontos.
+     */
+    @Override
+    public long count() {
+<span class="nc" id="L170">        return entityManager</span>
+<span class="nc" id="L171">                .createQuery(&quot;select count(p) from Ponto p&quot;, Long.class)</span>
+<span class="nc" id="L172">                .getSingleResult();</span>
+    }
+
+    /**
+     * Busca todos os pontos que estão ativos.
+     * 
+     * @return Lista de pontos ativos.
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public List&lt;Ponto&gt; findAllPontosAtivos() {
+<span class="nc" id="L183">        return pontoRepository.findByAtivoTrue();</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

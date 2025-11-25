@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DadosFormularioService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">cadmototaxistas</a> &gt; <a href="index.source.html" class="el_package">br.gov.ba.saj.smtt.cadmototaxistas.service.dados.formulario</a> &gt; <span class="el_source">DadosFormularioService.java</span></div><h1>DadosFormularioService.java</h1><pre class="source lang-java linenums">package br.gov.ba.saj.smtt.cadmototaxistas.service.dados.formulario;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
+
+import br.gov.ba.saj.smtt.cadmototaxistas.model.entities.MotoMarca;
+import br.gov.ba.saj.smtt.cadmototaxistas.model.entities.MotoModelo;
+import br.gov.ba.saj.smtt.cadmototaxistas.model.entities.Ponto;
+import br.gov.ba.saj.smtt.cadmototaxistas.model.enums.*;
+import br.gov.ba.saj.smtt.cadmototaxistas.service.motocicleta.marca.MotoMarcaService;
+import br.gov.ba.saj.smtt.cadmototaxistas.service.motocicleta.modelo.MotoModeloService;
+import br.gov.ba.saj.smtt.cadmototaxistas.service.ponto.PontoService;
+
+/**
+ * Serviço responsável por fornecer dados auxiliares utilizados em formulários
+ * da aplicação.
+ */
+@Service
+<span class="fc" id="L23">public class DadosFormularioService {</span>
+
+  @Autowired
+  private PontoService pontoService;
+
+  @Autowired
+  private MotoMarcaService motoMarcaService;
+
+  @Autowired
+  private MotoModeloService motoModeloService;
+
+  /**
+   * Carrega os atributos fixos e dinâmicos para popular formulários (ex.: marcas,
+   * modelos, pontos).
+   *
+   * @param model o modelo da view onde os dados serão inseridos.
+   */
+  public void carregarAtributosGerais(Model model) {
+<span class="nc" id="L41">    model.addAttribute(&quot;motocicletaMarcas&quot;, getMarcasDeMotocicletaAtivas());</span>
+<span class="nc" id="L42">    model.addAttribute(&quot;motocicletaModelos&quot;, getModelosDeMotocicletaAtivos());</span>
+<span class="nc" id="L43">    model.addAttribute(&quot;pontos&quot;, getPontosAtivos());</span>
+<span class="nc" id="L44">  }</span>
+
+  /**
+   * Carrega os enums necessários para dropdowns e seletores nos formulários.
+   *
+   * @param model o modelo da view onde os dados serão inseridos.
+   */
+  public void carregarEnumsParaFormulario(Model model) {
+<span class="nc" id="L52">    model.addAttribute(&quot;tiposSanguineos&quot;, getTiposSanguineos());</span>
+<span class="nc" id="L53">    model.addAttribute(&quot;categoriasCnh&quot;, getCategoriasCnh());</span>
+<span class="nc" id="L54">    model.addAttribute(&quot;tiposPlaca&quot;, getTiposPlaca());</span>
+<span class="nc" id="L55">    model.addAttribute(&quot;situacoesMoto&quot;, getSituacoesMoto());</span>
+<span class="nc" id="L56">    model.addAttribute(&quot;modalidadesDeCondutor&quot;, getModalidadesDeCondutor());</span>
+<span class="nc" id="L57">  }</span>
+
+  /**
+   * Carrega os atributos fixos e dinâmicos para popular formulários (ex.: marcas,
+   * modelos, pontos).
+   *
+   * @param model o modelo da view onde os dados serão inseridos.
+   */
+  public void carregarAtributosGerais(ModelMap model) {
+<span class="nc" id="L66">    model.addAttribute(&quot;motocicletaMarcas&quot;, getMarcasDeMotocicletaAtivas());</span>
+<span class="nc" id="L67">    model.addAttribute(&quot;motocicletaModelos&quot;, getModelosDeMotocicletaAtivos());</span>
+<span class="nc" id="L68">    model.addAttribute(&quot;pontos&quot;, getPontosAtivos());</span>
+<span class="nc" id="L69">  }</span>
+
+  /**
+   * Carrega os enums necessários para dropdowns e seletores nos formulários.
+   *
+   * @param model o modelo da view onde os dados serão inseridos.
+   */
+  public void carregarEnumsParaFormulario(ModelMap model) {
+<span class="nc" id="L77">    model.addAttribute(&quot;tiposSanguineos&quot;, getTiposSanguineos());</span>
+<span class="nc" id="L78">    model.addAttribute(&quot;categoriasCnh&quot;, getCategoriasCnh());</span>
+<span class="nc" id="L79">    model.addAttribute(&quot;tiposPlaca&quot;, getTiposPlaca());</span>
+<span class="nc" id="L80">    model.addAttribute(&quot;situacoesMoto&quot;, getSituacoesMoto());</span>
+<span class="nc" id="L81">    model.addAttribute(&quot;modalidadesDeCondutor&quot;, getModalidadesDeCondutor());</span>
+<span class="nc" id="L82">  }</span>
+
+  public List&lt;Ponto&gt; getPontosAtivos() {
+<span class="nc" id="L85">    return pontoService.findAllPontosAtivos();</span>
+  }
+
+  public List&lt;MotoModelo&gt; getModelosDeMotocicletaAtivos() {
+<span class="nc" id="L89">    return motoModeloService.buscarTodos()</span>
+<span class="nc" id="L90">        .stream()</span>
+<span class="nc" id="L91">        .filter(MotoModelo::isAtivo)</span>
+<span class="nc" id="L92">        .toList();</span>
+  }
+
+  public List&lt;MotoMarca&gt; getMarcasDeMotocicletaAtivas() {
+<span class="nc" id="L96">    return motoMarcaService.buscarTodos()</span>
+<span class="nc" id="L97">        .stream()</span>
+<span class="nc" id="L98">        .filter(MotoMarca::isAtivo)</span>
+<span class="nc" id="L99">        .toList();</span>
+  }
+
+  public ETipoSanguineo[] getTiposSanguineos() {
+<span class="nc" id="L103">    return ETipoSanguineo.values();</span>
+  }
+
+  public ECategoria[] getCategoriasCnh() {
+<span class="nc" id="L107">    return ECategoria.values();</span>
+  }
+
+  public ETipoPlaca[] getTiposPlaca() {
+<span class="nc" id="L111">    return ETipoPlaca.values();</span>
+  }
+
+  public ESituacaoMoto[] getSituacoesMoto() {
+<span class="nc" id="L115">    return ESituacaoMoto.values();</span>
+  }
+
+  public EModalidadeDeCondutor[] getModalidadesDeCondutor() {
+<span class="nc" id="L119">    return EModalidadeDeCondutor.values();</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

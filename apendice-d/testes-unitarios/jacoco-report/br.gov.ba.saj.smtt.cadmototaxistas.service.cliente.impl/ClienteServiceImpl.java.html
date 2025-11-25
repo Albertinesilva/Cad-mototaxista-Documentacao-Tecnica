@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ClienteServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">cadmototaxistas</a> &gt; <a href="index.source.html" class="el_package">br.gov.ba.saj.smtt.cadmototaxistas.service.cliente.impl</a> &gt; <span class="el_source">ClienteServiceImpl.java</span></div><h1>ClienteServiceImpl.java</h1><pre class="source lang-java linenums">package br.gov.ba.saj.smtt.cadmototaxistas.service.cliente.impl;
+
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import br.gov.ba.saj.smtt.cadmototaxistas.model.entities.Cliente;
+import br.gov.ba.saj.smtt.cadmototaxistas.repositories.ClienteRepository;
+import br.gov.ba.saj.smtt.cadmototaxistas.security.model.entities.Usuario;
+import br.gov.ba.saj.smtt.cadmototaxistas.security.services.usuario.UsuarioService;
+import br.gov.ba.saj.smtt.cadmototaxistas.service.cliente.ClienteService;
+
+/**
+ * Implementação do serviço para operações relacionadas ao Cliente.
+ */
+@Service
+<span class="fc" id="L20">public class ClienteServiceImpl implements ClienteService {</span>
+
+  @Autowired
+  private ClienteRepository clienteRepository;
+
+  @Autowired
+  private UsuarioService usuarioService;
+
+  /**
+   * Salva um cliente no banco de dados, associando-o ao usuário autenticado
+   * após validar a senha fornecida.
+   *
+   * @param cliente objeto Cliente com os dados a serem salvos.
+   * @param user    objeto User com dados do usuário autenticado.
+   * @return {@code true} se o cliente foi salvo com sucesso; {@code false} caso a
+   *         senha esteja incorreta.
+   */
+  @Override
+  @Transactional
+  public boolean salvar(Cliente cliente, User user) {
+<span class="nc" id="L40">    Optional&lt;Usuario&gt; usuarioOpt = usuarioService.validarSenhaEObterUsuario(cliente.getUsuario().getSenha(), user);</span>
+<span class="nc bnc" id="L41" title="All 2 branches missed.">    if (usuarioOpt.isEmpty()) {</span>
+<span class="nc" id="L42">      return false;</span>
+    }
+
+<span class="nc" id="L45">    cliente.setUsuario(usuarioOpt.get());</span>
+<span class="nc" id="L46">    clienteRepository.save(cliente);</span>
+<span class="nc" id="L47">    return true;</span>
+  }
+
+  /**
+   * Busca um cliente pelo email associado ao usuário.
+   *
+   * @param email email do usuário associado ao cliente.
+   * @return Optional contendo o Cliente encontrado, ou vazio caso não exista.
+   */
+  @Override
+  @Transactional(readOnly = true)
+  public Optional&lt;Cliente&gt; buscarPorUsuarioEmail(String email) {
+<span class="nc" id="L59">    return clienteRepository.findByUsuarioEmail(email);</span>
+  }
+
+  /**
+   * Edita os dados de um cliente existente após validar a senha fornecida.
+   *
+   * @param cliente objeto Cliente com dados atualizados e identificador válido.
+   * @param user    objeto User com dados do usuário autenticado.
+   * @return {@code true} se a edição foi realizada com sucesso; {@code false}
+   *         caso a senha esteja incorreta.
+   * @throws IllegalArgumentException se o cliente não for encontrado no banco.
+   */
+  @Override
+  @Transactional
+  public boolean editar(Cliente cliente, User user) {
+<span class="nc" id="L74">    Optional&lt;Usuario&gt; usuarioOpt = usuarioService.validarSenhaEObterUsuario(cliente.getUsuario().getSenha(), user);</span>
+<span class="nc bnc" id="L75" title="All 2 branches missed.">    if (usuarioOpt.isEmpty()) {</span>
+<span class="nc" id="L76">      return false;</span>
+    }
+<span class="nc" id="L78">    Cliente entity = clienteRepository.findById(cliente.getId())</span>
+<span class="nc" id="L79">        .orElseThrow(() -&gt; new IllegalArgumentException(&quot;Cliente não encontrado&quot;));</span>
+
+<span class="nc" id="L81">    entity.setNome(cliente.getNome());</span>
+<span class="nc" id="L82">    entity.setDataNascimento(cliente.getDataNascimento());</span>
+<span class="nc" id="L83">    entity.setEndereco(cliente.getEndereco());</span>
+<span class="nc" id="L84">    entity.setContato(cliente.getContato());</span>
+
+<span class="nc" id="L86">    clienteRepository.save(entity);</span>
+<span class="nc" id="L87">    return true;</span>
+  }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

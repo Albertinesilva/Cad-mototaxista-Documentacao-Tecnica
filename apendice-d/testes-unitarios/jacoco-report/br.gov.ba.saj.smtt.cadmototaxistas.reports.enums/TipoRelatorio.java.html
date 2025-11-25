@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TipoRelatorio.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">cadmototaxistas</a> &gt; <a href="index.source.html" class="el_package">br.gov.ba.saj.smtt.cadmototaxistas.reports.enums</a> &gt; <span class="el_source">TipoRelatorio.java</span></div><h1>TipoRelatorio.java</h1><pre class="source lang-java linenums">package br.gov.ba.saj.smtt.cadmototaxistas.reports.enums;
+
+/**
+ * Enum que representa os diferentes tipos de relatórios disponíveis
+ * para geração via JasperReports.
+ *
+ * &lt;p&gt;
+ * Cada valor do enum contém o prefixo correspondente ao nome do arquivo
+ * `.jasper` localizado na pasta &lt;code&gt;resources/reports&lt;/code&gt;.
+ * Esse prefixo é utilizado para compor dinamicamente o caminho do relatório.
+ * &lt;/p&gt;
+ * 
+ * Exemplos de nomes de arquivos gerados:
+ * &lt;ul&gt;
+ * &lt;li&gt;&lt;code&gt;alvara-01.jasper&lt;/code&gt;&lt;/li&gt;
+ * &lt;li&gt;&lt;code&gt;tipos-sanguineo-02.jasper&lt;/code&gt;&lt;/li&gt;
+ * &lt;/ul&gt;
+ * 
+ * @author
+ */
+<span class="nc" id="L21">public enum TipoRelatorio {</span>
+
+  /**
+   * Relatório de alvará de autorização para o condutor.
+   */
+<span class="nc" id="L26">  ALVARA_CONDUTOR(&quot;alvara-&quot;),</span>
+
+  /**
+   * Relatório estatístico com agrupamento por tipo sanguíneo dos condutores.
+   */
+<span class="nc" id="L31">  TIPOS_SANGUINEO(&quot;tipos-sanguineo-&quot;),</span>
+
+  /**
+   * Relatório de vencimento do alvará de autorização dos condutores.
+   */
+<span class="nc" id="L36">  VENCIMENTO_ALVARA(&quot;vencimento-alvara-&quot;),</span>
+
+  /**
+   * Relatório de motocicletas agrupadas por marca.
+   */
+<span class="nc" id="L41">  MARCAS_MOTOCICLETAS_MAIS_UTILIZADAS(&quot;motocicletas-mais-utilizadas-&quot;),</span>
+
+  /**
+   * Relatório de motocicletas agrupadas por ano de fabricação.
+   */
+<span class="nc" id="L46">  CONDUTORES_POR_FAIXA_ETARIA(&quot;condutores-faixa-etaria-&quot;),</span>
+
+  /**
+   * Relatório de motocicletas agrupadas por ano de fabricação.
+   */
+<span class="nc" id="L51">  CNH_VENCIDA_OU_PROXIMA_VENCIMENTO(&quot;cnh-situacao-&quot;);</span>
+
+  /**
+   * Prefixo do nome do arquivo `.jasper`.
+   */
+  private final String nomeArquivo;
+
+  /**
+   * Construtor do enum.
+   * 
+   * @param nomeArquivo prefixo do nome do arquivo `.jasper` correspondente ao
+   *                    tipo.
+   */
+<span class="nc" id="L64">  TipoRelatorio(String nomeArquivo) {</span>
+<span class="nc" id="L65">    this.nomeArquivo = nomeArquivo;</span>
+<span class="nc" id="L66">  }</span>
+
+  /**
+   * Retorna o prefixo do nome do arquivo do relatório.
+   * 
+   * @return prefixo do arquivo Jasper correspondente.
+   */
+  public String getNomeArquivo() {
+<span class="nc" id="L74">    return nomeArquivo;</span>
+  }
+
+  /**
+   * Converte uma string para o valor correspondente do enum
+   * {@link TipoRelatorio},
+   * ignorando diferenças entre maiúsculas e minúsculas.
+   *
+   * @param tipo nome textual do tipo de relatório (por exemplo:
+   *             &quot;ALVARA_CONDUTOR&quot;).
+   * @return o valor correspondente do enum {@link TipoRelatorio}.
+   * @throws IllegalArgumentException se o tipo informado não corresponder a
+   *                                  nenhum valor do enum.
+   */
+  public static TipoRelatorio from(String tipo) {
+<span class="nc bnc" id="L89" title="All 2 branches missed.">    for (TipoRelatorio rel : values()) {</span>
+<span class="nc bnc" id="L90" title="All 2 branches missed.">      if (rel.name().equalsIgnoreCase(tipo)) {</span>
+<span class="nc" id="L91">        return rel;</span>
+      }
+    }
+<span class="nc" id="L94">    throw new IllegalArgumentException(&quot;Relatório não encontrado: &quot; + tipo);</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

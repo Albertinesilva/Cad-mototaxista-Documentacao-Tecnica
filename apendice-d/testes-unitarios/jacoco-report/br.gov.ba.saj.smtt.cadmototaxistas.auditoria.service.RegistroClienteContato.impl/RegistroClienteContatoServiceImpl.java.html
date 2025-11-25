@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RegistroClienteContatoServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">cadmototaxistas</a> &gt; <a href="index.source.html" class="el_package">br.gov.ba.saj.smtt.cadmototaxistas.auditoria.service.RegistroClienteContato.impl</a> &gt; <span class="el_source">RegistroClienteContatoServiceImpl.java</span></div><h1>RegistroClienteContatoServiceImpl.java</h1><pre class="source lang-java linenums">package br.gov.ba.saj.smtt.cadmototaxistas.auditoria.service.RegistroClienteContato.impl;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import br.gov.ba.saj.smtt.cadmototaxistas.auditoria.model.entities.RegistroClienteContato;
+import br.gov.ba.saj.smtt.cadmototaxistas.auditoria.repository.RegistroClienteContatoRepository;
+import br.gov.ba.saj.smtt.cadmototaxistas.auditoria.service.RegistroClienteContato.RegistroClienteContatoService;
+import br.gov.ba.saj.smtt.cadmototaxistas.model.entities.Cliente;
+import br.gov.ba.saj.smtt.cadmototaxistas.model.entities.Condutor;
+import br.gov.ba.saj.smtt.cadmototaxistas.service.cliente.ClienteService;
+import br.gov.ba.saj.smtt.cadmototaxistas.service.condutor.CondutorService;
+import br.gov.ba.saj.smtt.cadmototaxistas.util.paginacao.PaginacaoUtil;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.PersistenceContext;
+
+@Service
+<span class="fc" id="L23">public class RegistroClienteContatoServiceImpl implements RegistroClienteContatoService {</span>
+
+  @Autowired
+  private RegistroClienteContatoRepository registroClienteContatoRepository;
+
+  @Autowired
+  private CondutorService condutorService;
+
+  @Autowired
+  private ClienteService clienteService;
+
+  @PersistenceContext
+  private EntityManager entityManager;
+
+  @Override
+  @Transactional(readOnly = false)
+  public void salvar(Long condutorId, String emailClienteAutenticado) {
+<span class="nc" id="L40">    Condutor condutor = condutorService.buscarPorId(condutorId);</span>
+<span class="nc" id="L41">    Cliente cliente = clienteService.buscarPorUsuarioEmail(emailClienteAutenticado)</span>
+<span class="nc" id="L42">        .orElseThrow(</span>
+<span class="nc" id="L43">            () -&gt; new EntityNotFoundException(&quot;Cliente não encontrado com o email: &quot; + emailClienteAutenticado));</span>
+
+<span class="nc" id="L45">    var registro = new RegistroClienteContato();</span>
+<span class="nc" id="L46">    registro.setCliente(cliente);</span>
+<span class="nc" id="L47">    registro.setNomeCliente(cliente.getNome());</span>
+<span class="nc" id="L48">    registro.setEmailCliente(cliente.getUsuario().getEmail());</span>
+<span class="nc" id="L49">    registro.setNomeCondutor(condutor.getNome());</span>
+<span class="nc" id="L50">    registro.setNumeroOrdem(condutor.getNumOrdem());</span>
+<span class="nc" id="L51">    registro.setContatoCondutor(condutor.getContato().getTelefoneComercial());</span>
+<span class="nc" id="L52">    registro.setMarcaModeloMoto(</span>
+<span class="nc" id="L53">        condutor.getMotocicleta().getMotoModelo().getMarcaMoto().getNomeMarca()</span>
+            + &quot; - &quot;
+<span class="nc" id="L55">            + condutor.getMotocicleta().getMotoModelo().getNomeModelo());</span>
+<span class="nc" id="L56">    registro.setDataContato(LocalDateTime.now());</span>
+<span class="nc" id="L57">    registroClienteContatoRepository.save(registro);</span>
+
+<span class="nc" id="L59">  }</span>
+
+  @Override
+  @Transactional(readOnly = true)
+  public List&lt;RegistroClienteContato&gt; listarPorEmailCliente(String email) {
+<span class="nc" id="L64">    return registroClienteContatoRepository.findByClienteUsuarioEmail(email);</span>
+  }
+
+  /**
+   * Realiza a busca paginada dos registros de contatos de cliente, com ordenação
+   * conforme a direção
+   * especificada.
+   * 
+   * &lt;p&gt;
+   * Este método utiliza a API do JPA (`EntityManager`) para executar uma consulta
+   * JPQL que retorna
+   * uma lista de objetos {@link RegistroClienteContato} de forma paginada, ou
+   * seja, limitada
+   * ao número de registros
+   * por página e deslocada de acordo com o número da página atual. A ordenação é
+   * feita com base no número de ordem do condutor.
+   * &lt;/p&gt;
+   * 
+   * &lt;p&gt;
+   * O tamanho fixo da página é definido como 5 registros. A página 1 representa
+   * os primeiros 5 elementos.
+   * A direção da ordenação pode ser &quot;asc&quot; (crescente) ou &quot;desc&quot; (decrescente).
+   * &lt;/p&gt;
+   *
+   * @param pagina  o número da página solicitada (baseado em 1, e não 0).
+   * @param direcao a direção da ordenação, sendo &quot;asc&quot; para ascendente ou &quot;desc&quot;
+   *                para descendente.
+   * @return um objeto {@link PaginacaoUtil} contendo os dados da página atual
+   *         (lista de registos de contatos de cliente, total de páginas, etc.).
+   */
+  @Override
+  public PaginacaoUtil&lt;RegistroClienteContato&gt; buscaPaginada(Long clienteId, int pagina, String direcao) {
+<span class="nc" id="L96">    int tamanho = 5;</span>
+<span class="nc" id="L97">    int inicio = (pagina - 1) * tamanho;</span>
+
+<span class="nc" id="L99">    List&lt;RegistroClienteContato&gt; registroClienteContatos = entityManager</span>
+<span class="nc" id="L100">        .createQuery(</span>
+            &quot;select r from RegistroClienteContato r where r.cliente.id = :clienteId order by r.numeroOrdem &quot; + direcao,
+            RegistroClienteContato.class)
+<span class="nc" id="L103">        .setParameter(&quot;clienteId&quot;, clienteId)</span>
+<span class="nc" id="L104">        .setFirstResult(inicio)</span>
+<span class="nc" id="L105">        .setMaxResults(tamanho)</span>
+<span class="nc" id="L106">        .getResultList();</span>
+
+<span class="nc" id="L108">    long totalRegistros = count(clienteId);</span>
+<span class="nc" id="L109">    long totalDePaginas = (totalRegistros + (tamanho - 1)) / tamanho;</span>
+
+<span class="nc" id="L111">    return new PaginacaoUtil&lt;&gt;(tamanho, pagina, totalDePaginas, direcao, registroClienteContatos);</span>
+  }
+
+  /**
+   * Conta o número total de registros da entidade {@link RegistroClienteContato}
+   * no banco de
+   * dados.
+   *
+   * &lt;p&gt;
+   * Utiliza uma consulta JPQL simples com a função de agregação
+   * &lt;code&gt;count()&lt;/code&gt; para retornar
+   * o total de registros existentes na tabela
+   * &lt;code&gt;registro_cliente_contato&lt;/code&gt;.
+   * &lt;/p&gt;
+   *
+   * @return o número total de registros da entidade
+   *         {@link RegistroClienteContato}.
+   */
+  @Override
+  public long count(Long clienteId) {
+<span class="nc" id="L131">    return entityManager.createQuery(</span>
+        &quot;select count(r) from RegistroClienteContato r where r.cliente.id = :clienteId&quot;, Long.class)
+<span class="nc" id="L133">        .setParameter(&quot;clienteId&quot;, clienteId)</span>
+<span class="nc" id="L134">        .getSingleResult();</span>
+  }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

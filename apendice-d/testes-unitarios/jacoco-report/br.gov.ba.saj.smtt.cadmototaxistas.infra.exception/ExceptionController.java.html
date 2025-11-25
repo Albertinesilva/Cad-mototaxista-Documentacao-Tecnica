@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ExceptionController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">cadmototaxistas</a> &gt; <a href="index.source.html" class="el_package">br.gov.ba.saj.smtt.cadmototaxistas.infra.exception</a> &gt; <span class="el_source">ExceptionController.java</span></div><h1>ExceptionController.java</h1><pre class="source lang-java linenums">package br.gov.ba.saj.smtt.cadmototaxistas.infra.exception;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.servlet.ModelAndView;
+
+/**
+ * Controlador global para tratamento de exceções.
+ * 
+ * Esta classe captura exceções lançadas durante a execução da aplicação e
+ * direciona para páginas de erro amigáveis, com mensagens customizadas.
+ * 
+ * Trata exceções específicas como {@link UsernameNotFoundException} e
+ * {@link DataIntegrityViolationException}, entre outras que podem ser
+ * acrescentadas.
+ * 
+ */
+@ControllerAdvice
+<span class="fc" id="L23">public class ExceptionController {</span>
+
+	// Logger estático para registrar logs da classe
+<span class="fc" id="L26">	private static final Logger LOGGER = LoggerFactory.getLogger(ExceptionController.class);</span>
+
+	/**
+	 * Trata exceção quando usuário não é encontrado durante autenticação.
+	 * 
+	 * @param ex Exceção lançada quando o usuário não é encontrado.
+	 * @return {@link ModelAndView} para a página de erro com informações do
+	 *         problema.
+	 */
+	@ExceptionHandler(UsernameNotFoundException.class)
+	public ModelAndView usuarioNaoEncontradoException(UsernameNotFoundException ex) {
+<span class="nc" id="L37">		LOGGER.warn(&quot;UsernameNotFoundException: {}&quot;, ex.getMessage());</span>
+<span class="nc" id="L38">		ModelAndView model = new ModelAndView(&quot;error&quot;);</span>
+<span class="nc" id="L39">		model.addObject(&quot;status&quot;, 404);</span>
+<span class="nc" id="L40">		model.addObject(&quot;error&quot;, &quot;Operação não pode ser realizada.&quot;);</span>
+<span class="nc" id="L41">		model.addObject(&quot;message&quot;, ex.getMessage());</span>
+<span class="nc" id="L42">		return model;</span>
+	}
+
+	/**
+	 * Trata exceções de violação de integridade de dados no banco, como
+	 * valores duplicados em campos únicos.
+	 * 
+	 * @param ex Exceção lançada em violação de restrições do banco de dados.
+	 * @return {@link ModelAndView} para a página de erro com mensagens específicas.
+	 */
+	@ExceptionHandler(DataIntegrityViolationException.class)
+	public ModelAndView dataIntegrityViolationException(DataIntegrityViolationException ex) {
+<span class="nc" id="L54">		LOGGER.error(&quot;DataIntegrityViolationException: &quot;, ex);</span>
+<span class="nc" id="L55">		ModelAndView model = new ModelAndView(&quot;error&quot;);</span>
+<span class="nc" id="L56">		model.addObject(&quot;status&quot;, 400);</span>
+<span class="nc" id="L57">		model.addObject(&quot;error&quot;, &quot;Violação de Integridade de Dados&quot;);</span>
+
+<span class="nc" id="L59">		String mensagem = &quot;Operação não pode ser realizada devido à integridade dos dados.&quot;;</span>
+
+<span class="nc bnc" id="L61" title="All 2 branches missed.">		if (ex.getMessage().contains(&quot;condutor_numero_ordem_key&quot;)) {</span>
+<span class="nc" id="L62">			mensagem = &quot;Número de Ordem já cadastrado.&quot;;</span>
+<span class="nc bnc" id="L63" title="All 2 branches missed.">		} else if (ex.getMessage().contains(&quot;condutor_cpf_key&quot;)) {</span>
+<span class="nc" id="L64">			mensagem = &quot;CPF já cadastrado.&quot;;</span>
+<span class="nc bnc" id="L65" title="All 2 branches missed.">		} else if (ex.getMessage().contains(&quot;condutor_rg_key&quot;)) {</span>
+<span class="nc" id="L66">			mensagem = &quot;RG já cadastrado.&quot;;</span>
+		}
+
+<span class="nc" id="L69">		model.addObject(&quot;message&quot;, mensagem);</span>
+<span class="nc" id="L70">		return model;</span>
+	}
+
+	/**
+	 * Trata exceção genérica para erros inesperados do servidor.
+	 * 
+	 * @param ex Exceção genérica lançada.
+	 * @return {@link ModelAndView} para página de erro 500.
+	 */
+	@ExceptionHandler(Exception.class)
+	public ModelAndView handleGenericException(Exception ex) {
+<span class="nc" id="L81">		LOGGER.error(&quot;Erro inesperado: &quot;, ex);</span>
+<span class="nc" id="L82">		ModelAndView model = new ModelAndView(&quot;error&quot;);</span>
+<span class="nc" id="L83">		model.addObject(&quot;status&quot;, 500);</span>
+<span class="nc" id="L84">		model.addObject(&quot;error&quot;, &quot;Erro Interno do Servidor&quot;);</span>
+<span class="nc" id="L85">		model.addObject(&quot;message&quot;, &quot;Ocorreu um erro inesperado. Por favor, tente novamente mais tarde.&quot;);</span>
+<span class="nc" id="L86">		return model;</span>
+	}
+
+	@ExceptionHandler(AcessoNegadoException.class)
+	public ModelAndView acessoNegadoException(AcessoNegadoException ex) {
+		// Criação da ModelAndView para exibir a página de erro
+<span class="nc" id="L92">		ModelAndView mv = new ModelAndView(&quot;error&quot;);</span>
+
+		// Adicionando atributos à ModelAndView para exibição
+<span class="nc" id="L95">		mv.addObject(&quot;status&quot;, 403);</span>
+<span class="nc" id="L96">		mv.addObject(&quot;error&quot;, &quot;Operação não pode ser realizada&quot;);</span>
+<span class="nc" id="L97">		mv.addObject(&quot;message&quot;, ex.getMessage());</span>
+
+<span class="nc" id="L99">		return mv;</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

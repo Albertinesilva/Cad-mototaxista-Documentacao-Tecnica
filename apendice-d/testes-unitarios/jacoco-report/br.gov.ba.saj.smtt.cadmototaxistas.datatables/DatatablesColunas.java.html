@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DatatablesColunas.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">cadmototaxistas</a> &gt; <a href="index.source.html" class="el_package">br.gov.ba.saj.smtt.cadmototaxistas.datatables</a> &gt; <span class="el_source">DatatablesColunas.java</span></div><h1>DatatablesColunas.java</h1><pre class="source lang-java linenums">package br.gov.ba.saj.smtt.cadmototaxistas.datatables;
+
+/**
+ * Classe utilitária que define as colunas a serem utilizadas nas configurações
+ * de ordenação e exibição dos componentes DataTables da aplicação.
+ *
+ * &lt;p&gt;
+ * Cada constante representa as colunas mapeadas para determinada entidade
+ * (por exemplo, {@code Funcionario}, {@code Usuario}), sendo usadas para fins de
+ * paginação, ordenação e exibição no front-end.
+ * &lt;/p&gt;
+ *
+ * &lt;p&gt;
+ * Essas colunas devem estar alinhadas com os atributos do objeto exibido
+ * na tabela HTML para que o plugin DataTables funcione corretamente.
+ * &lt;/p&gt;
+ *
+ * @author SeuNome
+ * @since 1.0
+ */
+<span class="nc" id="L21">public class DatatablesColunas {</span>
+
+    /**
+     * Colunas utilizadas pelo DataTables para exibição e ordenação da entidade {@code Funcionario}.
+     * &lt;ul&gt;
+     *   &lt;li&gt;id - Identificador único do funcionário&lt;/li&gt;
+     *   &lt;li&gt;nome - Nome completo do funcionário&lt;/li&gt;
+     *   &lt;li&gt;dtInscricao - Data de inscrição no sistema&lt;/li&gt;
+     * &lt;/ul&gt;
+     */
+<span class="nc" id="L31">    public static final String[] FUNCIONARIO = {&quot;id&quot;, &quot;nome&quot;, &quot;dtInscricao&quot;};</span>
+
+    /**
+     * Colunas utilizadas pelo DataTables para exibição e ordenação da entidade {@code Usuario}.
+     * &lt;ul&gt;
+     *   &lt;li&gt;id - Identificador único do usuário&lt;/li&gt;
+     *   &lt;li&gt;email - Endereço de e-mail do usuário&lt;/li&gt;
+     *   &lt;li&gt;ativo - Status de ativação do usuário&lt;/li&gt;
+     *   &lt;li&gt;perfis - Perfis ou permissões atribuídas ao usuário&lt;/li&gt;
+     * &lt;/ul&gt;
+     */
+<span class="nc" id="L42">    public static final String[] USUARIOS = {&quot;id&quot;, &quot;email&quot;, &quot;ativo&quot;, &quot;perfis&quot;};</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

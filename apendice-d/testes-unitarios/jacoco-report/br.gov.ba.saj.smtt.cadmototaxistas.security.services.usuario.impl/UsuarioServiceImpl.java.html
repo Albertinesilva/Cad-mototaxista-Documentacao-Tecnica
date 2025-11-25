@@ -1,0 +1,400 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UsuarioServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">cadmototaxistas</a> &gt; <a href="index.source.html" class="el_package">br.gov.ba.saj.smtt.cadmototaxistas.security.services.usuario.impl</a> &gt; <span class="el_source">UsuarioServiceImpl.java</span></div><h1>UsuarioServiceImpl.java</h1><pre class="source lang-java linenums">package br.gov.ba.saj.smtt.cadmototaxistas.security.services.usuario.impl;
+
+import java.time.Instant;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import jakarta.mail.MessagingException;
+import jakarta.servlet.http.HttpServletRequest;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import br.gov.ba.saj.smtt.cadmototaxistas.datatables.Datatables;
+import br.gov.ba.saj.smtt.cadmototaxistas.datatables.DatatablesColunas;
+import br.gov.ba.saj.smtt.cadmototaxistas.security.model.entities.Perfil;
+import br.gov.ba.saj.smtt.cadmototaxistas.security.model.entities.Token;
+import br.gov.ba.saj.smtt.cadmototaxistas.security.model.entities.Usuario;
+import br.gov.ba.saj.smtt.cadmototaxistas.security.model.enums.PerfilTipo;
+import br.gov.ba.saj.smtt.cadmototaxistas.security.repositories.UsuarioRepository;
+import br.gov.ba.saj.smtt.cadmototaxistas.security.services.email.EmailService;
+import br.gov.ba.saj.smtt.cadmototaxistas.security.services.token.TokenService;
+import br.gov.ba.saj.smtt.cadmototaxistas.security.services.usuario.UsuarioService;
+import br.gov.ba.saj.smtt.cadmototaxistas.util.enums.ResultadoAtivacao;
+
+/**
+ * Implementação dos serviços para gerenciamento de usuários.
+ * Contém métodos para autenticação, cadastro, edição, exclusão, recuperação e
+ * redefinição de senha.
+ */
+@Service
+<span class="fc" id="L40">public class UsuarioServiceImpl implements UserDetailsService, UsuarioService {</span>
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private Datatables datatables;
+
+    @Autowired
+    private EmailService emailService;
+
+    @Autowired
+    private TokenService tokenService;
+
+    /**
+     * Busca um usuário pelo e-mail.
+     * 
+     * @param email e-mail do usuário
+     * @return Usuário encontrado
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public Usuario buscarPorEmail(String email) {
+<span class="fc" id="L63">        return usuarioRepository.findByEmail(email);</span>
+    }
+
+    /**
+     * Carrega os detalhes do usuário pelo nome de usuário (e-mail).
+     * 
+     * @param username e-mail do usuário
+     * @return Detalhes do usuário para autenticação
+     * @throws UsernameNotFoundException se o usuário não for encontrado
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+<span class="fc" id="L76">        Usuario usuario = buscarPorEmailEAtivo(username)</span>
+<span class="fc" id="L77">                .orElseThrow(</span>
+<span class="nc" id="L78">                        () -&gt; new UsernameNotFoundException(&quot;Usuário &quot; + username + &quot; não encontrado ou inativo.&quot;));</span>
+
+<span class="fc" id="L80">        return new User(</span>
+<span class="fc" id="L81">                usuario.getEmail(),</span>
+<span class="fc" id="L82">                usuario.getSenha(),</span>
+<span class="fc" id="L83">                usuario.getPerfis().stream()</span>
+<span class="fc" id="L84">                        .map(Perfil::getDescricao)</span>
+<span class="fc" id="L85">                        .map(SimpleGrantedAuthority::new)</span>
+<span class="fc" id="L86">                        .toList());</span>
+    }
+
+    /**
+     * Busca todos os usuários paginados com base na requisição DataTables.
+     * 
+     * @param request HttpServletRequest contendo os parâmetros de paginação
+     * @return Mapa com os dados paginados
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public Map&lt;String, Object&gt; buscarTodos(HttpServletRequest request) {
+<span class="nc" id="L98">        datatables.setRequest(request);</span>
+<span class="nc" id="L99">        datatables.setColunas(DatatablesColunas.USUARIOS);</span>
+<span class="nc bnc" id="L100" title="All 2 branches missed.">        Page&lt;Usuario&gt; page = datatables.getSearch().isEmpty()</span>
+<span class="nc" id="L101">                ? usuarioRepository.findAll(datatables.getPageable())</span>
+<span class="nc" id="L102">                : usuarioRepository.findByEmailOrPerfil(datatables.getSearch(), datatables.getPageable());</span>
+<span class="nc" id="L103">        return datatables.getResponse(page);</span>
+    }
+
+    /**
+     * Salva um novo usuário com a senha criptografada.
+     * 
+     * @param usuario Usuário a ser salvo
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public void salvarUsuario(Usuario usuario) {
+<span class="fc" id="L114">        String crypt = new BCryptPasswordEncoder().encode(usuario.getSenha());</span>
+<span class="fc" id="L115">        usuario.setSenha(crypt);</span>
+<span class="fc" id="L116">        usuarioRepository.save(usuario);</span>
+<span class="fc" id="L117">    }</span>
+
+    /**
+     * Edita um usuário existente.
+     * 
+     * @param usuario Usuário a ser editado
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public void editar(Usuario usuario) {
+<span class="fc" id="L127">        usuarioRepository.save(usuario);</span>
+<span class="fc" id="L128">    }</span>
+
+    /**
+     * Exclui um usuário.
+     * 
+     * @param usuario Usuário a ser excluído
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public void excluir(Usuario usuario) {
+<span class="fc" id="L138">        usuarioRepository.delete(usuario);</span>
+<span class="fc" id="L139">    }</span>
+
+    /**
+     * Busca um usuário pelo ID.
+     * 
+     * @param id ID do usuário
+     * @return Usuário encontrado
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public Usuario buscarPorId(Long id) {
+<span class="fc" id="L150">        Usuario usuario = usuarioRepository.findById(id)</span>
+<span class="pc" id="L151">                .orElseThrow(() -&gt; new IllegalArgumentException(&quot;Id Inválido para Usuário:&quot; + id));</span>
+
+<span class="fc" id="L153">        return usuario;</span>
+    }
+
+    /**
+     * Busca todos os usuários cadastrados.
+     * 
+     * @return Lista de usuários
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public List&lt;Usuario&gt; buscarTodos() {
+<span class="fc" id="L164">        return usuarioRepository.findAll();</span>
+    }
+
+    /**
+     * Busca usuários por nome.
+     * 
+     * @param nome Nome do usuário
+     * @return Lista de usuários
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public List&lt;Usuario&gt; buscarPorNome(String nome) {
+<span class="nc" id="L176">        return usuarioRepository.findAll();</span>
+    }
+
+    /**
+     * Busca usuário por ID e por perfis.
+     * 
+     * @param usuarioId ID do usuário
+     * @param perfisId  IDs dos perfis
+     * @return Usuário encontrado
+     */
+    @Transactional(readOnly = true)
+    public Usuario buscarPorIdEPerfis(Long usuarioId, Long[] perfisId) {
+<span class="nc" id="L188">        return usuarioRepository.findByIdAndPerfis(usuarioId, perfisId)</span>
+<span class="nc" id="L189">                .orElseThrow(() -&gt; new UsernameNotFoundException(&quot;Usuário inexistente!&quot;));</span>
+    }
+
+    /**
+     * Verifica se a senha digitada é igual à armazenada (criptografada).
+     * 
+     * @param senhaDigitada   Senha em texto plano
+     * @param senhaArmazenada Senha criptografada
+     * @return true se a senha for correta
+     */
+    @Override
+    public boolean isSenhaCorreta(String senhaDigitada, String senhaArmazenada) {
+<span class="fc" id="L201">        return new BCryptPasswordEncoder().matches(senhaDigitada, senhaArmazenada);</span>
+    }
+
+    /**
+     * Valida a senha fornecida com a do usuário autenticado.
+     *
+     * @param senhaInformada senha digitada no formulário.
+     * @param user           usuário autenticado.
+     * @return Optional contendo o usuário se a senha for válida, ou vazio se
+     *         inválida.
+     */
+    public Optional&lt;Usuario&gt; validarSenhaEObterUsuario(String senhaInformada, User user) {
+<span class="fc" id="L213">        Usuario usuario = buscarPorEmail(user.getUsername());</span>
+<span class="pc bpc" id="L214" title="1 of 2 branches missed.">        if (isSenhaCorreta(senhaInformada, usuario.getSenha())) {</span>
+<span class="fc" id="L215">            return Optional.of(usuario);</span>
+        }
+<span class="nc" id="L217">        return Optional.empty();</span>
+    }
+
+    /**
+     * Altera a senha de um usuário.
+     * 
+     * @param usuario Usuário a ser atualizado
+     * @param senha   Nova senha
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public void alterarSenha(Usuario usuario, String senha) {
+<span class="fc" id="L229">        usuario.setSenha(new BCryptPasswordEncoder().encode(senha));</span>
+<span class="fc" id="L230">        usuarioRepository.save(usuario);</span>
+<span class="fc" id="L231">    }</span>
+
+    /**
+     * Salva um novo usuário com perfil de FUNCIONARIO e envia e-mail de
+     * confirmação.
+     * 
+     * @param usuario Usuário a ser salvo
+     * @throws MessagingException em caso de falha no envio do e-mail
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public void salvarUsuarioCliente(Usuario usuario) throws MessagingException {
+<span class="fc" id="L243">        String crypt = new BCryptPasswordEncoder().encode(usuario.getSenha());</span>
+<span class="fc" id="L244">        usuario.setSenha(crypt);</span>
+<span class="fc" id="L245">        usuario.addPerfil(PerfilTipo.CLIENTE);</span>
+<span class="fc" id="L246">        usuarioRepository.save(usuario);</span>
+
+<span class="fc" id="L248">        emailDeConfirmacaoDeCadastro(usuario);</span>
+<span class="fc" id="L249">    }</span>
+
+    /**
+     * Busca um usuário ativo pelo e-mail.
+     * 
+     * @param email E-mail do usuário
+     * @return Optional de Usuário
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public Optional&lt;Usuario&gt; buscarPorEmailEAtivo(String email) {
+<span class="fc" id="L260">        return usuarioRepository.findByEmailAndAtivo(email);</span>
+    }
+
+    /**
+     * Envia e-mail com o código de ativação de cadastro.
+     * 
+     * @param email E-mail de destino
+     * @throws MessagingException em caso de falha no envio
+     */
+    @Override
+    public void emailDeConfirmacaoDeCadastro(Usuario usuario) throws MessagingException {
+<span class="fc" id="L271">        String codigoDeConfirmacao = tokenService.generateTokenAtivacao(usuario);</span>
+<span class="fc" id="L272">        emailService.enviarPedidoDeConfirmacaoDeCadastro(usuario.getEmail(), codigoDeConfirmacao);</span>
+<span class="fc" id="L273">    }</span>
+
+    /**
+     * Ativa o cadastro de um usuário com base no código de ativação (token)
+     * informado.
+     * &lt;p&gt;
+     * O processo consiste em:
+     * &lt;ul&gt;
+     * &lt;li&gt;Buscar o token no banco de dados&lt;/li&gt;
+     * &lt;li&gt;Verificar se o token é válido, se ainda não expirou e se não foi
+     * utilizado&lt;/li&gt;
+     * &lt;li&gt;Ativar o usuário associado ao token&lt;/li&gt;
+     * &lt;li&gt;Desativar o token para evitar reutilização&lt;/li&gt;
+     * &lt;/ul&gt;
+     *
+     * @param codigo o código (token) de ativação enviado ao usuário (geralmente via
+     *               e-mail)
+     * @return {@code true} se o cadastro foi ativado com sucesso; {@code false} se
+     *         o token for inválido,
+     *         expirado, já utilizado ou se o usuário associado não for válido
+     * @throws MessagingException
+     */
+    @Override
+    @Transactional
+    public ResultadoAtivacao ativarCadastroCliente(String codigo) throws MessagingException {
+<span class="nc" id="L298">        Optional&lt;Token&gt; tokenAtivacao = tokenService.findByToken(codigo);</span>
+
+<span class="nc bnc" id="L300" title="All 2 branches missed.">        if (tokenAtivacao.isEmpty()) {</span>
+<span class="nc" id="L301">            return ResultadoAtivacao.TOKEN_INVALIDO;</span>
+        }
+
+<span class="nc" id="L304">        Token token = tokenAtivacao.get();</span>
+<span class="nc" id="L305">        Usuario usuario = token.getUsuario();</span>
+
+<span class="nc bnc" id="L307" title="All 4 branches missed.">        if (token.isDesativado() || token.getDataExpiracao().isBefore(Instant.now())) {</span>
+            // Se o usuário já está ativo, não reenviar e-mail
+<span class="nc bnc" id="L309" title="All 4 branches missed.">            if (usuario != null &amp;&amp; usuario.isAtivo()) {</span>
+<span class="nc" id="L310">                return ResultadoAtivacao.JA_ATIVADO;</span>
+            }
+
+<span class="nc" id="L313">            emailDeConfirmacaoDeCadastro(usuario);</span>
+<span class="nc" id="L314">            return ResultadoAtivacao.TOKEN_EXPIRADO_OU_UTILIZADO;</span>
+        }
+
+<span class="nc bnc" id="L317" title="All 4 branches missed.">        if (usuario == null || usuario.hasNotId()) {</span>
+<span class="nc" id="L318">            emailDeConfirmacaoDeCadastro(usuario);</span>
+<span class="nc" id="L319">            return ResultadoAtivacao.USUARIO_INVALIDO;</span>
+        }
+
+<span class="nc bnc" id="L322" title="All 2 branches missed.">        if (usuario.isAtivo()) {</span>
+<span class="nc" id="L323">            return ResultadoAtivacao.JA_ATIVADO;</span>
+        }
+
+<span class="nc" id="L326">        usuario.setAtivo(true);</span>
+<span class="nc" id="L327">        token.disabled();</span>
+<span class="nc" id="L328">        tokenService.salvar(token);</span>
+
+<span class="nc" id="L330">        return ResultadoAtivacao.ATIVADO;</span>
+    }
+
+    /**
+     * Gera e envia e-mail para redefinição de senha.
+     * 
+     * @param email E-mail do usuário
+     * @throws MessagingException em caso de erro ao enviar o e-mail
+     */
+    @Override
+    @Transactional
+    public Token pedidoRedefinicaoDeSenha(String email) throws MessagingException {
+<span class="fc" id="L342">        Usuario usuario = buscarPorEmailEAtivo(email)</span>
+<span class="fc" id="L343">                .orElseThrow(() -&gt; new UsernameNotFoundException(&quot;Usuário &quot; + email + &quot; não encontrado ou inativo.&quot;));</span>
+
+<span class="fc" id="L345">        Token token = tokenService.generateTokenParaRedefinicaoSenha(usuario);</span>
+<span class="fc" id="L346">        String codigoVerificador = tokenService.generateCodigoVerificador();</span>
+
+        // Atualiza código verificador no usuário para validação futura
+<span class="fc" id="L349">        usuario.setCodigoVerificador(codigoVerificador);</span>
+
+        // Envia email com código verificador
+<span class="fc" id="L352">        emailService.enviarPedidoDeRedefinicaoSenha(email, codigoVerificador);</span>
+
+<span class="fc" id="L354">        return token;</span>
+    }
+
+    /**
+     * Valida o token e o código verificador e, se válidos:
+     * - Desativa o token
+     * - Redefine a senha
+     * - Limpa o código verificador
+     *
+     * @return true se tudo foi feito com sucesso, false caso contrário
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public boolean processarRedefinicaoDeSenha(String tokenRecebido, Usuario usuarioForm) {
+<span class="fc" id="L368">        Optional&lt;Token&gt; tokenOptional = tokenService.findByToken(tokenRecebido);</span>
+
+<span class="fc bfc" id="L370" title="All 2 branches covered.">        if (tokenOptional.isEmpty())</span>
+<span class="fc" id="L371">            return false;</span>
+
+<span class="fc" id="L373">        Token token = tokenOptional.get();</span>
+
+        // 1. Token já usado ou expirado?
+<span class="fc bfc" id="L376" title="All 4 branches covered.">        if (token.isDesativado() || token.getDataExpiracao().isBefore(Instant.now()))</span>
+<span class="fc" id="L377">            return false;</span>
+
+<span class="fc" id="L379">        Usuario usuarioToken = token.getUsuario();</span>
+
+        // 2. Código verificador não confere?
+<span class="fc bfc" id="L382" title="All 2 branches covered.">        if (!usuarioForm.getCodigoVerificador().equals(usuarioToken.getCodigoVerificador()))</span>
+<span class="fc" id="L383">            return false;</span>
+
+        // 3. Usuário não está ativo
+<span class="fc bfc" id="L386" title="All 2 branches covered.">        if (!usuarioToken.isAtivo())</span>
+<span class="fc" id="L387">            return false;</span>
+
+        // Tudo certo → processa redefinição
+<span class="fc" id="L390">        token.disabled();</span>
+<span class="fc" id="L391">        tokenService.salvar(token);</span>
+
+<span class="fc" id="L393">        usuarioToken.setCodigoVerificador(null);</span>
+<span class="fc" id="L394">        alterarSenha(usuarioToken, usuarioForm.getSenha());</span>
+
+<span class="fc" id="L396">        return true;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

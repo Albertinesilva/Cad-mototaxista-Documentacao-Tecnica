@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>IdadeMinimaValidator.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">cadmototaxistas</a> &gt; <a href="index.source.html" class="el_package">br.gov.ba.saj.smtt.cadmototaxistas.service.condutor.validation.idademinima</a> &gt; <span class="el_source">IdadeMinimaValidator.java</span></div><h1>IdadeMinimaValidator.java</h1><pre class="source lang-java linenums">package br.gov.ba.saj.smtt.cadmototaxistas.service.condutor.validation.idademinima;
+
+import java.time.LocalDate;
+
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
+
+/**
+ * Validador da anotação {@link ValidIdadeMinima}.
+ * &lt;p&gt;
+ * Valida se uma data de nascimento corresponde a uma idade mínima exigida.
+ */
+<span class="nc" id="L13">public class IdadeMinimaValidator implements ConstraintValidator&lt;ValidIdadeMinima, LocalDate&gt; {</span>
+
+  /**
+   * Idade mínima exigida configurada na anotação.
+   */
+  private int idadeMinima;
+
+  /**
+   * Inicializa o validador com o valor da idade mínima definida na anotação.
+   *
+   * @param constraintAnnotation Anotação com o valor da idade mínima.
+   */
+  @Override
+  public void initialize(ValidIdadeMinima constraintAnnotation) {
+<span class="nc" id="L27">    this.idadeMinima = constraintAnnotation.value();</span>
+<span class="nc" id="L28">  }</span>
+
+  /**
+   * Valida se a data de nascimento informada é anterior ou igual à data mínima calculada.
+   * Se for nula, considera válida (validação opcional).
+   *
+   * @param dataNascimento Data de nascimento a ser validada.
+   * @param context Contexto da validação.
+   * @return {@code true} se a idade for maior ou igual à idade mínima, ou se nula;
+   *         {@code false} caso contrário.
+   */
+  @Override
+  public boolean isValid(LocalDate dataNascimento, ConstraintValidatorContext context) {
+<span class="nc bnc" id="L41" title="All 2 branches missed.">    if (dataNascimento == null) {</span>
+<span class="nc" id="L42">      return true;</span>
+    }
+<span class="nc" id="L44">    LocalDate hoje = LocalDate.now();</span>
+<span class="nc" id="L45">    LocalDate dataMinima = hoje.minusYears(idadeMinima);</span>
+<span class="nc bnc" id="L46" title="All 2 branches missed.">    return !dataNascimento.isAfter(dataMinima);</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

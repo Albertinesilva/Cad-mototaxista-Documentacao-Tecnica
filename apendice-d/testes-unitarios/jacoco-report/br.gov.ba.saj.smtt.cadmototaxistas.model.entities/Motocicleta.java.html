@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Motocicleta.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">cadmototaxistas</a> &gt; <a href="index.source.html" class="el_package">br.gov.ba.saj.smtt.cadmototaxistas.model.entities</a> &gt; <span class="el_source">Motocicleta.java</span></div><h1>Motocicleta.java</h1><pre class="source lang-java linenums">package br.gov.ba.saj.smtt.cadmototaxistas.model.entities;
+
+import java.time.LocalDate;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PastOrPresent;
+import jakarta.validation.constraints.Size;
+
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.format.annotation.DateTimeFormat.ISO;
+
+import br.gov.ba.saj.smtt.cadmototaxistas.model.enums.ESituacaoMoto;
+import br.gov.ba.saj.smtt.cadmototaxistas.model.enums.ETipoPlaca;
+import br.gov.ba.saj.smtt.cadmototaxistas.service.motocicleta.validation.anofabricacao.ValidAnoFabricacao;
+import br.gov.ba.saj.smtt.cadmototaxistas.service.motocicleta.validation.anomodelo.ValidAnoModelo;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * Entidade que representa uma motocicleta associada a um condutor.
+ * &lt;p&gt;
+ * Contém informações como placa, tipo de placa, situação da moto, ano de
+ * fabricação, ano do modelo,
+ * observações, modelo da moto e o condutor relacionado.
+ * &lt;/p&gt;
+ * &lt;p&gt;
+ * As validações customizadas {@link ValidAnoFabricacao} e
+ * {@link ValidAnoModelo} garantem a consistência das datas.
+ * &lt;/p&gt;
+ * 
+ * @author
+ */
+@ValidAnoModelo
+@Getter
+@Setter
+@Entity
+@Table(name = &quot;motocicleta&quot;)
+<span class="fc" id="L48">public class Motocicleta extends AbstractEntity {</span>
+
+    /**
+     * Placa da motocicleta.
+     * Obrigatória, única, mínimo 7 caracteres.
+     */
+    @NotBlank(message = &quot;{NotBlank.motocicleta.placa}&quot;)
+    @Size(min = 7, message = &quot;{Size.motocicleta.placa}&quot;)
+    @Column(name = &quot;placa&quot;, nullable = false, unique = true, length = 10)
+    private String placa;
+
+    /**
+     * Tipo da placa (ex: Mercosul, padrão).
+     * Opcional, armazenado como String do enum {@link ETipoPlaca}.
+     */
+    @Column(name = &quot;tipo_placa&quot;, nullable = true, length = 8)
+    @Enumerated(EnumType.STRING)
+    private ETipoPlaca tipoPlaca;
+
+    /**
+     * Situação da motocicleta.
+     * Opcional, armazenado como String do enum {@link ESituacaoMoto}.
+     */
+    @Column(name = &quot;situacao_moto&quot;, nullable = true, length = 13)
+    @Enumerated(EnumType.STRING)
+    private ESituacaoMoto ePropria;
+
+    /**
+     * Ano de fabricação da motocicleta.
+     * Obrigatório, deve ser data passada ou presente.
+     * Validado pela anotação customizada {@link ValidAnoFabricacao}.
+     */
+    @NotNull(message = &quot;{NotNull.motocicleta.anoFabricacao}&quot;)
+    @PastOrPresent(message = &quot;{PastOrPresent.motocicleta.anoFabricacao}&quot;)
+    @ValidAnoFabricacao
+    @DateTimeFormat(iso = ISO.DATE)
+    @Column(name = &quot;ano_fabricacao&quot;, nullable = false, columnDefinition = &quot;DATE&quot;)
+    private LocalDate anoFabricacao;
+
+    /**
+     * Ano do modelo da motocicleta.
+     * Obrigatório.
+     * Validado pela anotação customizada {@link ValidAnoModelo}.
+     */
+    @NotNull(message = &quot;{NotNull.motocicleta.anoModelo}&quot;)
+    @DateTimeFormat(iso = ISO.DATE)
+    @Column(name = &quot;ano_modelo&quot;, nullable = false, columnDefinition = &quot;DATE&quot;)
+    private LocalDate anoModelo;
+
+    /**
+     * Observações adicionais sobre a motocicleta.
+     * Opcional, até 500 caracteres.
+     */
+    @Column(name = &quot;observacao&quot;, nullable = true, length = 500)
+    private String observacao;
+
+    /**
+     * Modelo da motocicleta.
+     * Obrigatório e validado.
+     */
+    @Valid
+    @NotNull(message = &quot;{NotNull.motocicleta.motoModelo}&quot;)
+    @ManyToOne
+    @JoinColumn(name = &quot;moto_modelo_fk&quot;)
+    private MotoModelo motoModelo;
+
+    /**
+     * Condutor associado a esta motocicleta.
+     * Relacionamento bidirecional OneToOne mapeado pela propriedade 'motocicleta'
+     * do condutor.
+     */
+    @OneToOne(mappedBy = &quot;motocicleta&quot;)
+    private Condutor condutor;
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

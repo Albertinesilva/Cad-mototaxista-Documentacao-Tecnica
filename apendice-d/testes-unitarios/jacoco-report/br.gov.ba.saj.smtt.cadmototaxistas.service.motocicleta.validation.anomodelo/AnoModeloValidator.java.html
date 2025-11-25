@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AnoModeloValidator.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">cadmototaxistas</a> &gt; <a href="index.source.html" class="el_package">br.gov.ba.saj.smtt.cadmototaxistas.service.motocicleta.validation.anomodelo</a> &gt; <span class="el_source">AnoModeloValidator.java</span></div><h1>AnoModeloValidator.java</h1><pre class="source lang-java linenums">package br.gov.ba.saj.smtt.cadmototaxistas.service.motocicleta.validation.anomodelo;
+
+import br.gov.ba.saj.smtt.cadmototaxistas.model.entities.Motocicleta;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
+
+/**
+ * Validador para a anotação {@link ValidAnoModelo}.
+ * 
+ * Realiza a validação da consistência entre os campos {@code anoFabricacao} e
+ * {@code anoModelo}
+ * da entidade {@link Motocicleta}, garantindo que o ano do modelo não seja
+ * anterior ao ano de fabricação.
+ */
+<span class="nc" id="L15">public class AnoModeloValidator implements ConstraintValidator&lt;ValidAnoModelo, Motocicleta&gt; {</span>
+
+  /**
+   * Realiza a validação do objeto {@link Motocicleta}.
+   * 
+   * @param moto    objeto a ser validado
+   * @param context contexto da validação para adicionar mensagens personalizadas
+   * @return {@code true} se válido, {@code false} caso contrário
+   */
+  @Override
+  public boolean isValid(Motocicleta moto, ConstraintValidatorContext context) {
+<span class="nc bnc" id="L26" title="All 2 branches missed.">    if (moto == null) {</span>
+<span class="nc" id="L27">      return true; // Não valida se o objeto for nulo</span>
+    }
+
+<span class="nc bnc" id="L30" title="All 4 branches missed.">    if (moto.getAnoFabricacao() == null || moto.getAnoModelo() == null) {</span>
+<span class="nc" id="L31">      return true; // Não realiza validação se algum dos campos for nulo</span>
+    }
+
+<span class="nc bnc" id="L34" title="All 2 branches missed.">    boolean isValid = !moto.getAnoModelo().isBefore(moto.getAnoFabricacao());</span>
+
+<span class="nc bnc" id="L36" title="All 2 branches missed.">    if (!isValid) {</span>
+      // Remove a mensagem de erro padrão e adiciona uma mensagem personalizada no
+      // campo 'anoModelo'
+<span class="nc" id="L39">      context.disableDefaultConstraintViolation();</span>
+<span class="nc" id="L40">      context.buildConstraintViolationWithTemplate(context.getDefaultConstraintMessageTemplate())</span>
+<span class="nc" id="L41">          .addPropertyNode(&quot;anoModelo&quot;)</span>
+<span class="nc" id="L42">          .addConstraintViolation();</span>
+    }
+
+<span class="nc" id="L45">    return isValid;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CepValidator.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">cadmototaxistas</a> &gt; <a href="index.source.html" class="el_package">br.gov.ba.saj.smtt.cadmototaxistas.service.condutor.validation.cep</a> &gt; <span class="el_source">CepValidator.java</span></div><h1>CepValidator.java</h1><pre class="source lang-java linenums">package br.gov.ba.saj.smtt.cadmototaxistas.service.condutor.validation.cep;
+
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
+
+/**
+ * Validador para verificar se um valor de CEP (Código de Endereçamento Postal)
+ * está no formato válido &quot;xxxxx-xxx&quot;.
+ * 
+ * O formato esperado é 5 dígitos, seguido de hífen e mais 3 dígitos, por exemplo:
+ * &quot;12345-678&quot;.
+ * 
+ * Caso o valor seja null ou vazio, o validador considera válido.
+ */
+<span class="nc" id="L15">public class CepValidator implements ConstraintValidator&lt;ValidCep, String&gt; {</span>
+
+  private static final String CEP_REGEX = &quot;^\\d{5}-\\d{3}$&quot;;
+
+  /**
+   * Valida se o valor informado está no formato correto de CEP.
+   * 
+   * @param value   Valor do CEP a ser validado.
+   * @param context Contexto da validação.
+   * @return true se o valor for null, vazio ou corresponder ao formato &quot;xxxxx-xxx&quot;;
+   *         false caso contrário.
+   */
+  @Override
+  public boolean isValid(String value, ConstraintValidatorContext context) {
+<span class="nc bnc" id="L29" title="All 4 branches missed.">    if (value == null || value.trim().isEmpty()) {</span>
+<span class="nc" id="L30">      return true;</span>
+    }
+<span class="nc" id="L32">    return value.matches(CEP_REGEX);</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

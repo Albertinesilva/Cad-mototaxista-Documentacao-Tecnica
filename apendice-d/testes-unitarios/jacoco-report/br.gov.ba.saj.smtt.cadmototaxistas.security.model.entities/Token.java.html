@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Token.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">cadmototaxistas</a> &gt; <a href="index.source.html" class="el_package">br.gov.ba.saj.smtt.cadmototaxistas.security.model.entities</a> &gt; <span class="el_source">Token.java</span></div><h1>Token.java</h1><pre class="source lang-java linenums">package br.gov.ba.saj.smtt.cadmototaxistas.security.model.entities;
+
+import java.time.Instant;
+
+import br.gov.ba.saj.smtt.cadmototaxistas.model.entities.AbstractEntity;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+/**
+ * Representa um token de autenticação vinculado a um usuário.
+ * &lt;p&gt;
+ * Esse token é utilizado para operações como confirmação de cadastro e
+ * redefinição de senha, tendo uma data de expiração e podendo ser desativado.
+ * &lt;/p&gt;
+ * 
+ * @author
+ */
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
+@Entity
+@Table(name = &quot;tokens&quot;)
+public class Token extends AbstractEntity {
+
+  /**
+   * Código do token utilizado para autenticação ou confirmação.
+   * &lt;p&gt;
+   * Deve ser único e não nulo.
+   */
+  @Column(name = &quot;token&quot;, nullable = false, unique = true, length = 255)
+  private String token;
+
+  /**
+   * Instante exato da expiração do token.
+   * &lt;p&gt;
+   * Após essa data, o token é considerado inválido.
+   */
+  @Column(name = &quot;data_expiracao&quot;, nullable = false)
+  private Instant dataExpiracao;
+
+  /**
+   * Indica se o token foi desativado.
+   * &lt;p&gt;
+   * Tokens desativados não podem mais ser utilizados.
+   */
+  @Column(name = &quot;desativado&quot;, nullable = false)
+  private boolean desativado;
+
+  /**
+   * Usuário associado a este token.
+   * &lt;p&gt;
+   * Define a relação entre o token e o {@link Usuario} responsável.
+   */
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = &quot;usuario_id&quot;)
+  private Usuario usuario;
+
+  /**
+   * Método utilitário para desativar o token.
+   */
+  public void disabled() {
+<span class="fc" id="L71">    this.desativado = true;</span>
+<span class="fc" id="L72">  }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

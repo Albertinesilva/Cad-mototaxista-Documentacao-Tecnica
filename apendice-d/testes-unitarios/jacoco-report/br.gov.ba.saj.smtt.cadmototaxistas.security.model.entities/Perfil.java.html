@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Perfil.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">cadmototaxistas</a> &gt; <a href="index.source.html" class="el_package">br.gov.ba.saj.smtt.cadmototaxistas.security.model.entities</a> &gt; <span class="el_source">Perfil.java</span></div><h1>Perfil.java</h1><pre class="source lang-java linenums">package br.gov.ba.saj.smtt.cadmototaxistas.security.model.entities;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+
+import br.gov.ba.saj.smtt.cadmototaxistas.model.entities.AbstractEntity;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+/**
+ * Representa o perfil de acesso de um usuário no sistema.
+ * &lt;p&gt;
+ * Cada perfil define um conjunto de permissões ou regras que um usuário pode
+ * ter, como por exemplo: ADMIN, FUNCIONARIO etc.
+ * &lt;p&gt;
+ * A descrição do perfil deve ser única e não nula.
+ *
+ * @author
+ */
+@NoArgsConstructor
+@Setter
+@Getter
+@Entity
+@Table(name = &quot;perfis&quot;)
+public class Perfil extends AbstractEntity {
+
+	/**
+	 * Descrição do perfil de acesso (ex: ADMIN, FUNCIONARIO).
+	 * &lt;p&gt;
+	 * Deve ser única e não pode ser nula.
+	 */
+	@Column(name = &quot;descricao&quot;, nullable = false, unique = true)
+	private String descricao;
+
+	/**
+	 * Construtor que recebe o ID do perfil.
+	 *
+	 * @param id identificador do perfil.
+	 */
+<span class="fc" id="L42">	public Perfil(Long id) {</span>
+<span class="fc" id="L43">		super.setId(id);</span>
+<span class="fc" id="L44">	}</span>
+
+	/**
+	 * Construtor que recebe apenas a descrição do perfil.
+	 *
+	 * @param descricao descrição textual do perfil.
+	 */
+<span class="fc" id="L51">	public Perfil(String descricao) {</span>
+<span class="fc" id="L52">		this.descricao = descricao;</span>
+<span class="fc" id="L53">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

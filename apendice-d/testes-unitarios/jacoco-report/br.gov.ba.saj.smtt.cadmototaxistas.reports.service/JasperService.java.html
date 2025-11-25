@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>JasperService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">cadmototaxistas</a> &gt; <a href="index.source.html" class="el_package">br.gov.ba.saj.smtt.cadmototaxistas.reports.service</a> &gt; <span class="el_source">JasperService.java</span></div><h1>JasperService.java</h1><pre class="source lang-java linenums">package br.gov.ba.saj.smtt.cadmototaxistas.reports.service;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.sql.DataSource;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
+import org.springframework.stereotype.Service;
+
+import br.gov.ba.saj.smtt.cadmototaxistas.reports.enums.TipoRelatorio;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperExportManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+
+/**
+ * Serviço responsável pela geração de relatórios utilizando JasperReports.
+ * 
+ * &lt;p&gt;
+ * Os arquivos `.jasper` devem estar disponíveis no classpath do projeto,
+ * dentro do diretório {@code resources/reports}, e devem seguir o padrão de
+ * nomenclatura {@code tipos-sanguineo-{code}.jasper}.
+ * &lt;/p&gt;
+ * 
+ * &lt;p&gt;
+ * Este serviço permite a geração de relatórios em PDF, com suporte a
+ * parâmetros dinâmicos.
+ * &lt;/p&gt;
+ * 
+ * @author
+ */
+@Service
+<span class="fc" id="L41">public class JasperService {</span>
+
+<span class="fc" id="L43">    private static final Logger LOGGER = LoggerFactory.getLogger(JasperService.class);</span>
+
+    private static final String JASPER_DIRETORIO = &quot;classpath:reports/&quot;;
+    private static final String JASPER_SUFIXO = &quot;.jasper&quot;;
+
+    @Autowired
+    private ResourceLoader resourceLoader;
+
+    @Autowired
+    private DataSource dataSource;
+
+    /**
+     * Cria um mapa com os parâmetros padrão usados em todos os relatórios.
+     * 
+     * @return mapa contendo os parâmetros padrão (imagens, logos, etc.).
+     */
+    private Map&lt;String, Object&gt; criarParametrosPadrao() {
+<span class="nc" id="L60">        Map&lt;String, Object&gt; parametros = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L61">        parametros.put(&quot;LOGO_SINALEIRA&quot;, JASPER_DIRETORIO);</span>
+<span class="nc" id="L62">        return parametros;</span>
+    }
+
+    /**
+     * Gera um relatório JasperReports em formato PDF com apenas os parâmetros
+     * padrão (LOGO_SINALEIRA e IMAGEM_MOTO).
+     *
+     * @param code o código do relatório a ser gerado (ex: &quot;grupo-sanguineo&quot;).
+     * @param tipo o tipo de relatório a ser gerado, conforme o enum
+     *             {@link TipoRelatorio}.
+     * @return um array de bytes representando o conteúdo do PDF gerado.
+     * @throws RuntimeException em caso de falha na geração.
+     */
+    public byte[] gerarPDF(String code, TipoRelatorio tipo) {
+<span class="nc" id="L76">        return gerarPDF(code, tipo, null);</span>
+    }
+
+    /**
+     * Gera um relatório JasperReports em formato PDF com parâmetros adicionais.
+     *
+     * @param code             o código do relatório a ser gerado (ex:
+     *                         &quot;grupo-sanguineo&quot;).
+     * @param tipo             o tipo de relatório a ser gerado, conforme o enum
+     *                         {@link TipoRelatorio}.
+     * @param parametrosExtras parâmetros adicionais a serem utilizados no
+     *                         relatório.
+     * @return um array de bytes representando o conteúdo do PDF gerado.
+     * @throws RuntimeException em caso de falha na geração.
+     */
+    public byte[] gerarPDF(String code, TipoRelatorio tipo, Long parametrosExtras) {
+<span class="nc" id="L92">        byte[] bytes = null;</span>
+        try {
+<span class="nc" id="L94">            Map&lt;String, Object&gt; parametros = criarParametrosPadrao();</span>
+
+<span class="nc bnc" id="L96" title="All 2 branches missed.">            if (parametrosExtras != null) {</span>
+<span class="nc" id="L97">                parametros.put(&quot;ID_CONDUTOR&quot;, parametrosExtras);</span>
+<span class="nc" id="L98">                parametros.put(&quot;LOGO_MUNICIPIO&quot;, JASPER_DIRETORIO);</span>
+            }
+
+<span class="nc" id="L101">            String caminho = JASPER_DIRETORIO + tipo.getNomeArquivo() + code + JASPER_SUFIXO;</span>
+<span class="nc" id="L102">            Resource resource = resourceLoader.getResource(caminho);</span>
+
+<span class="nc" id="L104">            try (InputStream jasperFile = resource.getInputStream()) {</span>
+<span class="nc" id="L105">                JasperPrint print = JasperFillManager.fillReport(jasperFile, parametros, dataSource.getConnection());</span>
+<span class="nc" id="L106">                bytes = JasperExportManager.exportReportToPdf(print);</span>
+            }
+
+<span class="nc" id="L109">        } catch (IOException | JRException | SQLException e) {</span>
+<span class="nc" id="L110">            LOGGER.error(&quot;Erro ao gerar relatório Jasper ::: &quot;, e);</span>
+<span class="nc" id="L111">            throw new RuntimeException(e);</span>
+<span class="nc" id="L112">        }</span>
+
+<span class="nc" id="L114">        return bytes;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

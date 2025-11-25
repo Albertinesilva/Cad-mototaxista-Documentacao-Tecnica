@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ETipoPlaca.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">cadmototaxistas</a> &gt; <a href="index.source.html" class="el_package">br.gov.ba.saj.smtt.cadmototaxistas.model.enums</a> &gt; <span class="el_source">ETipoPlaca.java</span></div><h1>ETipoPlaca.java</h1><pre class="source lang-java linenums">package br.gov.ba.saj.smtt.cadmototaxistas.model.enums;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+/**
+ * Enumeração que representa os tipos de placa veicular reconhecidos pelo
+ * sistema.
+ * &lt;p&gt;
+ * Essa enum é usada para identificar o modelo da placa da motocicleta
+ * cadastrada.
+ * &lt;/p&gt;
+ *
+ * &lt;ul&gt;
+ * &lt;li&gt;{@code MERCOSUL} - Placa no novo padrão Mercosul (branca com letras
+ * azuis).&lt;/li&gt;
+ * &lt;li&gt;{@code ANTIGA} - Placa no modelo antigo (geralmente cinza ou preta).&lt;/li&gt;
+ * &lt;/ul&gt;
+ */
+<span class="fc" id="L20">@Getter</span>
+@AllArgsConstructor
+public enum ETipoPlaca {
+
+    /** Placa padrão Mercosul (nova). */
+<span class="fc" id="L25">    MERCOSUL(&quot;Mercosul&quot;),</span>
+
+    /** Placa antiga (cinza ou preta). */
+<span class="fc" id="L28">    ANTIGA(&quot;Cinza&quot;);</span>
+
+    /**
+     * Descrição textual do tipo de placa.
+     */
+    private final String tipoPlaca;
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

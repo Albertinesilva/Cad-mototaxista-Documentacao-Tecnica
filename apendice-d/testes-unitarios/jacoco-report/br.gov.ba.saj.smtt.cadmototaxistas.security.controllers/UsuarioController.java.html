@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UsuarioController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">cadmototaxistas</a> &gt; <a href="index.source.html" class="el_package">br.gov.ba.saj.smtt.cadmototaxistas.security.controllers</a> &gt; <span class="el_source">UsuarioController.java</span></div><h1>UsuarioController.java</h1><pre class="source lang-java linenums">package br.gov.ba.saj.smtt.cadmototaxistas.security.controllers;
+
+import jakarta.mail.MessagingException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import br.gov.ba.saj.smtt.cadmototaxistas.model.entities.Funcionario;
+import br.gov.ba.saj.smtt.cadmototaxistas.model.enums.ETipoSanguineo;
+import br.gov.ba.saj.smtt.cadmototaxistas.security.model.entities.Perfil;
+import br.gov.ba.saj.smtt.cadmototaxistas.security.model.entities.Token;
+import br.gov.ba.saj.smtt.cadmototaxistas.security.model.entities.Usuario;
+import br.gov.ba.saj.smtt.cadmototaxistas.security.model.enums.PerfilTipo;
+import br.gov.ba.saj.smtt.cadmototaxistas.security.services.usuario.UsuarioService;
+import br.gov.ba.saj.smtt.cadmototaxistas.service.funcionario.FuncionarioService;
+import br.gov.ba.saj.smtt.cadmototaxistas.util.enums.ResultadoAtivacao;
+import br.gov.ba.saj.smtt.cadmototaxistas.util.messages.UtilMessage;
+
+/**
+ * Controlador responsável pelo gerenciamento de usuários, incluindo cadastro,
+ * edição de credenciais, redefinição de senha e associação com funcionários
+ * SMTT.
+ */
+@Controller
+@RequestMapping(&quot;/u&quot;)
+<span class="fc" id="L41">public class UsuarioController {</span>
+
+    @Autowired
+    private UsuarioService usuarioService;
+
+    @Autowired
+    private FuncionarioService funcionarioService;
+
+    /**
+     * Exibe a tela de cadastro de usuário (para administradores).
+     */
+    @GetMapping(&quot;/novo/cadastro/usuario&quot;)
+    public String cadastroPorAdminParaAdminFuncionario(Usuario usuario) {
+<span class="nc" id="L54">        return &quot;usuario/cadastro&quot;;</span>
+    }
+
+    /**
+     * Exibe a tela de listagem de usuários.
+     */
+    @GetMapping(&quot;/lista&quot;)
+    public String listar() {
+<span class="nc" id="L62">        return &quot;usuario/lista&quot;;</span>
+    }
+
+    /**
+     * Retorna os usuários formatados para DataTables.
+     */
+    @GetMapping(&quot;/datatables/server/usuarios&quot;)
+    public ResponseEntity&lt;?&gt; listarUsuariosDatatables(HttpServletRequest request) {
+<span class="nc" id="L70">        return ResponseEntity.ok(usuarioService.buscarTodos(request));</span>
+    }
+
+    /**
+     * Salva um novo usuário cadastrado por administrador.
+     */
+    @PostMapping(&quot;/cadastro/salvar&quot;)
+    public String salvar(@Valid Usuario usuario, RedirectAttributes attr, BindingResult result) {
+<span class="nc bnc" id="L78" title="All 2 branches missed.">        if (result.hasErrors()) {</span>
+<span class="nc" id="L79">            return &quot;usuario/cadastro&quot;;</span>
+        }
+        try {
+<span class="nc" id="L82">            usuarioService.salvarUsuario(usuario);</span>
+<span class="nc" id="L83">            attr.addFlashAttribute(&quot;success&quot;, &quot;Operação realizada com sucesso!&quot;);</span>
+<span class="nc" id="L84">        } catch (DataIntegrityViolationException ex) {</span>
+<span class="nc" id="L85">            attr.addFlashAttribute(&quot;fail&quot;, &quot;Cadastro não realizado, email já existente!&quot;);</span>
+<span class="nc" id="L86">        }</span>
+
+<span class="nc" id="L88">        return &quot;redirect:/u/novo/cadastro/usuario&quot;;</span>
+    }
+
+    /**
+     * Pré-edição de credenciais de um usuário pelo ID.
+     */
+    @GetMapping(&quot;/editar/credenciais/usuario/{id}&quot;)
+    public ModelAndView preEditarCredenciais(@PathVariable(&quot;id&quot;) Long id) {
+<span class="nc" id="L96">        ModelAndView mv = new ModelAndView(&quot;usuario/cadastro&quot;);</span>
+<span class="nc" id="L97">        mv.addObject(&quot;usuario&quot;, usuarioService.buscarPorId(id));</span>
+<span class="nc" id="L98">        return mv;</span>
+    }
+
+    /**
+     * Pré-edição de dados pessoais do usuário e redirecionamento para view
+     * adequada.
+     */
+    @GetMapping(&quot;/editar/dados/usuario/{id}/perfis/{perfis}&quot;)
+    public ModelAndView preEditarCadastroDadosPessoais(@PathVariable(&quot;id&quot;) Long usuarioId,
+            @PathVariable(&quot;perfis&quot;) Long[] perfisId, ModelMap model) {
+
+<span class="nc" id="L109">        Usuario usuario = usuarioService.buscarPorIdEPerfis(usuarioId, perfisId);</span>
+<span class="nc" id="L110">        model.addAttribute(&quot;etiposanguineos&quot;, ETipoSanguineo.values());</span>
+
+<span class="nc bnc" id="L112" title="All 2 branches missed.">        if (usuario.getPerfis().contains(new Perfil(PerfilTipo.ADMIN.getCod())) &amp;&amp;</span>
+<span class="nc bnc" id="L113" title="All 2 branches missed.">                !usuario.getPerfis().contains(new Perfil(PerfilTipo.FUNCIONARIO.getCod()))) {</span>
+
+<span class="nc" id="L115">            return new ModelAndView(&quot;usuario/cadastro&quot;, &quot;usuario&quot;, usuario);</span>
+
+        } else {
+<span class="nc bnc" id="L118" title="All 2 branches missed.">            if (usuario.getPerfis().contains(new Perfil(PerfilTipo.FUNCIONARIO.getCod()))) {</span>
+
+<span class="nc" id="L120">                Funcionario funcionario = funcionarioService.buscarPorUsuarioId(usuarioId);</span>
+<span class="nc bnc" id="L121" title="All 2 branches missed.">                return funcionario.hasNotId()</span>
+<span class="nc" id="L122">                        ? new ModelAndView(&quot;funcionario/cadastro&quot;, &quot;funcionario&quot;,</span>
+                                new Funcionario(new Usuario(usuarioId)))
+<span class="nc" id="L124">                        : new ModelAndView(&quot;funcionario/cadastro&quot;, &quot;funcionario&quot;, funcionario);</span>
+
+<span class="nc bnc" id="L126" title="All 2 branches missed.">            } else if (usuario.getPerfis().contains(new Perfil(PerfilTipo.CLIENTE.getCod()))) {</span>
+<span class="nc" id="L127">                ModelAndView mv = new ModelAndView(&quot;error&quot;);</span>
+<span class="nc" id="L128">                mv.addObject(&quot;status&quot;, 403);</span>
+<span class="nc" id="L129">                mv.addObject(&quot;error&quot;, &quot;Área Restrita&quot;);</span>
+<span class="nc" id="L130">                mv.addObject(&quot;message&quot;, &quot;Os dados de clientes são restritos a ele mesmo&quot;);</span>
+<span class="nc" id="L131">                return mv;</span>
+            }
+        }
+<span class="nc" id="L134">        return new ModelAndView(&quot;redirect:/u/lista&quot;);</span>
+    }
+
+    /**
+     * Exibe a tela para edição de senha do usuário logado.
+     */
+    @GetMapping(&quot;/editar/senha&quot;)
+    public String abrirEditarSenha() {
+<span class="nc" id="L142">        return &quot;usuario/editar-senha&quot;;</span>
+    }
+
+    /**
+     * Processa a edição da senha do usuário logado.
+     */
+    @PostMapping(&quot;/confirmar/senha&quot;)
+    public String editarSenha(@RequestParam(&quot;senha1&quot;) String s1, @RequestParam(&quot;senha2&quot;) String s2,
+            @RequestParam(&quot;senha3&quot;) String s3, @AuthenticationPrincipal User user,
+            RedirectAttributes attr) {
+
+<span class="nc bnc" id="L153" title="All 2 branches missed.">        if (!s1.equals(s2)) {</span>
+<span class="nc" id="L154">            attr.addFlashAttribute(&quot;fail&quot;, &quot;Senhas não conferem, tente novamente!&quot;);</span>
+<span class="nc" id="L155">            return &quot;redirect:/u/editar/senha&quot;;</span>
+        }
+
+<span class="nc" id="L158">        Usuario usuario = usuarioService.buscarPorEmail(user.getUsername());</span>
+<span class="nc bnc" id="L159" title="All 2 branches missed.">        if (!usuarioService.isSenhaCorreta(s3, usuario.getSenha())) {</span>
+<span class="nc" id="L160">            attr.addFlashAttribute(&quot;fail&quot;, &quot;Senha atual não confere, tente novamente!&quot;);</span>
+<span class="nc" id="L161">            return &quot;redirect:/u/editar/senha&quot;;</span>
+        }
+
+<span class="nc" id="L164">        usuarioService.alterarSenha(usuario, s1);</span>
+<span class="nc" id="L165">        attr.addFlashAttribute(&quot;success&quot;, &quot;Senha alterada com sucesso!&quot;);</span>
+
+<span class="nc" id="L167">        return &quot;redirect:/u/editar/senha&quot;;</span>
+    }
+
+    /**
+     * Exibe a página de cadastro para servidores SMTT.
+     */
+    @GetMapping(&quot;/novo/cadastro&quot;)
+    public String novoCadastro(Usuario usuario) {
+<span class="nc" id="L175">        return &quot;cadastrar-se&quot;;</span>
+    }
+
+    /**
+     * Exibe mensagem de sucesso após cadastro.
+     */
+    @GetMapping(&quot;/cadastro/realizado&quot;)
+    public String cadastroRealizado() {
+<span class="nc" id="L183">        return &quot;fragments/mensagem&quot;;</span>
+    }
+
+    /**
+     * Salva o cadastro de um novo usuário cliente.
+     */
+    @PostMapping(&quot;/cadastro/cliente/salvar&quot;)
+    public String salvarCadastroCliente(Usuario usuario, BindingResult result, RedirectAttributes attr)
+            throws MessagingException {
+        try {
+<span class="nc" id="L193">            usuarioService.salvarUsuarioCliente(usuario);</span>
+<span class="nc" id="L194">            attr.addFlashAttribute(&quot;success&quot;, &quot;Cadastro realizado com sucesso!&quot;);</span>
+<span class="nc" id="L195">        } catch (DataIntegrityViolationException ex) {</span>
+<span class="nc" id="L196">            result.reject(&quot;email&quot;, &quot;Ops! Este e-mail já foi cadastrado por outra pessoa.&quot;);</span>
+<span class="nc" id="L197">            return &quot;cadastrar-se&quot;;</span>
+<span class="nc" id="L198">        }</span>
+<span class="nc" id="L199">        return &quot;redirect:/u/cadastro/realizado&quot;;</span>
+    }
+
+    /**
+     * Endpoint responsável por processar a confirmação de cadastro do cliente, com
+     * base no token de ativação.
+     * &lt;p&gt;
+     * Após validar e ativar o cadastro via serviço, redireciona o usuário para a
+     * tela de login com uma
+     * mensagem de sucesso ou erro, conforme o resultado da ativação.
+     *
+     * @param codigo o token de ativação enviado ao usuário
+     * @param attr   atributos para enviar mensagens flash para a view após o
+     *               redirecionamento
+     * @return redirecionamento para a página de login
+     * @throws MessagingException
+     */
+    @GetMapping(&quot;/confirmacao/cadastro&quot;)
+    public String respostaConfirmacaoCadastroCliente(@RequestParam(&quot;codigo&quot;) String codigo,
+            RedirectAttributes attr) throws MessagingException {
+
+<span class="nc" id="L220">        ResultadoAtivacao resultado = usuarioService.ativarCadastroCliente(codigo);</span>
+<span class="nc" id="L221">        UtilMessage.adicionarMensagemAtivacao(resultado, attr);</span>
+
+<span class="nc" id="L223">        return &quot;redirect:/login&quot;;</span>
+    }
+
+    /**
+     * Exibe a tela para o pedido de redefinição de senha.
+     */
+    @GetMapping(&quot;/p/redefinir/senha&quot;)
+    public String pedidoRedefinirSenha() {
+<span class="nc" id="L231">        return &quot;usuario/pedido-recuperar-senha&quot;;</span>
+    }
+
+    /**
+     * Processa a solicitação de redefinição de senha e exibe o formulário de nova
+     * senha.
+     */
+    @GetMapping(&quot;/p/recuperar/senha&quot;)
+    public String redefinirSenha(String email, ModelMap model) throws MessagingException {
+<span class="nc" id="L240">        Token token = usuarioService.pedidoRedefinicaoDeSenha(email);</span>
+<span class="nc" id="L241">        model.addAttribute(&quot;sucesso&quot;,</span>
+                &quot;Em instantes você receberá um e-mail para prosseguir com a redefinição de sua senha.&quot;);
+<span class="nc" id="L243">        model.addAttribute(&quot;usuario&quot;, new Usuario(email));</span>
+<span class="nc" id="L244">        model.addAttribute(&quot;token&quot;, token.getToken());</span>
+
+<span class="nc" id="L246">        return &quot;usuario/recuperar-senha&quot;;</span>
+    }
+
+    /**
+     * Confirma a redefinição da nova senha informada.
+     */
+    @PostMapping(&quot;/p/nova/senha&quot;)
+    public String confirmacaoDeRedefinicaoDeSenha(Usuario usuario, String token, ModelMap model) {
+
+<span class="nc" id="L255">        boolean sucesso = usuarioService.processarRedefinicaoDeSenha(token, usuario);</span>
+
+<span class="nc bnc" id="L257" title="All 2 branches missed.">        if (!sucesso) {</span>
+<span class="nc" id="L258">            model.addAttribute(&quot;falha&quot;, &quot;Token ou código verificador inválido ou expirado.&quot;);</span>
+<span class="nc" id="L259">            model.addAttribute(&quot;usuario&quot;, usuario);</span>
+<span class="nc" id="L260">            model.addAttribute(&quot;token&quot;, token);</span>
+<span class="nc" id="L261">            return &quot;usuario/recuperar-senha&quot;;</span>
+        }
+
+<span class="nc" id="L264">        model.addAttribute(&quot;alerta&quot;, &quot;sucesso&quot;);</span>
+<span class="nc" id="L265">        model.addAttribute(&quot;titulo&quot;, &quot;Senha redefinida!&quot;);</span>
+<span class="nc" id="L266">        model.addAttribute(&quot;texto&quot;, &quot;Você já pode logar no sistema.&quot;);</span>
+<span class="nc" id="L267">        return &quot;login&quot;;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AcaoAuditoria.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">cadmototaxistas</a> &gt; <a href="index.source.html" class="el_package">br.gov.ba.saj.smtt.cadmototaxistas.auditoria.model.enums</a> &gt; <span class="el_source">AcaoAuditoria.java</span></div><h1>AcaoAuditoria.java</h1><pre class="source lang-java linenums">package br.gov.ba.saj.smtt.cadmototaxistas.auditoria.model.enums;
+
+/**
+ * Enumeração que representa os tipos de ações que podem ser auditadas no
+ * sistema.
+ *
+ * Cada constante define uma ação executada sobre os dados (como criação ou
+ * exclusão),
+ * junto de uma descrição legível que pode ser exibida em interfaces ou
+ * relatórios.
+ * 
+ * Usado em conjunto com
+ * {@link br.gov.ba.saj.smtt.cadmototaxistas.auditoria.model.entities.RegistroAuditoria}
+ * para registrar e categorizar eventos do sistema.
+ * 
+ * @author SeuNome
+ * @since 1.0
+ */
+<span class="nc" id="L19">public enum AcaoAuditoria {</span>
+
+    /**
+     * Ação de criação de um novo registro no sistema.
+     */
+<span class="nc" id="L24">    CREATE(&quot;Criar&quot;),</span>
+
+    /**
+     * Ação de modificação/atualização de um registro existente.
+     */
+<span class="nc" id="L29">    UPDATE(&quot;Editar&quot;),</span>
+
+    /**
+     * Ação de remoção/exclusão de um registro do sistema.
+     */
+<span class="nc" id="L34">    DELETE(&quot;Excluir&quot;),</span>
+
+    /**
+     * Ação de consulta ou visualização de um dado.
+     * Pode ser utilizada em auditorias de acessos ou verificações.
+     */
+<span class="nc" id="L40">    CONSULT(&quot;Consultar&quot;),</span>
+
+<span class="nc" id="L42">    ATUALIZACAO_ALVARA(&quot;Atualização de Alvará&quot;);</span>
+
+
+    /**
+     * Descrição legível da ação, usada para exibição em logs e interfaces.
+     */
+    private final String descricao;
+
+    /**
+     * Construtor do enum que associa uma descrição à ação.
+     * 
+     * @param descricao Descrição legível da ação.
+     */
+<span class="nc" id="L55">    AcaoAuditoria(String descricao) {</span>
+<span class="nc" id="L56">        this.descricao = descricao;</span>
+<span class="nc" id="L57">    }</span>
+
+    /**
+     * Retorna a descrição legível da ação de auditoria.
+     * 
+     * @return descrição da ação.
+     */
+    public String getDescricao() {
+<span class="nc" id="L65">        return descricao;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

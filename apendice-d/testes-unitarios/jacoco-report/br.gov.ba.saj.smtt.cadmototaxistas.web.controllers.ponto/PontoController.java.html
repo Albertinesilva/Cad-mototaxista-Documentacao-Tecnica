@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PontoController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">cadmototaxistas</a> &gt; <a href="index.source.html" class="el_package">br.gov.ba.saj.smtt.cadmototaxistas.web.controllers.ponto</a> &gt; <span class="el_source">PontoController.java</span></div><h1>PontoController.java</h1><pre class="source lang-java linenums">package br.gov.ba.saj.smtt.cadmototaxistas.web.controllers.ponto;
+
+import java.util.List;
+import java.util.Optional;
+
+import jakarta.validation.Valid;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import br.gov.ba.saj.smtt.cadmototaxistas.model.entities.Ponto;
+import br.gov.ba.saj.smtt.cadmototaxistas.service.ponto.PontoService;
+import br.gov.ba.saj.smtt.cadmototaxistas.service.validacao.ValidadorDeContatoService;
+import br.gov.ba.saj.smtt.cadmototaxistas.util.paginacao.PaginacaoUtil;
+
+/**
+ * Controller responsável por gerenciar as operações relacionadas aos pontos de
+ * mototáxi.
+ *
+ * Fornece funcionalidades para cadastrar, listar com paginação, editar,
+ * excluir, ativar/desativar
+ * e buscar pontos por nome. Utiliza {@link PontoService} para executar a lógica
+ * de negócio.
+ */
+@Controller
+@RequestMapping(&quot;/pontos&quot;)
+<span class="fc" id="L38">public class PontoController {</span>
+
+<span class="fc" id="L40">    private static final Logger LOGGER = LoggerFactory.getLogger(PontoController.class);</span>
+
+    @Autowired
+    private PontoService pontoService;
+
+    @Autowired
+    private ValidadorDeContatoService validadorDeContatoService;
+
+    /**
+     * Exibe o formulário para cadastro de um novo ponto.
+     *
+     * @param ponto entidade ponto vazia
+     * @return view da página de cadastro de ponto
+     */
+    @GetMapping(&quot;/cadastrar&quot;)
+    public String cadastrar(Ponto ponto) {
+<span class="nc" id="L56">        return &quot;ponto/cadastro&quot;;</span>
+    }
+
+    /**
+     * Lista os pontos paginados e ordenados.
+     *
+     * @param model modelo da view
+     * @param page  número da página atual (opcional)
+     * @param dir   direção de ordenação (asc ou desc)
+     * @return view com a lista paginada de pontos
+     */
+    @GetMapping(&quot;/listar&quot;)
+    public String listar(ModelMap model, @RequestParam(&quot;page&quot;) Optional&lt;Integer&gt; page,
+            @RequestParam(&quot;dir&quot;) Optional&lt;String&gt; dir) {
+<span class="nc" id="L70">        int paginaAtual = page.orElse(1);</span>
+<span class="nc" id="L71">        String ordem = dir.orElse(&quot;asc&quot;);</span>
+
+<span class="nc" id="L73">        PaginacaoUtil&lt;Ponto&gt; pagePonto = pontoService.buscaPaginada(paginaAtual, ordem);</span>
+<span class="nc" id="L74">        model.addAttribute(&quot;pagePonto&quot;, pagePonto);</span>
+<span class="nc" id="L75">        return &quot;ponto/lista&quot;;</span>
+    }
+
+    /**
+     * Salva um novo ponto após validação.
+     *
+     * @param ponto  entidade ponto a ser salva
+     * @param result resultado da validação
+     * @param model  modelo para erro
+     * @param attr   atributos de redirecionamento
+     * @return redirecionamento para listagem ou formulário em caso de erro
+     */
+    @PostMapping(&quot;/salvar&quot;)
+    public String salvar(@Valid Ponto ponto, BindingResult result, Model model, RedirectAttributes attr) {
+<span class="nc bnc" id="L89" title="All 4 branches missed.">        if (result.hasErrors() || validadorDeContatoService.existeTelefoneCadastrado(ponto)) {</span>
+<span class="nc" id="L90">            model.addAttribute(&quot;ponto&quot;, ponto);</span>
+<span class="nc" id="L91">            model.addAttribute(&quot;fail&quot;,</span>
+                    &quot;Erro ao salvar: verifique os campos obrigatórios e se o telefone informado já não está vinculado a outro contato.&quot;);
+<span class="nc" id="L93">            LOGGER.error(&quot;Erro ao salvar ponto: {}&quot;, result.getAllErrors());</span>
+<span class="nc" id="L94">            return &quot;ponto/cadastro&quot;;</span>
+        }
+<span class="nc" id="L96">        pontoService.salvar(ponto);</span>
+<span class="nc" id="L97">        attr.addFlashAttribute(&quot;success&quot;, &quot;Ponto inserido com sucesso.&quot;);</span>
+<span class="nc" id="L98">        return &quot;redirect:/pontos/listar&quot;;</span>
+    }
+
+    /**
+     * Pré-carrega os dados do ponto a ser editado.
+     *
+     * @param id    identificador do ponto
+     * @param model modelo com os dados
+     * @return view de cadastro preenchida com os dados existentes
+     */
+    @GetMapping(&quot;/editar/{id}&quot;)
+    public String preEditar(@PathVariable(&quot;id&quot;) Long id, ModelMap model) {
+<span class="nc" id="L110">        model.addAttribute(&quot;ponto&quot;, pontoService.buscarPorId(id));</span>
+<span class="nc" id="L111">        return &quot;ponto/cadastro&quot;;</span>
+    }
+
+    /**
+     * Edita um ponto após validação.
+     *
+     * @param ponto  entidade com dados atualizados
+     * @param result resultado da validação
+     * @param attr   atributos para mensagens flash
+     * @return redirecionamento ou formulário em caso de erro
+     */
+    @PostMapping(&quot;/editar&quot;)
+    public String editar(@Valid Ponto ponto, BindingResult result, Model model, RedirectAttributes attr) {
+<span class="nc bnc" id="L124" title="All 4 branches missed.">        if (result.hasErrors() || validadorDeContatoService.existeTelefoneCadastrado(ponto)) {</span>
+<span class="nc" id="L125">            model.addAttribute(&quot;fail&quot;,</span>
+                    &quot;Erro ao salvar: verifique os campos obrigatórios e se o telefone informado já não está vinculado a outro contato.&quot;);
+<span class="nc" id="L127">            LOGGER.error(&quot;Erro ao editar ponto: {}&quot;, result.getAllErrors());</span>
+<span class="nc" id="L128">            return &quot;ponto/cadastro&quot;;</span>
+        }
+<span class="nc" id="L130">        pontoService.editar(ponto);</span>
+<span class="nc" id="L131">        attr.addFlashAttribute(&quot;success&quot;, &quot;Ponto editado com sucesso.&quot;);</span>
+<span class="nc" id="L132">        return &quot;redirect:/pontos/listar&quot;;</span>
+    }
+
+    /**
+     * Exclui um ponto, caso não haja condutores vinculados.
+     *
+     * @param id   identificador do ponto
+     * @param attr atributos para mensagens flash
+     * @return redirecionamento para a listagem
+     */
+    @GetMapping(&quot;/excluir/{id}&quot;)
+    public String excluir(@PathVariable(&quot;id&quot;) Long id, RedirectAttributes attr) {
+<span class="nc bnc" id="L144" title="All 2 branches missed.">        if (pontoService.existeCondutorCadastradoNoPonto(id)) {</span>
+<span class="nc" id="L145">            attr.addFlashAttribute(&quot;fail&quot;, &quot;Não foi possível excluir o ponto, pois existe condutor(es) vinculado(s).&quot;);</span>
+        } else {
+<span class="nc" id="L147">            pontoService.excluir(id);</span>
+<span class="nc" id="L148">            attr.addFlashAttribute(&quot;success&quot;, &quot;Ponto removido com sucesso.&quot;);</span>
+        }
+<span class="nc" id="L150">        return &quot;redirect:/pontos/listar&quot;;</span>
+    }
+
+    /**
+     * Ativa ou desativa um ponto com base no status fornecido.
+     *
+     * @param id     identificador do ponto
+     * @param status true para ativar, false para desativar
+     * @param attr   atributos de redirecionamento
+     * @return redirecionamento para listagem
+     */
+    @PostMapping(&quot;/ativar-desativar/{id}&quot;)
+    public String ativarDesativar(@PathVariable Long id, @RequestParam boolean status, RedirectAttributes attr) {
+<span class="nc" id="L163">        pontoService.atualizarStatus(id, status);</span>
+<span class="nc bnc" id="L164" title="All 2 branches missed.">        if (status) {</span>
+<span class="nc" id="L165">            attr.addFlashAttribute(&quot;success&quot;, &quot;Ponto ativado com sucesso.&quot;);</span>
+        } else {
+<span class="nc" id="L167">            attr.addFlashAttribute(&quot;success&quot;, &quot;Ponto desativado com sucesso.&quot;);</span>
+        }
+<span class="nc" id="L169">        return &quot;redirect:/pontos/listar&quot;;</span>
+    }
+
+    @GetMapping(&quot;/buscar/nome&quot;)
+    public String getPorNome(@RequestParam(&quot;nome&quot;) String nome, ModelMap model, RedirectAttributes attr) {
+<span class="nc" id="L174">        List&lt;Ponto&gt; pontos = pontoService.buscarPorNomeContendo(nome);</span>
+
+<span class="nc bnc" id="L176" title="All 2 branches missed.">        if (pontos.isEmpty()) {</span>
+<span class="nc" id="L177">            attr.addFlashAttribute(&quot;fail&quot;, &quot;Nenhum ponto encontrado com esse nome.&quot;);</span>
+<span class="nc" id="L178">            return &quot;redirect:/pontos/listar&quot;;</span>
+        }
+
+<span class="nc" id="L181">        model.addAttribute(&quot;pontos&quot;, pontos);</span>
+<span class="nc" id="L182">        return &quot;ponto/lista&quot;;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

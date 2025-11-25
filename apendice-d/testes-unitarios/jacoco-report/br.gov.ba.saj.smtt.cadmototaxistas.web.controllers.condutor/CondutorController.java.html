@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CondutorController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">cadmototaxistas</a> &gt; <a href="index.source.html" class="el_package">br.gov.ba.saj.smtt.cadmototaxistas.web.controllers.condutor</a> &gt; <span class="el_source">CondutorController.java</span></div><h1>CondutorController.java</h1><pre class="source lang-java linenums">package br.gov.ba.saj.smtt.cadmototaxistas.web.controllers.condutor;
+
+import java.util.List;
+import java.util.Optional;
+
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import br.gov.ba.saj.smtt.cadmototaxistas.model.entities.Condutor;
+import br.gov.ba.saj.smtt.cadmototaxistas.reports.enums.TipoRelatorio;
+import br.gov.ba.saj.smtt.cadmototaxistas.reports.service.JasperService;
+import br.gov.ba.saj.smtt.cadmototaxistas.service.condutor.CondutorService;
+import br.gov.ba.saj.smtt.cadmototaxistas.service.dados.formulario.DadosFormularioService;
+import br.gov.ba.saj.smtt.cadmototaxistas.service.motocicleta.modelo.MotoModeloService;
+import br.gov.ba.saj.smtt.cadmototaxistas.service.ponto.PontoService;
+import br.gov.ba.saj.smtt.cadmototaxistas.service.validacao.ValidadorDeContatoService;
+import br.gov.ba.saj.smtt.cadmototaxistas.util.messages.UtilMessage;
+import br.gov.ba.saj.smtt.cadmototaxistas.util.paginacao.PaginacaoUtil;
+
+/**
+ * Controller responsável pelo gerenciamento de operações relacionadas aos
+ * condutores (mototaxistas).
+ *
+ * Oferece funcionalidades de cadastro, edição, exclusão, listagem, busca por
+ * CPF e número de ordem,
+ * ativação/desativação e visualização individual de condutores.
+ * Utiliza os serviços de {@link CondutorService}, {@link MotoModeloService},
+ * {@link MotocicletaService}
+ * e {@link PontoService} para persistência e recuperação de dados.
+ */
+@Controller
+@RequestMapping(&quot;/condutores&quot;)
+<span class="fc" id="L48">public class CondutorController {</span>
+
+<span class="fc" id="L50">    private static final Logger LOGGER = LoggerFactory.getLogger(CondutorController.class);</span>
+
+    @Autowired
+    private CondutorService condutorService;
+
+    @Autowired
+    private ValidadorDeContatoService validadorDeContatoService;
+
+    @Autowired
+    private DadosFormularioService dadosFormularioService;
+
+    @Autowired
+    private JasperService jasperService;
+
+    /**
+     * Exibe a página de cadastro de um novo condutor.
+     */
+    @GetMapping(&quot;/cadastrar&quot;)
+    public String cadastrar(Condutor condutor, Model model) {
+<span class="nc" id="L69">        dadosFormularioService.carregarAtributosGerais(model);</span>
+<span class="nc" id="L70">        dadosFormularioService.carregarEnumsParaFormulario(model);</span>
+<span class="nc" id="L71">        return &quot;condutor/cadastro&quot;;</span>
+    }
+
+    /**
+     * Exibe a lista paginada e ordenada dos condutores.
+     * 
+     * &lt;p&gt;
+     * Este método é responsável por recuperar uma página da listagem de
+     * {@link Condutor},
+     * com base nos parâmetros fornecidos via requisição (número da página e direção
+     * da ordenação),
+     * e adicioná-la ao modelo da view para exibição em tela.
+     * &lt;/p&gt;
+     *
+     * @param model o {@link ModelMap} utilizado para adicionar os dados à view.
+     * @param page  o número da página atual (opcional; se ausente, assume 1).
+     * @param dir   a direção da ordenação (&quot;asc&quot; para ascendente ou &quot;desc&quot; para
+     *              descendente; padrão é &quot;asc&quot;).
+     * @return o nome da view que renderiza a lista de condutores, com suporte a
+     *         paginação.
+     */
+    @GetMapping(&quot;/listar&quot;)
+    public String listar(ModelMap model, @RequestParam(&quot;page&quot;) Optional&lt;Integer&gt; page,
+            @RequestParam(&quot;dir&quot;) Optional&lt;String&gt; dir) {
+<span class="nc" id="L95">        int paginaAtual = page.orElse(1);</span>
+<span class="nc" id="L96">        String ordem = dir.orElse(&quot;asc&quot;);</span>
+
+<span class="nc" id="L98">        PaginacaoUtil&lt;Condutor&gt; pageCondutor = condutorService.buscaPaginada(paginaAtual, ordem, false);</span>
+<span class="nc" id="L99">        model.addAttribute(&quot;pageCondutor&quot;, pageCondutor);</span>
+<span class="nc" id="L100">        return &quot;condutor/lista&quot;;</span>
+    }
+
+    /**
+     * Salva um novo condutor após validação dos dados.
+     */
+    @PostMapping(&quot;/salvar&quot;)
+    public String salvar(@Valid Condutor condutor, BindingResult result, RedirectAttributes attr, Model model) {
+<span class="nc bnc" id="L108" title="All 2 branches missed.">        if (validadorDeContatoService.existeTelefoneCadastrado(condutor)) {</span>
+<span class="nc" id="L109">            model.addAttribute(&quot;condutor&quot;, condutor);</span>
+<span class="nc" id="L110">            dadosFormularioService.carregarAtributosGerais(model);</span>
+<span class="nc" id="L111">            dadosFormularioService.carregarEnumsParaFormulario(model);</span>
+<span class="nc" id="L112">            model.addAttribute(&quot;motocicletaModelos&quot;, condutorService.buscarModelosDaMarcaSelecionada(condutor));</span>
+<span class="nc" id="L113">            LOGGER.error(&quot;Erro ao salvar condutor: {}&quot;, result.getAllErrors());</span>
+<span class="nc" id="L114">            model.addAttribute(&quot;fail&quot;, &quot;Telefone já utilizado por outro contato.&quot;);</span>
+<span class="nc" id="L115">            return &quot;condutor/cadastro&quot;;</span>
+        }
+<span class="nc bnc" id="L117" title="All 2 branches missed.">        if (result.hasErrors()) {</span>
+<span class="nc" id="L118">            model.addAttribute(&quot;condutor&quot;, condutor);</span>
+<span class="nc" id="L119">            dadosFormularioService.carregarAtributosGerais(model);</span>
+<span class="nc" id="L120">            dadosFormularioService.carregarEnumsParaFormulario(model);</span>
+<span class="nc" id="L121">            model.addAttribute(&quot;motocicletaModelos&quot;, condutorService.buscarModelosDaMarcaSelecionada(condutor));</span>
+<span class="nc" id="L122">            LOGGER.error(&quot;Erro ao salvar condutor: {}&quot;, result.getAllErrors());</span>
+<span class="nc" id="L123">            return &quot;condutor/cadastro&quot;;</span>
+        }
+<span class="nc" id="L125">        Optional&lt;String&gt; erro = UtilMessage.verificarDuplicadosCondutor(condutorService, condutor);</span>
+<span class="nc bnc" id="L126" title="All 2 branches missed.">        if (erro.isPresent()) {</span>
+<span class="nc" id="L127">            model.addAttribute(&quot;condutor&quot;, condutor);</span>
+<span class="nc" id="L128">            dadosFormularioService.carregarAtributosGerais(model);</span>
+<span class="nc" id="L129">            dadosFormularioService.carregarEnumsParaFormulario(model);</span>
+<span class="nc" id="L130">            model.addAttribute(&quot;motocicletaModelos&quot;, condutorService.buscarModelosDaMarcaSelecionada(condutor));</span>
+<span class="nc" id="L131">            LOGGER.error(&quot;Erro ao salvar condutor: {}&quot;, result.getAllErrors());</span>
+<span class="nc" id="L132">            model.addAttribute(&quot;fail&quot;, erro.get());</span>
+<span class="nc" id="L133">            return &quot;condutor/cadastro&quot;;</span>
+        }
+<span class="nc" id="L135">        condutorService.salvar(condutor);</span>
+<span class="nc" id="L136">        attr.addFlashAttribute(&quot;success&quot;, &quot;Condutor inserido com sucesso.&quot;);</span>
+<span class="nc" id="L137">        return &quot;redirect:/condutores/detalhes/por-numero-de-ordem?numOrdem=&quot; + condutor.getNumOrdem();</span>
+    }
+
+    /**
+     * Pré-carrega os dados de um condutor para edição.
+     */
+    @GetMapping(&quot;/editar/{id}&quot;)
+    public String preEditar(@PathVariable(&quot;id&quot;) Long id, ModelMap model) {
+<span class="nc" id="L145">        Condutor condutor = condutorService.buscarPorId(id);</span>
+<span class="nc" id="L146">        dadosFormularioService.carregarAtributosGerais(model);</span>
+<span class="nc" id="L147">        dadosFormularioService.carregarEnumsParaFormulario(model);</span>
+<span class="nc" id="L148">        model.addAttribute(&quot;condutor&quot;, condutor);</span>
+<span class="nc" id="L149">        model.addAttribute(&quot;motocicletaModelos&quot;, condutorService.buscarModelosDaMarcaSelecionada(condutor));</span>
+<span class="nc" id="L150">        return &quot;condutor/cadastro&quot;;</span>
+    }
+
+    /**
+     * Edita os dados de um condutor existente após validação.
+     */
+    @PostMapping(&quot;/editar&quot;)
+    public String editar(@Valid Condutor condutor, BindingResult result, RedirectAttributes attr, Model model) {
+<span class="nc bnc" id="L158" title="All 2 branches missed.">        if (validadorDeContatoService.existeTelefoneCadastrado(condutor)) {</span>
+<span class="nc" id="L159">            model.addAttribute(&quot;condutor&quot;, condutor);</span>
+<span class="nc" id="L160">            dadosFormularioService.carregarAtributosGerais(model);</span>
+<span class="nc" id="L161">            dadosFormularioService.carregarEnumsParaFormulario(model);</span>
+<span class="nc" id="L162">            model.addAttribute(&quot;motocicletaModelos&quot;, condutorService.buscarModelosDaMarcaSelecionada(condutor));</span>
+<span class="nc" id="L163">            LOGGER.error(&quot;Erro ao salvar condutor: {}&quot;, result.getAllErrors());</span>
+<span class="nc" id="L164">            model.addAttribute(&quot;fail&quot;, &quot;Telefone já utilizado por outro contato.&quot;);</span>
+<span class="nc" id="L165">            return &quot;condutor/cadastro&quot;;</span>
+        }
+<span class="nc bnc" id="L167" title="All 2 branches missed.">        if (result.hasErrors()) {</span>
+<span class="nc" id="L168">            dadosFormularioService.carregarAtributosGerais(model);</span>
+<span class="nc" id="L169">            dadosFormularioService.carregarEnumsParaFormulario(model);</span>
+<span class="nc" id="L170">            model.addAttribute(&quot;motocicletaModelos&quot;, condutorService.buscarModelosDaMarcaSelecionada(condutor));</span>
+<span class="nc" id="L171">            return &quot;condutor/cadastro&quot;;</span>
+        }
+<span class="nc" id="L173">        Optional&lt;String&gt; erro = UtilMessage.verificarDuplicadosCondutor(condutorService, condutor);</span>
+<span class="nc bnc" id="L174" title="All 2 branches missed.">        if (erro.isPresent()) {</span>
+<span class="nc" id="L175">            model.addAttribute(&quot;condutor&quot;, condutor);</span>
+<span class="nc" id="L176">            dadosFormularioService.carregarAtributosGerais(model);</span>
+<span class="nc" id="L177">            dadosFormularioService.carregarEnumsParaFormulario(model);</span>
+<span class="nc" id="L178">            model.addAttribute(&quot;motocicletaModelos&quot;, condutorService.buscarModelosDaMarcaSelecionada(condutor));</span>
+<span class="nc" id="L179">            LOGGER.error(&quot;Erro ao salvar condutor: {}&quot;, result.getAllErrors());</span>
+<span class="nc" id="L180">            model.addAttribute(&quot;fail&quot;, erro.get());</span>
+<span class="nc" id="L181">            return &quot;condutor/cadastro&quot;;</span>
+        }
+<span class="nc" id="L183">        condutorService.editar(condutor);</span>
+<span class="nc" id="L184">        attr.addFlashAttribute(&quot;success&quot;, &quot;Condutor editado com sucesso.&quot;);</span>
+<span class="nc" id="L185">        return &quot;redirect:/condutores/detalhes/por-numero-de-ordem?numOrdem=&quot; + condutor.getNumOrdem();</span>
+
+    }
+
+    /**
+     * Exclui um condutor com base no seu ID.
+     */
+    @GetMapping(&quot;/excluir/{id}&quot;)
+    public String excluir(@PathVariable(&quot;id&quot;) Long id, RedirectAttributes attr) {
+<span class="nc" id="L194">        condutorService.excluir(id);</span>
+<span class="nc" id="L195">        attr.addFlashAttribute(&quot;success&quot;, &quot;condutor removido com sucesso..&quot;);</span>
+<span class="nc" id="L196">        return &quot;redirect:/condutores/listar&quot;;</span>
+    }
+
+    /**
+     * Filtra a lista de condutores pelo número de ordem.
+     */
+    @GetMapping(&quot;/buscar/numero-de-ordem&quot;)
+    public String getCondutorPorNumOrdem(@RequestParam(&quot;numOrdem&quot;) String numOrdem, ModelMap model,
+            RedirectAttributes attr) {
+<span class="nc" id="L205">        return condutorService.buscarPorNumOrdem(numOrdem)</span>
+<span class="nc" id="L206">                .map(condutor -&gt; {</span>
+<span class="nc" id="L207">                    model.addAttribute(&quot;condutores&quot;, List.of(condutor));</span>
+<span class="nc" id="L208">                    return &quot;condutor/lista&quot;;</span>
+                })
+<span class="nc" id="L210">                .orElseGet(() -&gt; {</span>
+<span class="nc" id="L211">                    attr.addFlashAttribute(&quot;fail&quot;, &quot;Número de ordem não existe!&quot;);</span>
+<span class="nc" id="L212">                    return &quot;redirect:/condutores/listar&quot;;</span>
+                });
+    }
+
+    /**
+     * Busca um condutor individual pelo número de ordem.
+     */
+    @GetMapping(&quot;/detalhes/por-numero-de-ordem&quot;)
+    public String getDetalhesCondutorPorNumOrdem(@RequestParam(&quot;numOrdem&quot;) String numOrdem, ModelMap model,
+            RedirectAttributes attr) {
+<span class="nc" id="L222">        return condutorService.buscarPorNumOrdem(numOrdem)</span>
+<span class="nc" id="L223">                .map(condutor -&gt; {</span>
+<span class="nc" id="L224">                    model.addAttribute(&quot;condutor&quot;, condutor);</span>
+<span class="nc" id="L225">                    return &quot;condutor/detalhes-condutor&quot;;</span>
+                })
+<span class="nc" id="L227">                .orElseGet(() -&gt; {</span>
+<span class="nc" id="L228">                    attr.addFlashAttribute(&quot;fail&quot;, &quot;Número de ordem não existe!&quot;);</span>
+<span class="nc" id="L229">                    return &quot;redirect:/condutores/cadastrar&quot;;</span>
+                });
+
+    }
+
+    /**
+     * Busca um condutor individual pelo CPF.
+     */
+    @GetMapping(&quot;/detalhes/por-cpf&quot;)
+    public String getDetalhesCondutorPorCpf(@RequestParam(&quot;cpf&quot;) String cpf, ModelMap model,
+            RedirectAttributes attr) {
+
+<span class="nc" id="L241">        return (condutorService.buscarPorCpf(cpf))</span>
+<span class="nc" id="L242">                .map(condutor -&gt; {</span>
+<span class="nc" id="L243">                    model.addAttribute(&quot;condutor&quot;, condutor);</span>
+<span class="nc" id="L244">                    return &quot;condutor/detalhes-condutor&quot;;</span>
+                })
+<span class="nc" id="L246">                .orElseGet(() -&gt; {</span>
+<span class="nc" id="L247">                    attr.addFlashAttribute(&quot;fail&quot;, &quot;CPF não existe!&quot;);</span>
+<span class="nc" id="L248">                    return &quot;redirect:/condutores/cadastrar&quot;;</span>
+                });
+    }
+
+    /**
+     * Ativa ou desativa um condutor com base no status informado.
+     */
+    @PostMapping(&quot;/ativar-desativar/{id}&quot;)
+    public String ativarDesativar(@PathVariable Long id, @RequestParam boolean status, RedirectAttributes attr) {
+<span class="nc" id="L257">        condutorService.atualizarStatus(id, status);</span>
+<span class="nc bnc" id="L258" title="All 2 branches missed.">        if (status) {</span>
+<span class="nc" id="L259">            attr.addFlashAttribute(&quot;success&quot;, &quot;Mototaxista ativado com sucesso.&quot;);</span>
+        } else {
+<span class="nc" id="L261">            attr.addFlashAttribute(&quot;success&quot;, &quot;Mototaxista desativado com sucesso.&quot;);</span>
+        }
+<span class="nc" id="L263">        return &quot;redirect:/condutores/listar&quot;;</span>
+    }
+
+    /**
+     * Gera e retorna um relatório PDF com base nos parâmetros informados.
+     * 
+     * &lt;p&gt;
+     * Este endpoint permite a visualização ou o download de relatórios
+     * JasperReports
+     * associados a condutores, como o alvará de autorização, utilizando o tipo do
+     * relatório e o código correspondente ao arquivo.
+     * &lt;/p&gt;
+     * 
+     * @param code     o código identificador do relatório (por exemplo: &quot;01&quot;,
+     *                 &quot;02&quot;).
+     *                 Usado para compor o nome do arquivo Jasper.
+     * @param acao     define o tipo de ação: &lt;b&gt;&quot;v&quot;&lt;/b&gt; para visualizar no
+     *                 navegador ou
+     *                 &lt;b&gt;&quot;d&quot;&lt;/b&gt; para download do arquivo.
+     * @param tipo     tipo de relatório a ser gerado, definido pelo enum
+     *                 {@link TipoRelatorio}.
+     *                 Define o prefixo do nome do arquivo `.jasper`.
+     * @param id       identificador do condutor, usado como parâmetro no relatório
+     *                 (pode ser nulo).
+     * @param response objeto {@link HttpServletResponse} para escrever o PDF
+     *                 gerado.
+     * 
+     * @throws Exception caso ocorra erro durante a geração ou envio do relatório.
+     */
+    @GetMapping(&quot;/alvara&quot;)
+    public void gerarAlvaraCondutor(
+            @RequestParam(&quot;code&quot;) String code,
+            @RequestParam(&quot;acao&quot;) String acao,
+            @RequestParam(&quot;tipo&quot;) TipoRelatorio tipo,
+            @RequestParam(name = &quot;id&quot;, required = false) Long id,
+            HttpServletResponse response) throws Exception {
+
+        try {
+<span class="nc" id="L301">            byte[] bytes = jasperService.gerarPDF(code, tipo, id);</span>
+
+<span class="nc bnc" id="L303" title="All 2 branches missed.">            if (bytes == null) {</span>
+<span class="nc" id="L304">                response.sendError(HttpServletResponse.SC_NOT_FOUND, &quot;Relatório não encontrado.&quot;);</span>
+<span class="nc" id="L305">                return;</span>
+            }
+
+<span class="nc" id="L308">            response.setContentType(MediaType.APPLICATION_PDF_VALUE);</span>
+
+            // Define o cabeçalho com base na ação: visualizar (&quot;v&quot;) ou baixar
+<span class="nc bnc" id="L311" title="All 2 branches missed.">            if (acao.equals(&quot;v&quot;)) {</span>
+<span class="nc" id="L312">                response.setHeader(&quot;Content-disposition&quot;, &quot;inline; filename=relatorio-&quot; + code + &quot;.pdf&quot;);</span>
+            } else {
+<span class="nc" id="L314">                response.setHeader(&quot;Content-disposition&quot;, &quot;attachment; filename=relatorio-&quot; + code + &quot;.pdf&quot;);</span>
+            }
+
+<span class="nc" id="L317">            response.getOutputStream().write(bytes);</span>
+<span class="nc" id="L318">        } catch (Exception e) {</span>
+<span class="nc" id="L319">            LOGGER.error(&quot;Erro ao gerar relatório: {}&quot;, e);</span>
+<span class="nc" id="L320">            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, &quot;Erro ao gerar o relatório.&quot;);</span>
+<span class="nc" id="L321">        }</span>
+<span class="nc" id="L322">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
