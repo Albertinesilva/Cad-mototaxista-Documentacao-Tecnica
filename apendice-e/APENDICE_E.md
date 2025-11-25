@@ -23,7 +23,7 @@ O Apêndice E apresenta os artefatos fundamentais relacionados à modelagem rela
     </tr>
     <tr align="center">
       <td>E.1 – Controle de Versões de Banco de Dados com Flyway</td>
-      <td>Scripts de Migração</td>
+      <td><a href="https://github.com/Albertinesilva/Cad-mototaxista-Documentacao-Tecnica/tree/main/apendice-e/migration">Scripts de Migração</a></td>
       <td>Versionamento do BD</td>
     </tr>
     <tr align="center">
