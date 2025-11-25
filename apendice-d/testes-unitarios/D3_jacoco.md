@@ -145,4 +145,10 @@ Contudo, a cobertura não é universal. Há lacunas em componentes auxiliares e 
 
 Em síntese, o esforço da etapa atual oferece uma base confiável para a segurança de autenticação e autorização no CAD-MOTOTAXISTA, fortalecendo os requisitos essenciais de proteção do sistema. A URL pública do relatório — **relatório de cobertura hospedado no Netlify** — reforça a transparência e facilita a revisão contínua pelas partes interessadas:
 
-📎 https://jacoco-cadmototaxista.netlify.app/
+📎[Jacoco Cad-Mototaxista](https://jacoco-cadmototaxista.netlify.app/)
+
+### Evidência Complementar: Código-Fonte dos Testes Unitários
+
+Além do relatório de cobertura disponibilizado via JaCoCo, o código completo dos testes unitários aplicados ao módulo de segurança e autenticação pode ser consultado no repositório público:
+
+🔗 [Testes Unitários Cad-Mototaxista](https://github.com/Albertinesilva/Cad-mototaxista-Documentacao-Tecnica/tree/main/apendice-d/testes-unitarios/test)
